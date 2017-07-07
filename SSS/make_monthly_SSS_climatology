@@ -1,0 +1,24 @@
+#!/bin/bash
+SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
+dir=/Users/elizabethdrenkard/ANALYSES/CCS/phc3.0
+
+filin=phc3.0_monthly.nc
+
+ncfil=sss_monthly_climatology.nc
+rm $ncfil
+
+python edit_SSS_file.py
+#ncks -O --mk_rec_dmn sss_time $ncfil $ncfil 
+
+# DROWN SSS FILE
+#timevar=sss_time
+#ncvar=SSS
+#$SOSIE/mask_drown_field_merra.x -D -i $dir/$ncfil -v $ncvar -t $timevar \
+#                                   -m $dir/phc3.0_lsm.nc \
+#                                   -g 200 -o drowned_$ncfil
+
+#python edit_drowned_SSS_file.py
+#ncrename -O -d time,sss_time -v time,sss_time drowned_$ncfil drowned_$ncfil
+ncatted -O -a cycle_length,sss_time,a,f,365 $ncfil
+#scp $ncfil edrenkar@yellowstone.ucar.edu:/glade/p/work/edrenkar/external_data/PHC3.0/
+
