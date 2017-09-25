@@ -1,0 +1,30 @@
+# PROCESS FOR ACQUIRING AND MODIFYING ERAinterim FILES FOR FORCING ROMS MODEL
+
+----------------
+FILE ACQUISITION
+----------------
+
+1) python get_fcERAinterim.py
+
+This file fetches the ERAinterim files from ECMWF site
+NOTE: must have .ecmwfapirc file in home directory
+
+---------------
+FILE PROCESSING
+---------------
+
+i) generate the .so library for humidity_toolbox.f90:
+   make -f Makefile_humid
+   rm -r humidity_toolbox.so.dSYM (remove the directory)
+
+ii) note which files need to be decumulated
+
+~ 
+
+2) Invoke the library for processing ERAinterim files
+
+
+
+~~~~~~~~~~~~
+
+
