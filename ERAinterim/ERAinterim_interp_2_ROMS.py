@@ -70,9 +70,9 @@ for nfil in range(len(ncfil)):
     ncfil2 = 'regridded_' + ncfil[nfil]
     fid2 = nc.Dataset(ncfil2,'w')
 
-    fid2.createDimension('time', None)
-    fid2.createDimension('eta_rho', Jmax)
-    fid2.createDimension('xi_rho', Imax)
+    fid.createDimension('time', None)
+    fid.createDimension('xu_ocean', )
+    fid.createDimension('xt_ocean', )
 
     fid2.createVariable('time', 'f8', ('time'))
     fid2.variables['time'].units = fid.variables['time'].units
