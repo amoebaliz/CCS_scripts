@@ -22,10 +22,15 @@ i) generate the .so library for humidity_toolbox.f90:
 
 ~ 
 
-2) Invoke the library for processing ERAinterim files
+2) ./make_ERA_roms_clim
+  
+   i) processes ERAi files based on lib_python
+  ii) creates a monthly climatology
+ iii) edits the time stamp on the files 
 
+~
 
+3) Invoke the library for processing ERAinterim files
 
-~~~~~~~~~~~~
 
 
