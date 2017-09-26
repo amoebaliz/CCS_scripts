@@ -15,9 +15,11 @@
 # L.Drenkard 2017 - additional adaptations
 
 from ecmwfapi import ECMWFDataServer
+from lib_process_ERAinterim import ERAinterim_processing
 import calendar
 import numpy as np
 import os 
+import sys
 
 # Define the list of interesting variables with their associated parameter on MARS server
 #ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
