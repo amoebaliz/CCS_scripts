@@ -1,0 +1,32 @@
+#!/bin/bash
+SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
+dirin=/Users/elizabethdrenkard/external_data/ERAinterim
+dirout=$dirin/drowned
+ncvar=("Pair" "Qair" "Tair" "Uwind" "Vwind" "swrad" "lwrad" "rain")
+echo $ncvar
+
+n=0
+#for varstr in msl q2 t2 u10 v10 radsw radlw precip; do
+for varstr in radsw; do
+
+    echo $varstr
+    filin=${varstr}_1981-2010_monthly_clim.nc
+    filout=ERAi_$filin
+
+    #mv $dirin/$filin $filout
+
+    # DROWN ERA FILES
+    timevar=$( ncdump -h $dirin/$filout | grep time | head -1 | awk '{ print $1 }' )
+    ncvar=$( ncdump -h $dirin/$filout | grep float | tail -1 | sed -e "s/(/ /" | awk '{ print $2 }' )
+
+    echo Processing variable $ncvar in file $filout
+    $SOSIE/mask_drown_field_era.x -D -i $dirin/$filout -v $ncvar -t $timevar \
+                                     -m $dirin/land_sea_mask/lsm_erainterim_roms.nc \
+                                     -p -1 -o $dirout/drowned_$filout  
+    n+=1
+done
+
+python edit_drowned_ERA_files.py
+
+scp $dirin/drowned/drowned_ERAi_*_1981-2010_monthly_clim.nc edrenkar@yellowstone.ucar.edu:/glade/p/work/edrenkar/external_data/ERAinterim/drowned/
+
