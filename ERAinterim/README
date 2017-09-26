@@ -9,15 +9,16 @@ FILE ACQUISITION
 This file fetches the ERAinterim files from ECMWF site
 NOTE: must have .ecmwfapirc file in home directory
 
+Also pre-processes the files to subset to CCS domain. results in 80x80 latxlon
+netCDF file
 ---------------
 FILE PROCESSING
 ---------------
 
 i) generate the .so library for humidity_toolbox.f90:
-   make -f Makefile_humid
-   rm -r humidity_toolbox.so.dSYM (remove the directory)
 
-ii) note which files need to be decumulated
+     make -f Makefile_humid
+     rm -r humidity_toolbox.so.dSYM (remove the directory)
 
 ~ 
 
