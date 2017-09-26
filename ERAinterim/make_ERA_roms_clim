@@ -3,15 +3,16 @@
 python process_ERAinterim.py
 
 dir_fc=/Users/elizabethdrenkard/ANALYSES/CCS/ERAinterim
+dir_out=/Users/elizabethdrenkard/external_data/ERAinterim
 #for var in t2 msl q2 u10 v10 radsw radlw precip; do
 for var in radsw; do
     for mon in $( seq -f %02g 1 12 ) ; do
         ncra -O -h $dir_fc/${var}_*_${mon}_monthly_ROMS.nc $dir_fc/${var}_1981-2010_monthly_clim_${mon}.nc
         rm $dir_fc/${var}_*_${mon}_monthly_ROMS.nc
     done
-    ncrcat -O -h $dir_fc/${var}_1981-2010_monthly_clim_??.nc $dir_fc/climatologies/${var}_1981-2010_monthly_clim.nc
+    ncrcat -O -h $dir_fc/${var}_1981-2010_monthly_clim_??.nc $dir_out/${var}_1981-2010_monthly_clim.nc
     rm $dir_fc/${var}_1981-2010_monthly_clim_??.nc
-    ncatted -O -h -a cycle_length,time,a,f,365 $dir_fc/climatologies/${var}_1981-2010_monthly_clim.nc
+    ncatted -O -h -a cycle_length,time,a,f,365 $dir_out/${var}_1981-2010_monthly_clim.nc
 
 done
 

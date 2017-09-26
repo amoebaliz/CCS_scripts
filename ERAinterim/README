@@ -17,10 +17,8 @@ FILE PROCESSING
 
 i) generate the .so library for humidity_toolbox.f90:
 
-     make -f Makefile_humid
+     make -f Makefile_humid *OR* f2py -c -m humidity_toolbox humidity_toolbox.f90
      rm -r humidity_toolbox.so.dSYM (remove the directory)
-
-~ 
 
 2) ./make_ERA_roms_clim
   
@@ -28,9 +26,31 @@ i) generate the .so library for humidity_toolbox.f90:
   ii) creates a monthly climatology
  iii) edits the time stamp on the files 
 
-~
+~~~~~~~~
 
-3) Invoke the library for processing ERAinterim files
+i) get/create land-sea mask for drowning ERAi files:
 
+   python get_ERAinterim_lsm.py
+   python create_landseamask_ERAi.py   
+
+
+3) ./drown_ERA_1981-2010_CLIM 
+
+   i) uses sosie to drown files NOTE: need ERAi land mask
+  ii) edits attributes of drowned ERAi files
+
+~~~~~~
+
+i) generate the .so library for regrid_atmos.f90:
+   
+    make -f Makefile *OR* f2py -c -m regrid_atmos regrid_atmos.f90 
+    rm -r regrid_atmos.so.dSYM (remove the directory)
+
+4) python ERAinterim_interp_2_ROMS.py 
+   
+   i) uses ROMS interpolation scheme to map to model grid
+
+~~~~~~
+IF WINDS - ADD CCMP ANOMALY
 
 

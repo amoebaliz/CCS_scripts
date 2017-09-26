@@ -26,8 +26,11 @@ ncfil =  ['drowned_ERAi_msl_1981-2010_monthly_clim.nc',\
           'drowned_ERAi_u10_1981-2010_monthly_clim.nc',\
           'drowned_ERAi_v10_1981-2010_monthly_clim.nc']
 
+ncfil = ['/Users/elizabethdrenkard/external_data/ERAinterim/drowned/drowned_ERAi_radlw_1981-2010_monthly_clim.nc']
+
 var = ['Pair','rain','Qair','lwrad_down','swrad','Tair','Uwind','Vwind']
 
+var = ['swrad']
 for nfil in range(len(ncfil)):
 
     fid = nc.Dataset(ncfil[nfil])
@@ -51,20 +54,6 @@ for nfil in range(len(ncfil)):
     for nt in range(Finp.shape[0]):
 
         Fout[nt,:] = regrid_atmos.regrid_atmos(np.asfortranarray(Finp[nt,:].squeeze().astype(float)), Xinp, Yinp, Amin, Amax, Xout, Yout)
-        #plt.figure()
-        #plt.pcolor(np.diff(Fout))
-        #plt.colorbar()
-        #plt.figure()
-        #plt.pcolor(np.diff(rain))
-        #plt.colorbar()
-        #plt.figure()
-        #plt.pcolor(Fout,cmap='jet')
-        #plt.colorbar()
-        #print 'MEEEEP', np.sum(Fout-rain)
-        #plt.figure()
-        #plt.pcolor(Fout-rain,cmap='jet')
-        #plt.colorbar()
-        #plt.show()
 
     # Save new regridded file
     ncfil2 = 'regridded_' + ncfil[nfil]

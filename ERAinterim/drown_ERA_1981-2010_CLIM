@@ -1,8 +1,10 @@
 #!/bin/bash
 SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
 dirin=/Users/elizabethdrenkard/external_data/ERAinterim
+
 dirout=$dirin/drowned
-ncvar=("Pair" "Qair" "Tair" "Uwind" "Vwind" "swrad" "lwrad" "rain")
+#ncvar=("Pair" "Qair" "Tair" "Uwind" "Vwind" "swrad" "lwrad" "rain")
+ncvar=("swrad")
 echo $ncvar
 
 n=0

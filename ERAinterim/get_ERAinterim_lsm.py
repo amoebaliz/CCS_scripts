@@ -50,7 +50,7 @@ os.system(cln_up)
                 
                 
 # SPATIALLY subset nc file to CCS
-CCS_sub = 'ncks -O -d lat,40,119 -d lon,290,369 ' + ncfil + ' ' + ncfil + '.sub'
+CCS_sub = 'ncks -O -d lat,40,119 -d lon,290,369 ' + ncfil + ' /Users/elizabethdrenkard/external_data/' + ncfil + '.sub'
 os.system(CCS_sub)
 cln_up = 'rm ' + ncfil 
 os.system(cln_up)
