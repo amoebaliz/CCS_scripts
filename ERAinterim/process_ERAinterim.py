@@ -27,7 +27,7 @@ for year in np.arange(fyear,lyear+1):
         #             'year':year, 'month':str(mon).zfill(2), 'ndays':nday[mon-1], 'nx':80, 'ny':80, 'output_dir':dir_fc}
 
         my_inputs = {'file_radsw':  dir_fc + '/radsw_ERAinterim_' + str(year) + '_' + str(mon).zfill(2) + '.nc.sub',\
-                     'year':year, 'month':str(mon).zfill(2), 'ndays':nday[mon-1], 'nx':80, 'ny':80, 'output_dir':dir_fc}
+                     'year':year, 'month':str(mon).zfill(2), 'ndays':nday[mon-1], 'ncumul':4,'nx':80, 'ny':80, 'output_dir':dir_fc}
 
         go = ERAinterim_processing(my_inputs)
         go()

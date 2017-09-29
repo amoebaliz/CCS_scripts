@@ -26,14 +26,18 @@ ncfil =  ['drowned_ERAi_msl_1981-2010_monthly_clim.nc',\
           'drowned_ERAi_u10_1981-2010_monthly_clim.nc',\
           'drowned_ERAi_v10_1981-2010_monthly_clim.nc']
 
-ncfil = ['/Users/elizabethdrenkard/external_data/ERAinterim/drowned/drowned_ERAi_radlw_1981-2010_monthly_clim.nc']
+#ncfil = ['drowned_ERAi_radsw_1981-2010_monthly_clim.nc']
 
 var = ['Pair','rain','Qair','lwrad_down','swrad','Tair','Uwind','Vwind']
 
-var = ['swrad']
+#var = ['swrad']
 for nfil in range(len(ncfil)):
 
-    fid = nc.Dataset(ncfil[nfil])
+    file_name= '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/' + ncfil[nfil]
+
+    #fid = nc.Dataset(ncfil[nfil])
+    fid = nc.Dataset(file_name)
+
     Finp = fid.variables[var[nfil]][:].squeeze()
 
     lat = fid.variables['lat'][:].squeeze().astype(float)
@@ -59,9 +63,9 @@ for nfil in range(len(ncfil)):
     ncfil2 = 'regridded_' + ncfil[nfil]
     fid2 = nc.Dataset(ncfil2,'w')
 
-    fid.createDimension('time', None)
-    fid.createDimension('xu_ocean', )
-    fid.createDimension('xt_ocean', )
+    fid2.createDimension('time', None)
+    fid2.createDimension('eta_rho', Jmax)
+    fid2.createDimension('xi_rho', Imax)
 
     fid2.createVariable('time', 'f8', ('time'))
     fid2.variables['time'].units = fid.variables['time'].units

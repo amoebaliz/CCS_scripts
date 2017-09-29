@@ -1,7 +1,10 @@
 import netCDF4 as nc
 
-filvar = ['q2','msl','t2','u10','v10','radsw','radlw','precip']
-invar = ['Qair','Pair','Tair','Uwind','Vwind','swrad','lwrad_down','rain']
+#filvar = ['q2','msl','t2','u10','v10','radsw','radlw','precip']
+#invar = ['Qair','Pair','Tair','Uwind','Vwind','swrad','lwrad_down','rain']
+filvar = ['radsw']
+invar = ['swrad']
+
 #invar = ['Uwind','Vwind']
 for nvar in range(len(invar)):
     ncfil1 = '/Users/elizabethdrenkard/external_data/ERAinterim/ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'

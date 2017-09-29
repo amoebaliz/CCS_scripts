@@ -1,7 +1,6 @@
 #!/bin/bash
 SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
 dirin=/Users/elizabethdrenkard/external_data/ERAinterim
-
 dirout=$dirin/drowned
 #ncvar=("Pair" "Qair" "Tair" "Uwind" "Vwind" "swrad" "lwrad" "rain")
 ncvar=("swrad")
@@ -14,8 +13,8 @@ for varstr in radsw; do
     echo $varstr
     filin=${varstr}_1981-2010_monthly_clim.nc
     filout=ERAi_$filin
-
-    #mv $dirin/$filin $filout
+    ls $dirin/$filout 
+    #mv $dir_0/$filin $dir_0/$filout
 
     # DROWN ERA FILES
     timevar=$( ncdump -h $dirin/$filout | grep time | head -1 | awk '{ print $1 }' )
@@ -30,5 +29,5 @@ done
 
 python edit_drowned_ERA_files.py
 
-scp $dirin/drowned/drowned_ERAi_*_1981-2010_monthly_clim.nc edrenkar@yellowstone.ucar.edu:/glade/p/work/edrenkar/external_data/ERAinterim/drowned/
+#scp $dirin/drowned/drowned_ERAi_*_1981-2010_monthly_clim.nc edrenkar@yellowstone.ucar.edu:/glade/p/work/edrenkar/external_data/ERAinterim/drowned/
 
