@@ -13,7 +13,6 @@ grd = pyroms.grid.get_ROMS_grid('CCS')
 Xout = np.asfortranarray(grd.hgrid.lon_rho.astype(float))
 Yout = np.asfortranarray(grd.hgrid.lat_rho.astype(float))
 
-
 Jmax, Imax = Xout.shape
 
 # ERAint files
