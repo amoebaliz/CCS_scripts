@@ -1,4 +1,4 @@
-SUBROUTINE regrid_atmos(Nx, Ny, Finp, Xinp, Yinp, Amin, Amax,          &
+SUBROUTINE regrid_atmos(Nx, Ny, Xinp, Yinp, Finp, Amin, Amax,          &
 &                   Imax, Jmax, Xout, Yout, Fout)
 !
 ! Regird atmospheric forcing fields using ROMS 2D regridding algorithm
@@ -56,12 +56,6 @@ real(r8), parameter :: deg2rad = pi/180.0_r8            ! degrees to radians con
 !
 !  Imported variable declarations:
 !
-!  CCS lon, lat, dimensions
-!
-real(r8), DIMENSION(Jmax,Imax), intent(in) :: Xout
-real(r8), DIMENSION(Jmax,Imax), intent(in) :: Yout
-integer, intent(in) :: Imax, Jmax
-!
 !  ERAinterim lon, lat, data, dimensions
 !
 real(r8), DIMENSION(Ny,Nx), intent(in)    :: Xinp
@@ -69,6 +63,12 @@ real(r8), DIMENSION(Ny,Nx), intent(in)    :: Yinp
 real(r8), DIMENSION(Ny,Nx), intent(inout) :: Finp(Nx,Ny)
 integer, intent(in) :: Nx, Ny
 real(r8), intent(inout) :: Amin, Amax
+!
+!  CCS lon, lat, dimensions
+!
+real(r8), DIMENSION(Jmax,Imax), intent(in) :: Xout
+real(r8), DIMENSION(Jmax,Imax), intent(in) :: Yout
+integer, intent(in) :: Imax, Jmax
 !
 !  Interpolated Output
 !
@@ -292,6 +292,66 @@ DO j=1,Jmax
       END IF
    END DO
 END DO
+RETURN
+END SUBROUTINE
+
+SUBROUTINE regrid_winds(Nx, Ny, Xinp, Yinp, FUinp, FVinp,       &
+&                       AUmin, AUmax, AVmin, Avmax, Imax, Jmax, &
+&                       angler, Xout, Yout, FUout, FVout)
+
+! ---------------------------------------
+! FOR ROTATING WINDS TO CURVILINEAR GRID 
+! ---------------------------------------
+IMPLICIT NONE
 !
+!  constants from mod_kinds and mod_scalars
+!
+integer, parameter  :: r8 = selected_real_kind(12,300)  ! 64-bit
+!
+!  Imported variable declarations:
+!
+!  ERAinterim lon, lat, data, dimensions
+!
+real(r8), DIMENSION(Ny,Nx), intent(in)    :: Xinp
+real(r8), DIMENSION(Ny,Nx), intent(in)    :: Yinp
+real(r8), DIMENSION(Ny,Nx), intent(inout) :: FUinp(Nx,Ny)
+real(r8), DIMENSION(Ny,Nx), intent(inout) :: FVinp(Nx,Ny)
+integer, intent(in) :: Nx, Ny
+real(r8), intent(inout) :: AUmin, AUmax, AVmin, AVmax
+!
+!  CCS lon, lat, dimensions
+!
+real(r8), DIMENSION(Jmax,Imax), intent(in) :: angler
+real(r8), DIMENSION(Jmax,Imax), intent(in) :: Xout
+real(r8), DIMENSION(Jmax,Imax), intent(in) :: Yout
+integer, intent(in) :: Imax, Jmax
+!
+!  Interpolated Output
+!
+real(r8), intent(out) :: FUout(Jmax,Imax)
+real(r8), intent(out) :: FVout(Jmax,Imax)
+!
+!  Local variable declarations:
+!  
+integer  :: i, j
+real(r8) :: cff1, cff2
+!
+! ---------------------------------------
+
+CALL regrid_atmos(Nx, Ny, Xinp, Yinp, FUinp, AUmin, AUmax, Imax, Jmax, Xout, Yout, FUout)
+
+CALL regrid_atmos(Nx, Ny, Xinp, Yinp, FVinp, AVmin, AVmax, Imax, Jmax, Xout, Yout, FVout)
+
+DO j=1,Jmax
+   DO i=1,Imax
+      cff1=FUout(j,i)*COS(angler(j,i))+    &        
+&          FVout(j,i)*SIN(angler(j,i))
+      cff2=FVout(j,i)*COS(angler(j,i))-    &
+&          FUout(j,i)*SIN(angler(j,i))
+      FUout(j,i)=cff1
+      FVout(j,i)=cff2
+   END DO
+END DO
+
 RETURN
 END SUBROUTINE
