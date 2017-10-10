@@ -60,7 +60,7 @@ real(r8), parameter :: deg2rad = pi/180.0_r8            ! degrees to radians con
 !
 real(r8), DIMENSION(Ny,Nx), intent(in)    :: Xinp
 real(r8), DIMENSION(Ny,Nx), intent(in)    :: Yinp
-real(r8), DIMENSION(Ny,Nx), intent(inout) :: Finp(Nx,Ny)
+real(r8), DIMENSION(Ny,Nx), intent(inout) :: Finp
 integer, intent(in) :: Nx, Ny
 real(r8), intent(inout) :: Amin, Amax
 !
@@ -93,7 +93,7 @@ real(r8) :: p1, p2, q1, q2
 !
 DO i=1,Nx
    DO j=1,Ny
-      angle(i,j)=0.0_r8
+      angle(j,i)=0.0_r8
    END DO
 END DO
 
