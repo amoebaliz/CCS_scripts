@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#MAKE MONTHLY MEANS
+fyear=2002
+lyear=2002
+
+dir=/glade/p/work/edrenkar/external_data/CCMP/
+for year in $( seq $fyear $lyear ) ; do
+    echo $year
+    # concatenate all daily anomalies for a given year 
+    ncrcat -O -h $dir$year/*daily_anom.nc CCMP_${year}_daily_anom.nc
+done
+
+

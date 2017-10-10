@@ -1,0 +1,63 @@
+
+APR 25, 2017: ACQUISITION & PROCESSING
+
+i)   ./get_CCMP_fils
+     # CONDUCTED on YELLOWSTONE BECAUSE IT TOOK A LONG TIME
+     wgets .nc files for 1988-2010
+     spatial subset:
+           ncks -d longitude,800,1100 -d latitude,300,600 $ncfil $ncfil.sub
+
+ii)  ./make_means
+     # CHANGE: only 1990-2010 because of missing data in 1988 & 1989
+     ncra to get monthly mean in each year
+     ncra to get 23 year climatology (1990-2010)
+     ncrcat climatology files to get full year of monthly clims
+
+iii) python make_anomalies.py
+     calculate daily mean windfields from 6hrly fields
+     subtract climatology month from daily mean
+     create new anomaly file
+     change longitude from 0to360 to -90to90 
+
+iv) python evaluate_wind_anoms.py
+    generate stats on u v wind anomalies relative to 21yr clim for 
+    CCMP sub_domain 
+
+SEPT 8, 2017
+v)  ./concat_daily_anoms
+    generates daily anomaly files for each year - need to do manually 
+    if not a complete JAN-DEC year 
+
+MISSING CCMP FILES
+NOTE: CLIMATOLOGY DOES NOT INCLUDE VALUES FOR THESE DATES
+
+CCMP_Wind_Analysis_19880509_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19880515_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19880918_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19880923_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19880924_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19881113_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19881224_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19881225_V02.0_L3.0_RSS.nc
+
+CCMP_Wind_Analysis_19890114_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890205_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890424_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890606_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890607_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890608_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890617_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890625_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890720_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890721_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890723_V02.0_L3.0_RSS.nc
+CCMP_Wind_Analysis_19890724_V02.0_L3.0_RSS.nc
+
+REASON FOR FILE OMMISSIONS ON CCMP HOME PAGE:
+"There are gaps within these data. There are 11 days scattered between May and December of 1988 and 14 days in January through July 1989 that do not appear on our FTP server
+
+During this time period, F08 is the only operational satellite input into the dataset. Days that are missing are because there was either very little or no data collected by the satellite on that day.
+
+In future reprocessing, we may include these files for completeness, but the CCMP wind field would essentially be just the ERA-Int background except for minor differences near buoys."
+
+CHOOSING to use 21 yr clim (omit 1988 and 1989) in part bc patch and in part bc not sure where all missing files are... 

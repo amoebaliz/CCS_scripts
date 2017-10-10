@@ -1,0 +1,9 @@
+#!/bin/bash
+for year in $( seq 1980 2011 ) ; do
+    cd /glade/p/work/edrenkar/external_data/SODA/$year
+       for file in $( ls | grep nc ) ; do
+           ncks -x -v hflux_total,nv,salt_flux_rstr,sbd,sbd_dhdt,sbd_horz,sbd_mld,sbd_vert,st_edges_ocean,sw_edges_ocean,time_bounds -d nv,st_edges_ocean,sw_edges_ocean $file $file.2
+           ncatted -O -a _FillValue,,d,, $file.2 $file
+           rm $file.2
+       done 
+done

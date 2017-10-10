@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for year in $( seq 1988 2010 ) ; do
+
+#    mkdir $year
+#    mv CCMP_Wind_Analysis_$year*_V02.0_L3.0_RSS.nc.sub $year/
+     rm $year/CCMP_Wind_Analysis_$year*_daily*
+done
+

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+url=ftp://ftp2.remss.com/ccmp/v02.0
+nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
+
+for yr in {1988..2010}; do
+    echo $yr
+    # Leap year criteria
+    ineq=$((yr%4))
+    if (($ineq == 0)); then
+       nmdays[1]=29
+    else
+       nmdays[1]=28
+    fi
+
+    for mon in {1..12} ; do
+        monstr=$(printf %02d $mon)
+        echo $monstr
+        dmon=${nmdays[$((mon-1))]}
+        nday=1
+
+        while (($nday <= $dmon)); do
+              daystr=$(printf %02d $nday)
+              ncfil=CCMP_Wind_Analysis_$yr$monstr${daystr}_V02.0_L3.0_RSS.nc
+
+              wget $url/Y$yr/M$monstr/$ncfil
+
+              ncks -d longitude,800,1100 -d latitude,300,600 $ncfil $ncfil.sub 
+              rm $ncfil 
+              ((nday+=1))
+        done
+    done
+done

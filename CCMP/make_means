@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#MAKE MONTHLY MEANS
+fyear=1990
+lyear=2010
+
+
+#for year in $( seq $fyear $lyear ) ; do
+#        echo $year
+        # MAKE TIME THE RECORD DIM
+#        for fil in $(ls $dir/$year/*.sub); do
+#            ncks -O --mk_rec_dmn time $fil $fil
+#        done
+#done
+
+#MAKE MONTHLY CLIMATOLOGIES
+
+dir=/glade/p/work/edrenkar/external_data/CCMP
+# Loop over every month 
+for mon in $( seq -f %02g 1 12 ) ; do
+    echo $mon
+    # loop over every year
+    for year in $( seq $fyear $lyear ) ; do
+        echo $year
+        # create individual monthly means; keep original CCMP files
+        ncra -O $year/CCMP_Wind_Analysis_$year${mon}*_V02.0_L3.0_RSS.nc.sub CCMP_$year$mon.nc
+    done
+    # create 23-yr climatology; remove monthly means from individual years 
+    # ncra -O CCMP_*$mon.nc CCMP_1988-2010_clim_$mon.nc
+
+    # create 21-yr climatology; remove monthly means from individual years 
+    ncra -O CCMP_*$mon.nc CCMP_1990-2010_clim_$mon.nc
+
+    rm CCMP_????$mon.nc
+done
+# concatenate climatology files into one file; remove individual monthly clim files
+# ncrcat CCMP_1988-2010_clim_*.nc CCMP_1988-2010_clim.nc
+ncrcat CCMP_1990-2010_clim_*.nc CCMP_1990-2010_clim.nc
+
+#rm CCMP_1988-2010_clim_*.nc
+rm CCMP_1990-2010_clim_*.nc
+
+### IN PREP ###
+#python edit_CCMP_clim.py
+
+

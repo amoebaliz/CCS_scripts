@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Auxiliary code to check soda file downloads
+#    NOTE: files most have been already sorted into yearly folders
+
+dir=/glade/p/work/edrenkar/external_data/SODA/
+while read f; do
+#http://dsrs.atmos.umd.edu/DATA/soda3.4.1/ORIGINAL/ocean/soda3.4.1_5dy_ocean_or_2010_12_31.nc
+#soda3.4.1_5dy_ocean_or_2010_12_31.nc.sub
+    ncfil=${f#*ocean/}.sub
+    yr=${f:79:4}
+    if [ ! -f "$dir/$yr/$ncfil" ]; then
+       echo "get " $ncfil
+    fi
+done <soda3.4.1_5dy_ocean_or_original.txt

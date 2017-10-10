@@ -1,0 +1,49 @@
+#!/bin/bash
+# File for making both monthly and climatological means
+# note: expects files to be sorted into yearly folders
+
+#MAKE MONTHLY MEANS
+fyear=1981
+lyear=2010
+
+soda_dir=/glade/p/work/edrenkar/external_data/SODA/
+
+froot1=soda3.4.1_5dy_ocean_or
+froot=soda3.4.1_mon
+
+for year in $( seq $fyear $lyear ) ; do
+    echo $year
+    
+    # CREATE YEAR DIRECTORIES AND SORT FILES
+
+    # mkdir -p $soda_dir$year
+    # mv $soda_dir${froot1}_${year}_* $soda_dir$year/
+    # cd $soda_dir$year/
+
+    # REMOVE UNNECESSARY VARIABLES; SAME AS edit_SODA3.4.1
+
+    # for file in $( ls | grep nc ) ; do
+    #     ncks -C -x -v hflux_total,nv,salt_flux_rstr,sbd,sbd_dhdt,sbd_horz,sbd_mld,sbd_vert,st_edges_ocean,sw_edges_ocean,time_bounds -d nv,st_edges_ocean,sw_edges_ocean $file $file.2
+    #     ncatted -O -a _FillValue,,d,, $file.2 $file
+    #     rm $file.2
+    # done
+
+    # MAKE MONTHLY MEANS
+    for mon in $( seq -f %02g 1 12 ) ; do
+        echo $mon
+        ncra -O $soda_dir$year/${froot1}_${year}_${mon}*.nc.sub $soda_dir${froot}_${year}_$mon.nc
+        #rm $soda_dir${froot1}_${year}_${mon}*.nc.sub
+    done
+done
+
+#MAKE MONTHLY CLIMATOLOGIES
+froot=soda3.4.1_mon
+for mon in $( seq -f %02g 1 12 ) ; do
+    echo $mon
+#    for year in $( seq $fyear $lyear ) ; do
+#        cp ../$year/${froot}_${year}_$mon.nc ..
+#        echo ${froot}_${year}_$mon.nc
+#    done
+    ncra -O $soda_dir${froot}_*_$mon.nc soda3.4.1_1981-2010_clim_$mon.nc
+#    rm ../${froot}_*_$mon.nc
+done

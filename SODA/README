@@ -1,0 +1,157 @@
+# PROTOCOL
+
+i) create a textfile that has a list of all files to download with wget
+	soda3.4.1_5dy_ocean_or_original.txt
+        
+        NOTE: this file curently requests 5 day means 1980 - 2010 
+
+1) acquire the SODA files:
+	./get_soda_3.4.1.bash
+
+        Function: wget files and subsets them to CCS region
+        Returns:  .sub files
+
+   i) check successful file download with:
+        ./check_files
+
+2) remove unnecessary variables from SODA files:
+        ./edit_SODA3.4.1 
+
+        Functions: 1) ncks -x -v 
+                   2) ncatted
+        Returns:   same file names (.sub)
+
+3) make monthly means AND monthly climatology files:
+        ./make_means
+
+        Function: ncra across days then all months
+        Returns:  1) soda3.4.1_mon_year_mon.nc files
+                  2) soda3.4.1_1981-2010_clim_mon.nc files
+ 
+        NOTE: script contains commented out code redundant with edit_SODA3.4.1
+              AND sort_by_year.bash
+
+   i) sanity check file time stamps of final monthly climatology files
+        python check_dates.py
+
+4) create gridfile for SODA remapping to ROMS:
+	python make_SODA3_grid.py
+
+        Returns: ROMS compatible SODA grid file
+
+   i) check that SODA file works with pyroms:
+        python SODA_grid_check.py
+
+
+
+#####################################################
+# NOTES FROM SODA ACQUISITION AND MODIFICATION
+#####################################################
+#
+# JUN-07-2017
+# ---------------------------------------------------
+
+i) get_soda_3.4.1.bash
+
+ii) ./make_means
+    NOTE: contains the preliminary ncks to remove unused variables
+
+
+
+#
+# APR-24-2017
+# ---------------------------------------------------
+Re created boundary conditions so covered 1981 - 2010 (instead of 1980-2009)
+
+used concat_cycle_bdry script to
+1. concatonated the files: 
+   ncrcat -O /glade/p/work/edrenkar/Inputs/construct/Boundary/bdry/CCS_bdry_soda3.3.1_1980-2009_clim* $filout
+2. edited the time values:
+   python edit_SODA_files.py:
+          ' PYTHON SCRIPT GIST '
+          ndays = [31,28,31,30,31,30,31,31,30,31,30,31]
+          dtot=0
+          newtime=np.zeros(len(ndays))
+          '# establish sss_time values for cycling over 365d yr'
+          '# (i.e., middle of Jan, Feb, Mar ... Dec)'
+          for nmon in range(len(ndays)):
+              newtime[nmon] = dtot + ndays[nmon]/2.0
+              dtot+=ndays[nmon]
+          fid.variables['time'].units = 'Days'
+          fid.variables['time'][:] = newtime
+3. cycled the time values:
+   ncatted -O -a cycle_length,time,a,f,365 $filout
+
+FOR OVERALL BOUNDARY PROGRESSION:
+  + make means to get monthly clim for a given month
+  + mv to Boundary folder
+  + make bdry file
+  + concat_cycle_bdry
+
+CONCERN: IS IT REASONABLE TO ASSIGN SODA TIME VALUES TO CENTER
+         OF MONTHS??
+
+#
+# MAR-17-2017 ::HAPPY ST. PATRICK'S DAY::
+# -------------------------------------
+Fixed CCS grid (forgot to truncate the xi_psi and xi_vert dimensions)
+
+Removed excess variables, dimensions, attributes from monthly, initial, and clim SODA files:
+   ncks -x -v hflux_total,nv,salt_flux_rstr,sbd,sbd_dhdt,sbd_horz,sbd_mld,sbd_vert,\
+              st_edges_ocean,sw_edges_ocean,time_bounds \
+           -d nv,st_edges_ocean,sw_edges_ocean \
+              $file.nc $file.sub
+   ncatted -O -a _FillValue,,d,, $file.sub $file.nc 
+   rm $file.sub
+
+#
+# MAR-2-2017
+# -------------------------------------
+SODA files aquired and slabbed to CCS domain
+ - 5dy, 1/4 deg files were: 
+    1) extracted (wget)
+    2) spatially truncated to CA (ncks)
+    3) averaged into months (for year, for month, ncra soda$year$month*.nc)
+    4) averaged 1980-2009 into monthly climatologyies (for month, ncra soday*$month.nc)
+    5) concatenated into 1 clim file (ncrcat)
+  
+NEXT OBJECTIVES:
+ - Convert into boundary condition and Climatology files
+ - Attempt to get atmospheric files (ERA INTERIM)
+ - CCMP Winds for daily/high resolution variability
+
+#
+# FEB-28-2017
+# -------------------------------------
+Switched to downloading higher resolution (quarter degree) SODA files
+  - This exceeded the limit for my workspace directory
+  - Edited wget file so extracted CCS domain immediately after download
+  - Currently waiting to average them in to months
+
+Questions to answer:
+    Is generating monthly averages from 5dy means accepatble?
+    # ART says alright - will check again later 
+    What variables are missing (if any) to be ROMS-ready??
+
+# FEB-27-2017
+#-------------------------------------
+Downloaded monthly mean values for SODA3.3.1 ocean variables
+ - used bash script with wget and .txt file with list of files
+
+Spatially truncated these files to the California Current System:
+   ./spatial_shrink
+   ncks -d latitude,180,255 -d longitude,430,503 soda3.3.1_mn_ocean_reg_$year.nc ../soda3.3.1_mn_ocean_CC_$year.nc
+
+Averaged files by month and concatonated to generate 30yr (1980-2010) monthly climatology 
+   ncra -O -F -d time,$mon,,12 soda3.3.1_mn_ocean_CC*.nc soda_$monstr.nc
+   ncrcat soda_* soda3.3.1_mn_clim_$fyear-$lyear.nc
+
+Questions to answer:
+   HOW do these monthly averages compare with Rafs? 
+   # CAME OUT PERSISTANTLY COOLER (or warmer, can't remember sign)
+	i.e., would it have been better to generate my own monthly files from 5dy fields?
+        # I AM NOW DOWNLOADING FROM THE ORIGINAL FILES B/C HIGHER RESOLUTION 
+   HOW do I asign time values to them?
+   # WITH 5dy means, seems they already have time stamps... will need to change perhaps
+   WHAT needs to be done to get it ROMS ready?
+   WHAT do we use for SODA grid for interpolation?
