@@ -1,6 +1,3 @@
-# Scripts relevant to setting up and executing ROMS for California Current System
-
-# ~~~~~~~~~~~~
-
-
+# Scripts setting up California Current System ROMS model
+------------------
 
