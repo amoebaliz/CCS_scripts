@@ -183,11 +183,6 @@ DO mp=1,Imax
            EXIT J_LOOP
         END IF
       END DO J_LOOP
-      
-      IF (mp.eq.np) THEN
-         print *, 'MEEP', np, Imi, Jmi
-      END IF
-
 !
 !  Knowing the correct cell, calculate the exact indices, accounting
 !  for a possibly rotated grid.  If spherical, convert all positions
@@ -197,6 +192,10 @@ DO mp=1,Imax
       xfac=yfac*COS(Yout(np,mp)*deg2rad)
       xpp=(Xout(np,mp)-Xinp(Jmi,Imi))*xfac
       ypp=(Yout(np,mp)-Yinp(Jmi,Imi))*yfac
+
+      IF (mp.eq.np) THEN
+          print *, 'MEEP', yfac, xfac, xpp, ypp
+      END IF
 !
 !  Use Law of Cosines to get cell parallelogram "shear" angle.
 !

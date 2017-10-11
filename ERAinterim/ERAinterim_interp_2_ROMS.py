@@ -59,11 +59,11 @@ ncfil =  ['drowned_ERAi_msl_1981-2010_monthly_clim.nc']#,\
 #          'drowned_ERAi_u10_1981-2010_monthly_clim.nc',\
 #          'drowned_ERAi_v10_1981-2010_monthly_clim.nc']
 
-var = ['Pair','rain','Qair','lwrad_down','swrad','Tair','Uwind','Vwind']
+#var = ['Pair','rain','Qair','lwrad_down','swrad','Tair','Uwind','Vwind']
 var = ['Pair']
 
-ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/'
-ncdir = '/Users/liz.drenkard/external_data/ERAinterim/drowned/80_x_70/'
+ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/80_x_80/'
+#ncdir = '/Users/liz.drenkard/external_data/ERAinterim/drowned/80_x_70/'
 
 #for nf in range(len(var)-2):
 for nf in range(1):
