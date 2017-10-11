@@ -1,5 +1,5 @@
 SUBROUTINE regrid_atmos(Nx, Ny, Xinp, Yinp, Finp, Amin, Amax,          &
-&                   Imax, Jmax, Xout, Yout, Fout)
+&                   Imax, Jmax, Xout, Yout, Jout, Iout, Fout)
 !
 ! Regird atmospheric forcing fields using ROMS 2D regridding algorithm
 !
@@ -61,26 +61,28 @@ real(r8), parameter :: deg2rad = pi/180.0_r8            ! degrees to radians con
 real(r8), DIMENSION(Ny,Nx), intent(in)    :: Xinp
 real(r8), DIMENSION(Ny,Nx), intent(in)    :: Yinp
 real(r8), DIMENSION(Ny,Nx), intent(inout) :: Finp
-integer, intent(in) :: Nx, Ny
+integer, intent(in) :: Ny, Nx
 real(r8), intent(inout) :: Amin, Amax
 !
 !  CCS lon, lat, dimensions
 !
 real(r8), DIMENSION(Jmax,Imax), intent(in) :: Xout
 real(r8), DIMENSION(Jmax,Imax), intent(in) :: Yout
-integer, intent(in) :: Imax, Jmax
+integer, intent(in) :: Jmax, Imax
 !
 !  Interpolated Output
 !
-real(r8), intent(out) :: Fout(Jmax,Imax)
+real(r8), DIMENSION(Jmax,Imax), intent(out) :: Fout
+real(r8), DIMENSION(Jmax,Imax), intent(out) :: Jout
+real(r8), DIMENSION(Jmax,Imax), intent(out) :: Iout
 !
 !  Local variable declarations:
 !  
 !  regrid (and others)
 integer :: i, j
 real(r8), dimension(Ny,Nx) :: angle
-real(r8), dimension(Jmax,Imax) :: Iout
-real(r8), dimension(Jmax,Imax) :: Jout
+!real(r8), dimension(Jmax,Imax) :: Iout
+!real(r8), dimension(Jmax,Imax) :: Jout
 !  hindices
 integer  :: np, mp, Imi, Jmi
 real(r8) :: aa2, ang, bb2, diag2, dx, dy, phi
@@ -96,7 +98,6 @@ DO i=1,Nx
       angle(j,i)=0.0_r8
    END DO
 END DO
-
 !
 !  Initialize local fractional coordinates arrays to avoid
 !  deframentation.
@@ -156,8 +157,14 @@ Jout=0.0_r8
 !  Then, interpolate to fractional cell position.
 !-----------------------------------------------------------------------
 !
-DO np=1,Jmax
-   DO mp=1,Imax
+yfac=Eradius*deg2rad
+xfac=yfac*COS(Yout(1,1)*deg2rad)
+xpp=(Xout(1,1)-Xinp(17,48))*xfac
+ypp=(Yout(1,1)-Yinp(17,48))*yfac
+! print *, 'MEEP', xpp, ypp
+
+DO mp=1,Imax
+   DO np=1,Jmax
 !
 !  The gridded data has a plaid distribution so the search is trivial.
 !
@@ -168,6 +175,7 @@ DO np=1,Jmax
            EXIT I_LOOP
         END IF
       END DO I_LOOP
+
       J_LOOP : DO j=1,Ny-1
         IF ((Yinp(j,1  ).le.Yout(np,mp)).and.                     &
         &            (Yinp(j+1,1).gt.Yout(np,mp))) THEN
@@ -175,6 +183,10 @@ DO np=1,Jmax
            EXIT J_LOOP
         END IF
       END DO J_LOOP
+      
+      IF (mp.eq.np) THEN
+         print *, 'MEEP', np, Imi, Jmi
+      END IF
 
 !
 !  Knowing the correct cell, calculate the exact indices, accounting
@@ -217,7 +229,7 @@ DO np=1,Jmax
 
    END DO
 END DO
-!print *, Iout
+
 !
 !  CALL linterp2d:
 !  Compute global interpolated field minimum and maximum values.
@@ -268,10 +280,11 @@ END DO
 !  Linearly interpolate requested field
 !-----------------------------------------------------------------------
 !
+print *, Ny, Nx
 Amin=1.0E+35_r8
 Amax=-1.0E+35_r8
-DO j=1,Jmax
-   DO i=1,Imax
+DO i=1,Imax
+   DO j=1,Jmax
 
       i1=INT(Iout(j,i))
       i2=i1+1
@@ -314,8 +327,8 @@ integer, parameter  :: r8 = selected_real_kind(12,300)  ! 64-bit
 !
 real(r8), DIMENSION(Ny,Nx), intent(in)    :: Xinp
 real(r8), DIMENSION(Ny,Nx), intent(in)    :: Yinp
-real(r8), DIMENSION(Ny,Nx), intent(inout) :: FUinp(Nx,Ny)
-real(r8), DIMENSION(Ny,Nx), intent(inout) :: FVinp(Nx,Ny)
+real(r8), DIMENSION(Ny,Nx), intent(inout) :: FUinp
+real(r8), DIMENSION(Ny,Nx), intent(inout) :: FVinp
 integer, intent(in) :: Nx, Ny
 real(r8), intent(inout) :: AUmin, AUmax, AVmin, AVmax
 !
@@ -328,8 +341,10 @@ integer, intent(in) :: Imax, Jmax
 !
 !  Interpolated Output
 !
-real(r8), intent(out) :: FUout(Jmax,Imax)
-real(r8), intent(out) :: FVout(Jmax,Imax)
+real(r8), DIMENSION(Jmax,Imax) :: Jout
+real(r8), DIMENSION(Jmax,Imax) :: Iout
+real(r8), DIMENSION(Jmax,Imax), intent(out) :: FUout
+real(r8), DIMENSION(Jmax,Imax), intent(out) :: FVout
 !
 !  Local variable declarations:
 !  
@@ -338,12 +353,12 @@ real(r8) :: cff1, cff2
 !
 ! ---------------------------------------
 
-CALL regrid_atmos(Nx, Ny, Xinp, Yinp, FUinp, AUmin, AUmax, Imax, Jmax, Xout, Yout, FUout)
+CALL regrid_atmos(Nx, Ny, Xinp, Yinp, FUinp, AUmin, AUmax, Imax, Jmax, Xout, Yout, Jout, Iout, FUout)
 
-CALL regrid_atmos(Nx, Ny, Xinp, Yinp, FVinp, AVmin, AVmax, Imax, Jmax, Xout, Yout, FVout)
+CALL regrid_atmos(Nx, Ny, Xinp, Yinp, FVinp, AVmin, AVmax, Imax, Jmax, Xout, Yout, Jout, Iout, FVout)
 
-DO j=1,Jmax
-   DO i=1,Imax
+DO i=1,Imax
+   DO j=1,Jmax
       cff1=FUout(j,i)*COS(angler(j,i))+    &        
 &          FVout(j,i)*SIN(angler(j,i))
       cff2=FVout(j,i)*COS(angler(j,i))-    &
