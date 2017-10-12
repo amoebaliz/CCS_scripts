@@ -8,11 +8,14 @@ grd = pyroms.grid.get_ROMS_grid('CCS')
 Yout = np.asfortranarray(grd.hgrid.lat_rho.astype(float))
 Xout = np.asfortranarray(grd.hgrid.lon_rho.astype(float))
 
-#fid1 = nc.Dataset('/Users/liz.drenkard/external_data/ERAinterim/drowned/80_x_80/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
-#fid2 = nc.Dataset('/Users/liz.drenkard/external_data/ERAinterim/drowned/70_x_70/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
+#SWFSC
+fid1 = nc.Dataset('/Users/liz.drenkard/external_data/ERAinterim/drowned/80_x_80/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
+fid2 = nc.Dataset('/Users/liz.drenkard/external_data/ERAinterim/drowned/70_x_70/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
 
-fid1 = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned/80_x_80/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
-fid2 = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned/70_x_80/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
+#MACBOOK
+#fid1 = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned/80_x_80/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
+#fid2 = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned/70_x_80/drowned_ERAi_msl_1981-2010_monthly_clim.nc')
+
 p1 = fid1.variables['Pair'][0,:].squeeze()
 p2 = fid2.variables['Pair'][0,:].squeeze()
 
@@ -39,7 +42,15 @@ Yinp2 = np.asfortranarray(np.transpose(np.tile(lat2,(len(lon2),1))))
 
 Jout1, Iout1, Fout1 = regrid_atmos.regrid_atmos(Xinp1, Yinp1, np.asfortranarray(p1.squeeze().astype(float)), Amin1, Amax1, Xout, Yout)
 Jout2, Iout2, Fout2 = regrid_atmos.regrid_atmos(Xinp2, Yinp2, np.asfortranarray(p2.squeeze().astype(float)), Amin2, Amax2, Xout, Yout)
+store_J_dif = np.zeros(Jout1.shape[1])
+for nt in range(Jout1.shape[1]):
+    store_J_dif[nt] = Jout1[nt,nt]-Jout2[nt,nt]
 
+print np.sum(store_J_dif)
+print Jout1.shape
+print 873*382
+print np.min(Jout1-Jout2)
+print np.max(Jout1-Jout2)
 #plt.figure()
 #plt.pcolor(Fout1-Fout2)
 #plt.colorbar()

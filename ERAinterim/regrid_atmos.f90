@@ -161,7 +161,6 @@ yfac=Eradius*deg2rad
 xfac=yfac*COS(Yout(1,1)*deg2rad)
 xpp=(Xout(1,1)-Xinp(17,48))*xfac
 ypp=(Yout(1,1)-Yinp(17,48))*yfac
-! print *, 'MEEP', xpp, ypp
 
 DO mp=1,Imax
    DO np=1,Jmax
@@ -192,10 +191,6 @@ DO mp=1,Imax
       xfac=yfac*COS(Yout(np,mp)*deg2rad)
       xpp=(Xout(np,mp)-Xinp(Jmi,Imi))*xfac
       ypp=(Yout(np,mp)-Yinp(Jmi,Imi))*yfac
-
-      IF (mp.eq.np) THEN
-          print *, 'MEEP', yfac, xfac, xpp, ypp
-      END IF
 !
 !  Use Law of Cosines to get cell parallelogram "shear" angle.
 !
@@ -225,6 +220,11 @@ DO mp=1,Imax
       dy=MIN(MAX(0.0_r8,dy/SQRT(bb2)),1.0_r8)
       Iout(np,mp)=REAL(Imi,r8)+dx ! Switching Imi and Jmi smooths field
       Jout(np,mp)=REAL(Jmi,r8)+dy
+
+     IF (mp.eq.np) THEN
+          print *, 'MEEP', dx, dy, REAL(Imi,r8)+dx, REAL(Jmi,r8)+dy
+     END IF
+
 
    END DO
 END DO
