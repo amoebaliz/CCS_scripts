@@ -224,11 +224,14 @@ DO mp=1,Imax
 !     IF (mp.eq.np) THEN
 !          print *, 'MEEP', dx, dy, REAL(Imi,r8)+dx, REAL(Jmi,r8)+dy
 !     END IF
+     IF ((mp.eq.np).and.(mp.lt.5)) THEN
+          print *, 'MEEP', dx, dy, REAL(Imi,r8)+dx, REAL(Jmi,r8)+dy
+          print *, precision(REAL(Imi,r8)), range(REAL(Imi,r8))
+     END IF
 
 
    END DO
 END DO
-
 !
 !  CALL linterp2d:
 !  Compute global interpolated field minimum and maximum values.
