@@ -157,11 +157,7 @@ Jout=0.0_r8
 !  Then, interpolate to fractional cell position.
 !-----------------------------------------------------------------------
 !
-yfac=Eradius*deg2rad
-xfac=yfac*COS(Yout(1,1)*deg2rad)
-xpp=(Xout(1,1)-Xinp(17,48))*xfac
-ypp=(Yout(1,1)-Yinp(17,48))*yfac
-
+print *, 'MEEP', Imax, Jmax
 DO mp=1,Imax
    DO np=1,Jmax
 !
@@ -221,10 +217,10 @@ DO mp=1,Imax
       Iout(np,mp)=REAL(Imi,r8)+dx ! Switching Imi and Jmi smooths field
       Jout(np,mp)=REAL(Jmi,r8)+dy
 
-     IF ((mp.eq.np).and.(mp.lt.5)) THEN
-          print *, 'MEEP', dx, dy, REAL(Imi,r8)+dx, REAL(Jmi,r8)+dy
-          print *, precision(REAL(Imi,r8)), range(REAL(Imi,r8))
-     END IF
+!     IF ((mp.eq.np).and.(mp.lt.5)) THEN
+!          print *, 'MEEP', dx, dy, REAL(Imi,r8)+dx, REAL(Jmi,r8)+dy
+!          print *, precision(REAL(Imi,r8)), range(REAL(Imi,r8))
+!     END IF
 
 
    END DO
@@ -282,6 +278,7 @@ END DO
 print *, Ny, Nx
 Amin=1.0E+35_r8
 Amax=-1.0E+35_r8
+! Itterates over CCS Grid dimensions
 DO i=1,Imax
    DO j=1,Jmax
 
@@ -299,6 +296,9 @@ DO i=1,Imax
          &                p1*q2*Finp(j2,i1)+                     & ! changed from p2*q1
          &                p2*q2*Finp(j2,i2)+                     &
          &                p2*q1*Finp(j1,i2)                        ! changed from p1*q2
+         IF ((j.eq.i).and.(j.lt.100).and.(j.gt.90)) THEN
+            print *, 'MEEP', j, Jout(j,i), Fout(j,i)
+         END IF
          Amin=MIN(Amin,Fout(j,i))
          Amax=MAX(Amax,Fout(j,i))
       END IF

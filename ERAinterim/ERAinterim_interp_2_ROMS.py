@@ -45,7 +45,6 @@ grd = pyroms.grid.get_ROMS_grid('CCS')
 
 Xout = np.asfortranarray(grd.hgrid.lon_rho.astype(float))
 Yout = np.asfortranarray(grd.hgrid.lat_rho.astype(float))
-
 angler = np.asfortranarray(grd.hgrid.angle_rho.astype(float))
 
 Jmax, Imax = Xout.shape
@@ -71,9 +70,8 @@ ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/70_x_80/'
 for nf in range(1):
     file_name = ncdir + ncfil[nf]
     fid = nc.Dataset(file_name)
-
     Finp = fid.variables[var[nf]][:].squeeze()
-    print Finp.shape
+    print Finp.shape,Finp[-1,-1]
     lat = fid.variables['lat'][:].squeeze().astype(float)
     lon = fid.variables['lon'][:].squeeze().astype(float)
     lon[lon>180]=lon[lon>180]-360
@@ -87,7 +85,6 @@ for nf in range(1):
     Amax = np.max(Finp)
 
     Jout, Iout, Fout = regrid_atmos.regrid_atmos(Xinp, Yinp, np.asfortranarray(Finp.squeeze().astype(float)), Amin, Amax, Xout, Yout)
-
 # WHOLE CLIMATOLOGY - COMMENTED FOR DEBUGGING
     # Run interp routine
 #    Jout = np.zeros((12,Jmax,Imax))
