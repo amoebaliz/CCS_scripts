@@ -221,9 +221,9 @@ DO mp=1,Imax
       Iout(np,mp)=REAL(Imi,r8)+dx ! Switching Imi and Jmi smooths field
       Jout(np,mp)=REAL(Jmi,r8)+dy
 
-     IF (mp.eq.np) THEN
-          print *, 'MEEP', dx, dy, REAL(Imi,r8)+dx, REAL(Jmi,r8)+dy
-     END IF
+!     IF (mp.eq.np) THEN
+!          print *, 'MEEP', dx, dy, REAL(Imi,r8)+dx, REAL(Jmi,r8)+dy
+!     END IF
 
 
    END DO
@@ -279,7 +279,6 @@ END DO
 !  Linearly interpolate requested field
 !-----------------------------------------------------------------------
 !
-print *, Ny, Nx
 Amin=1.0E+35_r8
 Amax=-1.0E+35_r8
 DO i=1,Imax
