@@ -27,18 +27,14 @@ def save_nc_fil(nf,ncfil,fid,Fout):
     fid2.variables['lon'].units = fid.variables['lon'].units
     fid2.variables['lon'][:]=Xout
     
-#    fid2.createVariable(var[nf],'f8',('time','eta_rho','xi_rho'),fill_value = np.float(1.0e15))
-    fid2.createVariable(var[nf],'f8',('eta_rho','xi_rho'),fill_value = np.float(1.0e10))
+    fid2.createVariable(var[nf],'f8',('time','eta_rho','xi_rho'),fill_value = np.float(1.0e15))
     fid2.variables[var[nf]].long_name = fid.variables[var[nf]].long_name
     fid2.variables[var[nf]].units = fid.variables[var[nf]].units
     fid2.variables[var[nf]].coordinates = fid.variables[var[nf]].coordinates
-#    fid2.variables[var[nf]].time = fid.variables[var[nf]].time
+    fid2.variables[var[nf]].time = fid.variables[var[nf]].time
     fid2.variables[var[nf]][:]=Fout
 
     fid2.close()
-
-# rid = nc.Dataset('rain_test.nc')
-# rain = rid.variables['rain'][:].squeeze()
 
 # CCS details
 grd = pyroms.grid.get_ROMS_grid('CCS')
@@ -60,32 +56,20 @@ ncfil =  ['drowned_ERAi_msl_1981-2010_monthly_clim.nc',\
           'drowned_ERAi_v10_1981-2010_monthly_clim.nc']
 
 var = ['Pair','rain','Qair','lwrad_down','swrad','Tair','Uwind','Vwind']
-#var = ['Pair']
 
-ncdir = '/glade/p/work/edrenkar/external_data/ERAinterim/drowned/'
 #ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/80_x_80/'
-ncfil =  ['drowned_ERAi_msl_1981-2010_monthly_clim.nc']#,\
-#          'drowned_ERAi_precip_1981-2010_monthly_clim.nc',\
-#          'drowned_ERAi_q2_1981-2010_monthly_clim.nc',\
-#          'drowned_ERAi_radlw_1981-2010_monthly_clim.nc',\
-#          'drowned_ERAi_radsw_1981-2010_monthly_clim.nc',\
-#          'drowned_ERAi_t2_1981-2010_monthly_clim.nc',\
-#          'drowned_ERAi_u10_1981-2010_monthly_clim.nc',\
-#          'drowned_ERAi_v10_1981-2010_monthly_clim.nc']
-
-#var = ['Pair','rain','Qair','lwrad_down','swrad','Tair','Uwind','Vwind']
-var = ['Pair']
-
-ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/80_x_80/'
-ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/70_x_80/'
+#ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/70_x_80/'
 #ncdir = '/Users/liz.drenkard/external_data/ERAinterim/drowned/80_x_70/'
+ncdir = '/glade/p/work/edrenkar/external_data/ERAinterim/drowned/80_x_80/'
+
 
 for nf in range(len(var)-2):
 #for nf in range(1):
+
     file_name = ncdir + ncfil[nf]
+    print file_name
     fid = nc.Dataset(file_name)
     Finp = fid.variables[var[nf]][:].squeeze()
-    print Finp.shape,Finp[-1,-1]
     lat = fid.variables['lat'][:].squeeze().astype(float)
     lon = fid.variables['lon'][:].squeeze().astype(float)
     lon[lon>180]=lon[lon>180]-360
@@ -98,22 +82,14 @@ for nf in range(len(var)-2):
     Amin = np.min(Finp)
     Amax = np.max(Finp)
 
-    Jout, Iout, Fout = regrid_atmos.regrid_atmos(Xinp, Yinp, np.asfortranarray(Finp.squeeze().astype(float)), Amin, Amax, Xout, Yout)
-# WHOLE CLIMATOLOGY - COMMENTED FOR DEBUGGING
-    # Run interp routine
-#    Jout = np.zeros((12,Jmax,Imax))
-#    Iout = np.zeros((12,Jmax,Imax))
-#    Fout = np.zeros((12,Jmax,Imax))
+#   Run interp routine
+    Jout = np.zeros((12,Jmax,Imax))
+    Iout = np.zeros((12,Jmax,Imax))
+    Fout = np.zeros((12,Jmax,Imax))
 
-#    for nt in range(Finp.shape[0]):
-#        print nt
-#        Jout[nt,:], Iout[nt,:], Fout[nt,:] = regrid_atmos.regrid_atmos(Xinp, Yinp, np.asfortranarray(Finp[nt,:].squeeze().astype(float)), Amin, Amax, Xout, Yout)
+    for nt in range(Finp.shape[0]):
+        Jout[nt,:], Iout[nt,:], Fout[nt,:] = regrid_atmos.regrid_atmos(Xinp, Yinp, np.asfortranarray(Finp[nt,:].squeeze().astype(float)), Amin, Amax, Xout, Yout)
         
-        #print np.max(Jout[nt,:].squeeze()), np.min(Jout[nt,:].squeeze())
-        #print np.max(Iout[nt,:].squeeze()), np.min(Iout[nt,:].squeeze())
-        #plt.pcolor(Jout[nt,:].squeeze())
-        #plt.colorbar()
-        #plt.show()
     # Save new regridded file
     ncfil2 = 'regridded_' + ncfil[nf]
     save_nc_fil(nf,ncfil2, fid, Fout)
