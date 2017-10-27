@@ -70,6 +70,7 @@ for nf in range(len(var)-2):
     print file_name
     fid = nc.Dataset(file_name)
     Finp = fid.variables[var[nf]][:].squeeze()
+    print Finp[0,0,:3]
     lat = fid.variables['lat'][:].squeeze().astype(float)
     lon = fid.variables['lon'][:].squeeze().astype(float)
     lon[lon>180]=lon[lon>180]-360
