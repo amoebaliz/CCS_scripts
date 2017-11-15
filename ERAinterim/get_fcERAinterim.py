@@ -22,20 +22,28 @@ import os
 import sys
 
 # Define the list of interesting variables with their associated parameter on MARS server
-#ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
-#                'msl' : '151.128' , 'radsw' : '169.128' , 'radlw' : '175.128' , 'precip' : '228.128'}
-
 # NOTE: need to use net short wave radiation (not downward) as above - different code
-ecmwf_param = {'radsw' : '176.128'}
+# ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
+#               'msl' : '151.128' , 'radsw' : '176.128' , 'radlw' : '175.128' , 'precip' : '228.128'}
+
+#ecmwf_param = {'t2' : '167.128'}
+#ecmwf_param = {'msl' : '151.128'}
+ecmwf_param = {'d2' : '168.128'}
+#ecmwf_param = {'precip' : '228.128'}
+#ecmwf_param = {'radsw' : '176.128'}
+#ecmwf_param = {'radlw' : '175.128'}
+#ecmwf_param = {'u10' : '165.128'}
+#ecmwf_param = {'v10' : '166.128'}
 
 # Choose years to download
-fyear = 1981
+fyear = 1982
 lyear = 2010
 nday = [31,28,31,30,31,30,31,31,30,31,30,31]
 
 server = ECMWFDataServer()
 
 for year in np.arange(fyear,lyear+1):
+    dir_fc = '/Users/liz.drenkard/external_data/ERAinterim/Forecast/' + str(year) + '/' 
     if calendar.isleap(year):
        nday[1] = 29
     else: 
@@ -67,17 +75,45 @@ for year in np.arange(fyear,lyear+1):
                 # CONVERT grib to nc file
                 grb2nc = 'cdo -R -t ecmwf -f nc -r copy ' + grbfil + ' ' + ncfil               
                 os.system(grb2nc)
+                # REMOVE grib file
                 cln_up = 'rm ' + grbfil
                 os.system(cln_up)
-                
+               
+                # NOTE: now working with global fields so no spatial subsetting
                 # SPATIALLY subset nc file to CCS
-                CCS_sub = 'ncks -O -d lat,40,119 -d lon,290,369 ' + ncfil + ' ' + ncfil + '.sub'
-                os.system(CCS_sub)
+                # CCS_sub = 'ncks -O -d lat,40,119 -d lon,290,369 ' + ncfil + ' ' + ncfil + '.sub'
+                # os.system(CCS_sub)
+                # cln_up = 'rm ' + ncfil 
+                # os.system(cln_up)
+
+                # PROCESS ncfil to be ROMS compatible
+                fil_key = 'file_' + key
+                
+                # NOTE: specific humidity requires d2 AND msl files input into the processing library. 
+                # the msl files must be ahead of d2 in terms of download and can not be deleted until
+                # q2 has been calculated
+                fil_key = 'file_' + key
+
+                if key == 'msl':
+                   break
+
+                elif key == 'd2':     
+                   my_inputs = {'file_msl':    'msl_ERAinterim_'    + str(year) + '_' + str(mon).zfill(2) + '.nc',\
+                                 fil_key:ncfil, 'year':year, 'month':str(mon).zfill(2), 'ndays':nday[mon-1],       \
+                                 'ncumul':4,'nx':512, 'ny':256, 'output_dir':dir_fc}
+                else:
+                   my_inputs = {fil_key:ncfil,  key:ecmwf_param[key], 'year':year, 'month':str(mon).zfill(2), \
+                                 'ndays':nday[mon-1], 'ncumul':4,'nx':512, 'ny':256, 'output_dir':dir_fc}
+
+                go = ERAinterim_processing(my_inputs)
+                go()
+
+                # DELETE MSL FILE
+                if key == 'd2':
+                   cln_up_msl = 'rm ' + 'msl_ERAinterim_'    + str(year) + '_' + str(mon).zfill(2) + '.nc'
+                   os.system(cln_up_msl)
+
+                # DELETE ERAi FILE 
                 cln_up = 'rm ' + ncfil 
                 os.system(cln_up)
 
-                # PROCESS ncfil to be ROMS compatible
-               
-                 #my_inputs = {'file':filenc,key:ecmwf_param[key],'year':year, 'ncumul':4, 'nx':80, 'ny':80}
-                 #go = ERAinterim_processing(my_inputs)
-                 #go()

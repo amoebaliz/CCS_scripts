@@ -1,30 +1,28 @@
 # PROCESS FOR ACQUIRING AND MODIFYING ERAinterim FILES FOR FORCING ROMS MODEL
 
-----------------
-FILE ACQUISITION
-----------------
+-------------------------------
+FILE ACQUISITION AND PROCESSING
+-------------------------------
+i) generate the .so library for humidity_toolbox.f90:
+
+     make -f Makefile_humid *OR* f2py -c -m humidity_toolbox humidity_toolbox.f90
+     rm -r humidity_toolbox.so.dSYM (remove the directory)
 
 1) python get_fcERAinterim.py
 
 This file fetches the ERAinterim files from ECMWF site
 NOTE: must have .ecmwfapirc file in home directory
 
-Also pre-processes the files to subset to CCS domain. results in 80x80 latxlon
-netCDF file
+This file then processes ERAi files based on lib_python, places them in external_data
+directory under given year and deletes original .grb and .nc files
 ---------------
 FILE PROCESSING
 ---------------
 
-i) generate the .so library for humidity_toolbox.f90:
-
-     make -f Makefile_humid *OR* f2py -c -m humidity_toolbox humidity_toolbox.f90
-     rm -r humidity_toolbox.so.dSYM (remove the directory)
-
 2) ./make_ERA_roms_clim
   
-   i) processes ERAi files based on lib_python
-  ii) creates a monthly climatology
- iii) edits the time stamp on the files 
+  i) creates a monthly climatology
+ ii) edits the time stamp on the files 
 
 ~~~~~~~~
 

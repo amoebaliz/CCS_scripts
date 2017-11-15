@@ -1,10 +1,15 @@
 #!/bin/bash
 
-python process_ERAinterim.py
+# python process_ERAinterim.py
+# NOTE: the above is no longer used
 
+# MACBOOK PRO DIRECTORY
 dir_fc=/Users/elizabethdrenkard/ANALYSES/CCS/ERAinterim
-#for var in t2 msl q2 u10 v10 radsw radlw precip; do
-for var in radsw; do
+
+# NOAA SWFSC DIRECTORY
+dir_fc=/Users/liz.drenkard/external_data/ERAinterim/Forecast/
+# NOTE: need to get from yearly directories
+for var in t2 msl q2 u10 v10 radsw radlw precip; do
     for mon in $( seq -f %02g 1 12 ) ; do
         ncra -O -h $dir_fc/${var}_*_${mon}_monthly_ROMS.nc $dir_fc/${var}_1981-2010_monthly_clim_${mon}.nc
         rm $dir_fc/${var}_*_${mon}_monthly_ROMS.nc
