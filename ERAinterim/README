@@ -13,11 +13,12 @@ i) generate the .so library for humidity_toolbox.f90:
 This file fetches the ERAinterim files from ECMWF site
 NOTE: must have .ecmwfapirc file in home directory
 
-This file then processes ERAi files based on lib_python, places them in external_data
+This file also processes ERAi files based on lib_python, places them in external_data
 directory under given year and deletes original .grb and .nc files
----------------
-FILE PROCESSING
----------------
+
+--------------------------
+ADDITIONAL FILE PROCESSING
+--------------------------
 
 2) ./make_ERA_roms_clim
   

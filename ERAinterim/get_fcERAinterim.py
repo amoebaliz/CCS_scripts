@@ -26,17 +26,17 @@ import sys
 # ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
 #               'msl' : '151.128' , 'radsw' : '176.128' , 'radlw' : '175.128' , 'precip' : '228.128'}
 
-#ecmwf_param = {'t2' : '167.128'}
+ecmwf_param = {'t2' : '167.128'}
 #ecmwf_param = {'msl' : '151.128'}
-ecmwf_param = {'d2' : '168.128'}
+#ecmwf_param = {'d2' : '168.128'}
 #ecmwf_param = {'precip' : '228.128'}
-#ecmwf_param = {'radsw' : '176.128'}
-#ecmwf_param = {'radlw' : '175.128'}
+ecmwf_param = {'radsw' : '176.128'}
+ecmwf_param = {'radlw' : '175.128'}
 #ecmwf_param = {'u10' : '165.128'}
 #ecmwf_param = {'v10' : '166.128'}
 
 # Choose years to download
-fyear = 1982
+fyear = 2010
 lyear = 2010
 nday = [31,28,31,30,31,30,31,31,30,31,30,31]
 

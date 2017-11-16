@@ -50,13 +50,7 @@ os.system(cln_up)
                 
                 
 # SPATIALLY subset nc file to CCS
-CCS_sub = 'ncks -O -d lat,40,119 -d lon,290,369 ' + ncfil + ' /Users/elizabethdrenkard/external_data/' + ncfil + '.sub'
-os.system(CCS_sub)
-cln_up = 'rm ' + ncfil 
-os.system(cln_up)
-
-                # PROCESS ncfil to be ROMS compatible
-               
-                 #my_inputs = {'file':filenc,key:ecmwf_param[key],'year':year, 'ncumul':4, 'nx':80, 'ny':80}
-                 #go = ERAinterim_processing(my_inputs)
-                 #go()
+#CCS_sub = 'ncks -O -d lat,40,119 -d lon,290,369 ' + ncfil + ' /Users/elizabethdrenkard/external_data/' + ncfil + '.sub'
+#os.system(CCS_sub)
+#cln_up = 'rm ' + ncfil 
+#os.system(cln_up)
