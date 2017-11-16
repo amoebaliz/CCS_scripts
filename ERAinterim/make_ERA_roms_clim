@@ -8,9 +8,13 @@ dir_fc=/Users/elizabethdrenkard/ANALYSES/CCS/ERAinterim
 
 # NOAA SWFSC DIRECTORY
 dir_fc=/Users/liz.drenkard/external_data/ERAinterim/Forecast/
+
 # NOTE: need to get from yearly directories
 for var in t2 msl q2 u10 v10 radsw radlw precip; do
     for mon in $( seq -f %02g 1 12 ) ; do
+        for yr in {1981..2010}; do
+            cp $dir_fc/$yr/${var}_*_${mon}_monthly_ROMS.nc $dir_fc
+        done
         ncra -O -h $dir_fc/${var}_*_${mon}_monthly_ROMS.nc $dir_fc/${var}_1981-2010_monthly_clim_${mon}.nc
         rm $dir_fc/${var}_*_${mon}_monthly_ROMS.nc
     done
@@ -21,6 +25,6 @@ for var in t2 msl q2 u10 v10 radsw radlw precip; do
 done
 
 # Edit time values
-python edit_ERAinterim.py
+python edit_ERAinterim_timevar.py
 
 

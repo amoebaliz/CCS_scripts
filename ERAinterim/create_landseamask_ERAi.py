@@ -9,7 +9,8 @@ def readnc(filein,varin):
         return out
 
 def write_lsm(lon_array,lat_array,var):
-                fid = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/land_sea_mask/lsm_LENS_roms.nc','w', format='NETCDF3_CLASSIC')
+                #fid = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/land_sea_mask/lsm_LENS_roms.nc','w', format='NETCDF3_CLASSIC')
+                fid = nc.Dataset('/Users/liz.drenkard/external_data/ERAinterim/landsea_mask/lsm_ERAi_for_roms.nc','w', format='NETCDF3_CLASSIC') 
                 fid.description = 'based on ERAinterim post-processing developped by raphael.dussin@gmail.com'
                 # dimensions
                 fid.createDimension('lat', lat_array.shape[0])
@@ -44,7 +45,7 @@ def write_lsm(lon_array,lat_array,var):
                 return None
 
 
-ncfil = '/Users/elizabethdrenkard/external_data/ERAinterim_lsm.nc.sub'
+ncfil = '/Users/liz.drenkard/external_data/ERAinterim/landsea_mask/ERAinterim_lsm.nc'
 
 lon = readnc(ncfil,'lon')
 lat = readnc(ncfil,'lat')
