@@ -1,3 +1,4 @@
+# ALTERNATIVE REGRID METHOD USING PYROMS???
 import netCDF4 as nc
 import numpy as np
 import matplotlib.pylab as plt
