@@ -4,17 +4,23 @@ import numpy as np
 import matplotlib.pylab as plt
 
 # use any output file for lon/lat
-filein='soda3.4.1_5dy_ocean_or_1980_02_02.nc.sub'
+#filein='soda3.4.1_5dy_ocean_or_1980_02_02.nc.sub'
 filein='/glade/p/work/edrenkar/external_data/ERAinterim/drowned/drowned_ERAi_msl_1981-2010_monthly_clim.nc'
 
 fid = nc.Dataset(filein,'r')
-lon_t = fid.variables['xt_ocean'][:]
-lat_t = fid.variables['yt_ocean'][:]
-lon_uv = fid.variables['xu_ocean'][:]
-lat_uv = fid.variables['yu_ocean'][:]
-st_ocean = fid.variables['st_ocean'][:]
-temp = fid.variables['temp'][:].squeeze()
-u = fid.variables['u'][:].squeeze()
+#lon_t = fid.variables['xt_ocean'][:]
+#lat_t = fid.variables['yt_ocean'][:]
+lon_t = fid.variables['lon'][:]
+lat_t = fid.variables['lat'][:]
+#lon_uv = fid.variables['xu_ocean'][:]
+#lat_uv = fid.variables['yu_ocean'][:]
+lon_uv = fid.variables['lon'][:]
+lat_uv = fid.variables['lat'][:]
+
+#st_ocean = fid.variables['st_ocean'][:]
+st_ocean = np.array([0])
+temp = fid.variables['msl'][:].squeeze()
+#u = fid.variables['u'][:].squeeze()
 #v = fid.variables['v'][:].squeeze()
 fid.close()
 
@@ -49,36 +55,40 @@ sw_edges_ocean[-1] = 5500.
 #--- compute kmt,...
 
 mask_t = np.ones((nz,ny,nx))
-mask_t[np.where(temp.mask == True)] = 0
+#mask_t[np.where(temp.mask == True)] = 0
 
 mask_u = np.ones((nz,ny,nx))
-mask_u[np.where(u.mask == True)] = 0
+#mask_u[np.where(u.mask == True)] = 0
 
-kmt = np.empty((ny,nx))
-ht = np.empty((ny,nx))
-for ky in np.arange(ny):
-        for kx in np.arange(nx):
-                indlist = np.where(mask_t[:,ky,kx] == 1)[0]
-                if len(indlist) == 0:
-                        kmt[ky,kx] = 0
-                        ht[ky,kx] = 0
-                else:
-                        kmt[ky,kx] = indlist.max() + 1
-                        ht[ky,kx] = st_edges_ocean[indlist.max() + 1]
+# kmt = np.empty((ny,nx))
+kmt = np.zeros((ny,nx))
+#ht = np.empty((ny,nx))
+ht = np.zeros((ny,nx))
 
-kmt[np.where(kmt == 0)] = spval
-ht[np.where(ht == 0)] = spval
+#for ky in np.arange(ny):
+#        for kx in np.arange(nx):
+#                indlist = np.where(mask_t[:,ky,kx] == 1)[0]
+#                if len(indlist) == 0:
+#                        kmt[ky,kx] = 0
+#                        ht[ky,kx] = 0
+#                else:
+#                        kmt[ky,kx] = indlist.max() + 1
+#                        ht[ky,kx] = st_edges_ocean[indlist.max() + 1]
 
-kmu = np.empty((ny,nx))
-for ky in np.arange(ny):
-        for kx in np.arange(nx):
-                indlist = np.where(mask_u[:,ky,kx] == 1)[0]
-                if len(indlist) == 0:
-                        kmu[ky,kx] = 0
-                else:
-                        kmu[ky,kx] = indlist.max() + 1
+#kmt[np.where(kmt == 0)] = spval
+#ht[np.where(ht == 0)] = spval
 
-kmu[np.where(kmu == 0)] = spval
+#kmu = np.empty((ny,nx))
+kmu = np.zeros((ny,nx))
+#for ky in np.arange(ny):
+#        for kx in np.arange(nx):
+#                indlist = np.where(mask_u[:,ky,kx] == 1)[0]
+#                if len(indlist) == 0:
+#                        kmu[ky,kx] = 0
+#                else:
+#                        kmu[ky,kx] = indlist.max() + 1
+
+#kmu[np.where(kmu == 0)] = spval
 
 
 #mask_v = np.ones((nz,ny,nx))
