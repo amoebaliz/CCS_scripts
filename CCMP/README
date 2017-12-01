@@ -1,4 +1,4 @@
-
+# METHODS FOR CCMP FILE GENERATION
 APR 25, 2017: ACQUISITION & PROCESSING
 
 i)   ./get_CCMP_fils
@@ -23,19 +23,24 @@ iv) python evaluate_wind_anoms.py
     generate stats on u v wind anomalies relative to 21yr clim for 
     CCMP sub_domain 
 
+   # Inspect wind stats with
+   1) evaluate_wind_anoms.py # generates stats file
+   2) check_avg_anoms.py     # various stats plots
+
 SEPT 8, 2017
 v)  ./concat_daily_anoms
     generates daily anomaly files for each year - need to do manually 
     if not a complete JAN-DEC year
  
-# NOTE: no longer interpolating
+####### NOTE: no longer interpolatin with this methodg
 # BUILDING .so file:
-Copy Makefile command (also below) - run in command line:
-
-     f2py -c -m regrid_atmos regrid_atmos.f90
-
+# Copy Makefile command (also below) - run in command line:
+#
+#     f2py -c -m regrid_atmos regrid_atmos.f90
+#
 # INTERPOLATE CCMP and ADD TO ERAi CLIMATOLOGY
-Edit CCMP_2_ROMS.py to work on specific daily anomaly file
+##########
+vi) python CCMP_2_ROMS.py
 
         # Daily anomaly files are created and stored @ 
         /glade/p/work/edrenkar/external_data/CCMP
