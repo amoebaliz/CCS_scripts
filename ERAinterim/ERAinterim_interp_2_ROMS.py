@@ -60,8 +60,8 @@ var = ['Pair','rain','Qair','lwrad_down','swrad','Tair','Uwind','Vwind']
 #ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/80_x_80/'
 #ncdir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/70_x_80/'
 #ncdir = '/Users/liz.drenkard/external_data/ERAinterim/drowned/80_x_70/'
-ncdir = '/glade/p/work/edrenkar/external_data/ERAinterim/drowned/80_x_80/'
-
+#ncdir = '/glade/p/work/edrenkar/external_data/ERAinterim/drowned/80_x_80/'
+ncdir = '/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/global/drowned/'
 
 for nf in range(len(var)-2):
 #for nf in range(1):

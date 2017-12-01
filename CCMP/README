@@ -26,7 +26,25 @@ iv) python evaluate_wind_anoms.py
 SEPT 8, 2017
 v)  ./concat_daily_anoms
     generates daily anomaly files for each year - need to do manually 
-    if not a complete JAN-DEC year 
+    if not a complete JAN-DEC year
+ 
+# NOTE: no longer interpolating
+# BUILDING .so file:
+Copy Makefile command (also below) - run in command line:
+
+     f2py -c -m regrid_atmos regrid_atmos.f90
+
+# INTERPOLATE CCMP and ADD TO ERAi CLIMATOLOGY
+Edit CCMP_2_ROMS.py to work on specific daily anomaly file
+
+        # Daily anomaly files are created and stored @ 
+        /glade/p/work/edrenkar/external_data/CCMP
+
+# Inspect wind stats with 
+1) evaluate_wind_anoms.py # generates stats file
+2) check_avg_anoms.py     # various stats plots
+
+
 
 MISSING CCMP FILES
 NOTE: CLIMATOLOGY DOES NOT INCLUDE VALUES FOR THESE DATES

@@ -7,8 +7,10 @@ invar = ['Qair','Pair','Tair','Uwind','Vwind','swrad','lwrad_down','rain']
 
 #invar = ['Uwind','Vwind']
 for nvar in range(len(invar)):
-    ncfil1 = '/Users/elizabethdrenkard/external_data/ERAinterim/ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
-    ncfil2 = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
+    #ncfil1 = '/Users/elizabethdrenkard/external_data/ERAinterim/global/' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
+    #ncfil2 = '/Users/elizabethdrenkard/external_data/ERAinterim/global/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
+    ncfil1 = '/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/global/'+ filvar[nvar] + '_1981-2010_monthly_clim.nc'
+    ncfil2 = '/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/global/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
     fid1 = nc.Dataset(ncfil1)
     fid2 = nc.Dataset(ncfil2,'a')
 

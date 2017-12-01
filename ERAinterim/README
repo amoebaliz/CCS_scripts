@@ -39,7 +39,8 @@ i) get/create land-sea mask for drowning ERAi files:
   ii) edits attributes of drowned ERAi files
 
 ~~~~~~
-
+# NOTE: REGRID NOT CURRENTLY WORKING THE WAY IT SHOULD - SWITCHING TO DROWNED ERA 
+# INTERPOLATING WINDS TO CCMP GRID
 i) generate the .so library for regrid_atmos.f90:
    
     make -f Makefile *OR* f2py -c -m regrid_atmos regrid_atmos.f90 
