@@ -5,8 +5,13 @@ from scipy.interpolate import griddata
 import ESMF
 
 # ERAint files
-fidUclim = nc.Dataset('/glade2/scratch2/edrenkar/CCS-inputs/drowned_ERAi_u10_1981-2010_monthly_clim.nc')
-fidVclim = nc.Dataset('/glade2/scratch2/edrenkar/CCS-inputs/drowned_ERAi_v10_1981-2010_monthly_clim.nc')
+# yellowstone
+#fidUclim = nc.Dataset('/glade2/scratch2/edrenkar/CCS-inputs/drowned_ERAi_u10_1981-2010_monthly_clim.nc')
+#fidVclim = nc.Dataset('/glade2/scratch2/edrenkar/CCS-inputs/drowned_ERAi_v10_1981-2010_monthly_clim.nc')
+
+# MacBook
+fidUclim = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned_winds/drowned_ERAi_u10_1981-2010_monthly_clim.nc')
+fidVclim = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned_winds/drowned_ERAi_v10_1981-2010_monthly_clim.nc')
 
 Uclim = fidUclim.variables['Uwind'][:]
 Vclim = fidVclim.variables['Vwind'][:]
@@ -22,7 +27,10 @@ sourcegrid = ESMF.Grid(np.array(Yi.shape), staggerloc = ESMF.StaggerLoc.CENTER, 
 # CCMP file
 mon0 = 5 # START MONTH (MAY) FOR CCMP
 yr = 'MAY01-APR02'
-CCMP_fil = '/glade/p/work/edrenkar/external_data/CCMP/CCMP_'+yr+'_daily_anom.nc'   
+# MACBOOK
+CCMP_fil = '/Users/elizabethdrenkard/external_data/CCMP/CCMP_'+yr+'_daily_anom.nc'  
+# YELLOWSTONE
+#CCMP_fil = '/glade/p/work/edrenkar/external_data/CCMP/CCMP_'+yr+'_daily_anom.nc'   
 fidCCMP = nc.Dataset(CCMP_fil)
 FinU = fidCCMP.variables['u_anom'][:]
 FinV = fidCCMP.variables['v_anom'][:]
@@ -41,17 +49,16 @@ source_lon = sourcegrid.get_coords(0)
 source_lat = sourcegrid.get_coords(1)
 dest_lon = destgrid.get_coords(0)
 dest_lat = destgrid.get_coords(1)
-
 ## FILLS
-source_lon[...] = clon
-source_lat[...] = lat
-dest_lon[...] = lon
-dest_lat[...] = lat
+source_lon[...] = Xi
+source_lat[...] = Yi
+dest_lon[...] = Xn
+dest_lat[...] = Yn
 
 sourcefieldU = ESMF.Field(sourcegrid, name = 'ERAi_Clim_Uwind')
 sourcefieldV = ESMF.Field(sourcegrid, name = 'ERAi_Clim_Vwind')
-destfield = ESMF.Field(destgrid, name = 'CCMP_Anom')
-
+destfieldU = ESMF.Field(destgrid, name = 'CCMP_Anom')
+destfieldV = ESMF.Field(destgrid, name = 'CCMP_Anom')
 # Allocate output variables
 Uout = np.zeros(FinU.shape)
 Vout = np.zeros(FinV.shape)
@@ -65,12 +72,12 @@ for nmon in range(12):
     #regCV =  griddata(clon,clat,Vclim[nmon,:].squeeze(),lon,lat)
     sourcefieldU.data[...] = Uclim[nmon,:].squeeze()
     sourcefieldV.data[...] = Vclim[nmon,:].squeeze()
-    regridU = ESMF.Regrid(sourcefieldU, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,  
+    regridU = ESMF.Regrid(sourcefieldU, destfieldU, regrid_method = ESMF.RegridMethod.BILINEAR,  
                      unmapped_action = ESMF.UnmappedAction.IGNORE)
-    regridV = ESMF.Regrid(sourcefieldV, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,
+    regridV = ESMF.Regrid(sourcefieldV, destfieldV, regrid_method = ESMF.RegridMethod.BILINEAR,
                      unmapped_action = ESMF.UnmappedAction.IGNORE)
-    destfieldU = regridU(sourcefieldU, destfield) 
-    destfieldV = regridV(sourcefieldU, destfield)    
+    destfieldU = regridU(sourcefieldU, destfieldU) 
+    destfieldV = regridV(sourcefieldV, destfieldV)    
  
     md = nmon-(mon0-1)
     nd = np.sum(ndays[:md])
@@ -78,7 +85,11 @@ for nmon in range(12):
         # daily index in CCMP file
         n = nd + nt
         # add regridded clim to CCMP anomaly 
-        
+        #if n == 112:
+        #   plt.figure();plt.pcolor(destfieldU.data);plt.colorbar()
+        #   plt.figure();plt.pcolor(FinU[n,:].squeeze());plt.colorbar()
+        #   plt.figure();plt.pcolor(FinU[n,:].squeeze()+destfieldU.data);plt.colorbar()
+        #   plt.show()
         Uout[n,:] = FinU[n,:].squeeze() + destfieldU.data
         Vout[n,:] = FinV[n,:].squeeze() + destfieldV.data
 # Save new wind files
