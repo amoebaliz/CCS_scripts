@@ -11,7 +11,35 @@ Initial CESM files have the following units:
    ---------------------------------
    
 
-IS PRECIP ACCURATE? 
+i) get historical files and generate climatologies
+       ./get_his_LENS
 
-HOW TO REGRID TO ROMS WITH PARTICULAR GRID STYLE
+ii) get future files and generate climatologies
+       ./get_fut_LENS
+
+iii) obtain LENS land-sea mask
+       ./get_lsm_LENS
+
+iv) take the difference between the future and past clims
+       ./make_difs
+
+NOTE: Specific humidity and U and V are NOT at the correct levels
+      for bulk flux calculations. Currently, we are using the 
+      lowest level (~60m) in the atmosphere for the model BUT
+      there are some approximations for testing this
+
+# FILES INVOLVED IN U/V @ 10m APPROXIMATION from TAUX,TAUY,U10
+* tau_wind_toolbox
+* lib_process_CESM_winds.py
+
+- these calculate the U and V 10m wind components from 
+  surface windstress
+
+# Qref in the Ice model extends to part of the domain
+# Reasonable match to QBOT in atmospheric file
+
+v) interpolate atmospheric files to add to the original
+   forcing fields
+
+
 
