@@ -1,0 +1,24 @@
+
+PROCESSING
+
+APR 25, 2017: PROCESSING & Generating
+
+i) get soda files, edit as in Boundary README, move to /glade/p/work/edrenkar/Inputs/construct/Boundary/soda_fils
+# ********************************************* #
+
+1) python make_remap_weights_file.py
+   (creates netcdf weighting files)
+
+2) python make_clim_file.py
+   (creates a boundary file for each file in soda_fils)
+   * NOTE: may need to move completed files to the scratch directory if running out of space
+
+3) ./concat_cycle_clim
+   (concattenates bdry files, edits the time values)
+
+4) mv climatology file to scratch directory
+
+5) remove all weight, clim .nc files from workdir
+
+#########################################
+
