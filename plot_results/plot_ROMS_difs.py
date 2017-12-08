@@ -81,8 +81,8 @@ def outline_mask(mapid,mask_img,val,x0,y0,x1,y1):
 def get_sst(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     mon = MONS[i] 
-    nc1 = '/Users/elizabethdrenkard/Desktop/CCS_ROMS_CLIM_FLS/CCS_5y_his_SST_clim.nc'
-    nc2 = '/Users/elizabethdrenkard/Desktop/CCS_ROMS_fut/Fut_2yr_' + str(i+1).zfill(2)+'.nc'
+    nc1 = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo01Y/4yr_clim_SST.nc'
+    nc2 = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo016_01Y/4yr_clim_SST.nc'
     fid1 = nc.Dataset(nc1)
     sst1 = fid1.variables['temp'][i,:].squeeze()
     
@@ -171,9 +171,10 @@ n=0
 m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 
-u,v,mag,mon = get_vel(0)
-im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
-im2 = m.quiver(glon[::afreq],glat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
+
+#u,v,mag,mon = get_vel(0)
+#im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
+#im2 = m.quiver(glon[::afreq],glat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
 
 #plt.show()
 # ANIMATION
@@ -181,15 +182,15 @@ def updatefig(i):
     global im1,im2,tx
     print i
     # REMOVE images after first step
-    im1.remove()
-    im2.remove()
-    #if i > 0:
-    #   im1.remove()
-    #sst,mon = get_sst(i)
-    u,v,mag,mon = get_vel(i)
-    #im1   = m.pcolormesh(glon,glat,sst,vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
-    im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
-    im2 = m.quiver(glon[::afreq,::afreq],glat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=3,zorder=map_order+2)
+    #im1.remove()
+    #im2.remove()
+    if i > 0:
+       im1.remove()
+    sst,mon = get_sst(i)
+    #u,v,mag,mon = get_vel(i)
+    im1   = m.pcolormesh(glon,glat,sst,vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
+    #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
+    #im2 = m.quiver(glon[::afreq,::afreq],glat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=3,zorder=map_order+2)
     polygon_patch(m,ax)
     tx_str = mon 
     tx.set_text(tx_str)
@@ -198,6 +199,6 @@ def updatefig(i):
        cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
 
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
-#ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'imagemagick',fps=1)
-ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'imagemagick',fps=1)
+ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'imagemagick',fps=1)
+#ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'imagemagick',fps=1)
 plt.show()

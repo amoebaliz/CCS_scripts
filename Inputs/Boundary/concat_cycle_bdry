@@ -1,0 +1,9 @@
+#!/bin/bash
+
+filout=CCS_bdry_soda3.4.1_1981-2010_clim.nc
+
+ncrcat -O /glade/p/work/edrenkar/Inputs/construct/Boundary/bdry/* /glade2/scratch2/edrenkar/CCS-inputs/$filout 
+python edit_SODA_files.py
+
+ncatted -O -a cycle_length,ocean_time,a,f,365 /glade2/scratch2/edrenkar/CCS-inputs/$filout
+

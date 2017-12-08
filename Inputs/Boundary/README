@@ -1,0 +1,22 @@
+PROCESSING
+
+i) get soda files
+
+# ********************************************* #
+
+1) python make_remap_weights_file.py
+   (creates netcdf weighting files)
+
+2) python make_bdry_file.py
+   (creates a boundary file for each file in soda_fils)
+   * NOTE: may need to move completed files to the scratch directory if running out of space
+
+3) ./concat_cycle_bdry
+   (concattenates bdry files, edits the time values)
+
+4) mv boundary file to scratch directory
+
+5) remove all weight, clim .nc files from workdir
+
+#########################################
+
