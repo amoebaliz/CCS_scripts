@@ -7,6 +7,11 @@ import matplotlib.dates as pltd
 
 def get_salt():
     ncfile = '/Users/elizabethdrenkard/Desktop/HIS_4yr_SALT.nc'
+<<<<<<< HEAD
+=======
+    ncfile = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo01Y/HIS_4yr_SALT.nc'
+    ncfile = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/4yr_clim_SST.nc' 
+>>>>>>> 5a3e1fe4f1e70bd3874059569db971ddb881831c
     fid = nc.Dataset(ncfile)
     sst = fid.variables['salt'][:].squeeze()
     return sst[1:-1,1:-1]

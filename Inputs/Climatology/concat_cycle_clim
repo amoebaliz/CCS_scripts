@@ -1,0 +1,10 @@
+#!/bin/bash
+
+filout=CCS_clim_soda3.4.1_1981-2010.nc
+
+#ncrcat -O /glade2/scratch2/edrenkar/CCS-inputs/CCS_clim_clim_??_SODA3_0.25deg.nc /glade2/scratch2/edrenkar/CCS-inputs/$filout 
+ncrcat -O /glade/p/work/edrenkar/Inputs/construct/Clim/clim/* /glade2/scratch2/edrenkar/CCS-inputs/$filout 
+python edit_SODA_files.py
+
+ncatted -O -a cycle_length,ocean_time,a,f,365 /glade2/scratch2/edrenkar/CCS-inputs/$filout
+
