@@ -46,7 +46,8 @@ def get_sss(ncfil):
 
 
 # DATA LOCATION 
-ncfil = '/glade/p/work/edrenkar/external_data/SODA/soda_annual_avg_salt.nc'
+#ncfil = '/glade/p/work/edrenkar/external_data/SODA/soda_annual_avg_salt.nc'
+ncfil = '/Users/elizabethdrenkard/Desktop/soda_annual_avg_salt.nc'
 sss, lat, lon = get_sss(ncfil)
 
 # CCS grid shape ONLY
@@ -71,7 +72,7 @@ clon,clat = np.meshgrid(lon,lat)
 fig, ax = plt.subplots(figsize=(8,8))
 m = Basemap(llcrnrlat=np.min(glat)-m_offset,urcrnrlat = np.max(glat)+m_offset,llcrnrlon=np.min(glon)-m_offset,urcrnrlon=np.max(glon)+m_offset, resolution='i', ax=ax)
 
-P = m.contourf(clon,clat,sss,np.linspace(30,36+1,50),edgecolors='face',cmap='plasma',zorder=map_order)
+P = m.contourf(clon,clat,sss,np.linspace(32,35.5,50),cmap='inferno',zorder=map_order)
 P.cmap.set_under('white')
 P.cmap.set_over([.9,.97,1])
 plt.colorbar(P)

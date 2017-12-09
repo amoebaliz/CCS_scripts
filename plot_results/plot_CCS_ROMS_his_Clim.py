@@ -94,7 +94,7 @@ def fill_CA_Gulf(field):
 def get_sst(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     mon = MONS[i] 
-    ncfile = '/Users/elizabethdrenkard/Desktop/4yr_clim_SST.nc'
+    ncfile = '/Users/elizabethdrenkard/Desktop/HIS_4yr_clim_SST.nc'
     fid = nc.Dataset(ncfile)
     sst = fid.variables['temp'][i,0,:].squeeze()    
     return sst,mon
@@ -169,8 +169,8 @@ n=0
 m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 
-#u,v,mag,mon = get_vel(0)
-#im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
+sst,mon = get_sst(0)
+im1 = m.pcolor(glon,glat,sst[1:-1,1:-1],vmin=8,vmax=28, cmap='nipy_spectral',zorder=map_order)
 #im2 = m.quiver(glon[::afreq],glat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
 
 #plt.show()
@@ -181,9 +181,9 @@ def updatefig(i):
     # REMOVE images after first step
     #im1.remove()
     #im2.remove()
-    if i > 0:
-       im1.remove()
-    sst,mon = get_sst(i)
+    #if i > 0:
+    #   im1.remove()
+    #sst,mon = get_sst(i)
     #u,v,mag,mon = get_vel(i)
     im1   = m.pcolormesh(glon,glat,sst[1:-1,1:-1], vmin=8,vmax=28,cmap='nipy_spectral',zorder=map_order)
     #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)

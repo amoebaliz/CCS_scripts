@@ -7,14 +7,12 @@ import matplotlib.dates as pltd
 
 def get_salt():
     ncfile = '/Users/elizabethdrenkard/Desktop/HIS_4yr_SALT.nc'
-    ncfile = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo01Y/HIS_4yr_SALT.nc'
     fid = nc.Dataset(ncfile)
     sst = fid.variables['salt'][:].squeeze()
     return sst[1:-1,1:-1]
 
 def get_vel():
     ncfile = '/Users/elizabethdrenkard/Desktop/HIS_4yr_UV.nc'
-    ncfile = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo01Y/HIS_4yr_UV.nc'
     store = np.zeros((50,x+2,y+2))
     fid = nc.Dataset(ncfile)
     u_vel = np.squeeze(fid.variables['u'][:])
@@ -52,14 +50,13 @@ cs = get_vel()
 print cs.shape
 cs_transect, z, lon, lat = pyroms.tools.transect(cs, istart, iend, jstart, jend, grd,vert=False, Cpos='rho')
 
-x = np.tile(np.array(range(cs_transect[:].shape[1])),(cs_transect[:].shape[0],1))
+x = np.tile(np.array(range(transect[:].shape[1])),(transect[:].shape[0],1))
+v = np.linspace(-1*col_val,col_val, 50, endpoint=True)
 
 fig = plt.figure()
 ax = fig.add_subplot(111,axisbg=[0.5,0.5,0.5])
-#v = np.linspace(-1*col_val,col_val, 50, endpoint=True)
-cs = ax.contourf(x,z,100*cs_transect,extend = 'both', cmap='jet')
-ax.set_ylim(-290,0)
-#plt.colorbar(cs,ticks=[-.001, 0, 0.001])
-plt.colorbar(cs)
+v = np.linspace(-1*col_val,col_val, 50, endpoint=True)
+cs = ax.contourf(x,z,transect,v,extend = 'both', cmap='bwr')
+plt.colorbar(cs,ticks=[-.001, 0, 0.001])
 plt.show()
 
