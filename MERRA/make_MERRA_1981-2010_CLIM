@@ -1,0 +1,33 @@
+#!/bin/bash
+SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
+dir=/Users/elizabethdrenkard/ANALYSES/CCS/MERRA
+dirin=$dir/monthly_clim_files
+dirout=$dir/monthly_clim_files/drowned
+    
+python edit_MERRA_files.py
+
+for varstr in Pair Qair Tair Uwind Vwind swrad lwrad_down rain; do
+
+    echo $varstr
+    filout=MERRA_${varstr}_1981-2010_MONTHLY_CLIM.nc
+
+    # Concatenate files to make climatology
+    ncrcat -O -h MERRA_${varstr}_1981-2010_MONTHLY_CLIM_*.nc $filout 
+    ncatted -O -a cycle_length,time,a,f,365 $filout
+
+    # DROWN MERRA FILES
+    timevar=$( ncdump -h $dirin/$filout | grep time | head -1 | awk '{ print $1 }' )
+    ncvar=$( ncdump -h $dirin/$filout | grep float | tail -1 | sed -e "s/(/ /" | awk '{ print $2 }' )
+
+    echo Processing variable $ncvar in file $filout
+    $SOSIE/mask_drown_field_merra.x -D -i $dirin/$filout -v $ncvar -t $timevar \
+                                     -m $dir/land_sea_mask/MERRA2_lsm_sub.nc \
+                                     -p -1 -o $dirout/drowned_$filout  
+
+done
+
+python edit_drowned_MERRA_files.py
+
+rm MERRA_*_1981-2010_MONTHLY_CLIM_*.nc
+#scp ./drowned/drowned_MERRA_*_1981-2010_MONTHLY_CLIM.nc edrenkar@yellowstone.ucar.edu:/glade/p/work/edrenkar/external_data/MERRA2/drowned/
+

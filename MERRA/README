@@ -1,0 +1,54 @@
+NOTE: STILL WAITING ON NASA RESPONSE REGARDING ARTIFACT!!!
+TO DO: ADD CCMP ANOMALY TO WIND CLIM
+
+##     PROCESSING & GENERATING ###
+
+* completed on personal computers with following files:
+
+i) get file for generating land sea mask:
+   https://goldsmr4.gesdisc.eosdis.nasa.gov/data/MERRA2_MONTHLY/M2C0NXASM.5.12.4/1980/
+   citation: Global Modeling and Assimilation Office (GMAO) (2015), MERRA-2 const_2d_asm_Nx: 2d, constants V5.12.4, Greenbelt, MD, USA, Goddard Earth Sciences Data and Information Services Center (GES DISC), Accessed [Data Access Date] DOI:10.5067/ME5QX6Q5IGGU
+
+ii) python create_landseamask_MERRA2.py
+           (creates mask using MERRA2_101.const_2d_asm_Nx.00000000.nc4)
+           (current threshold = 0.995)
+
+iii) ncks -d lat,186,305 -d lon,20,150 MERRA2_lsm.nc MERRA2_lsm_sub.nc
+          (truncates the mask to CA domain for reduced size)
+
+iv) Obtain MERRA2 files
+    clicking files found here:
+             SLV: https://goldsmr4.gesdisc.eosdis.nasa.gov/data/MERRA2_MONTHLY/M2TMNXSLV.5.12.4/
+             FLX: https://goldsmr4.gesdisc.eosdis.nasa.gov/data/MERRA2_MONTHLY/M2TMNXFLX.5.12.4/
+             RAD: https://goldsmr4.gesdisc.eosdis.nasa.gov/data/MERRA2_MONTHLY/M2TMNXRAD.5.12.4/
+
+v) initial processing of MERRA2 files(done on NOAA computer):
+           spatial and variable subset:
+                   ncks -O -d lat,186,305 -d lon,20,150 -v {PRECTOT/QV2M,SLP,T2M,U2M,V2M/LWGAB,SWGDN} $fil{flx/slv/rad}.nc $fil{flx/slv/rad}.nc.sub
+           temporal averaging to make monthly climatology:
+                   ncra MERRA2_100.tavgM_2d_{flx/slv/rad}_Nx.????{mon#}.nc4.sub MERRA2_{flx/slv/rad}_1981-2010_{mon#}.nc
+using files: 
+      MERRA2_flx_1981-2010_??.nc
+      MERRA2_rad_1981-2010_??.nc
+      MERRA2_slv_1981-2010_??.nc
+
+1) ./make_MERRA_1981-2010_CLIM 
+   (extracts variables, creates new ncfile and edits MERRA variabels, \
+    drowns the fields using SOSIE, re-edits the new ncfiles to fix SOSIE edits)
+
+2) scp ./drowned/drowned_MERRA_*_1981-2010_MONTHLY_CLIM.nc files to yellowstone
+       (workdir: edrenkar@yellowstone.ucar.edu:/glade/p/work/edrenkar/external_data/MERRA2/drowned/)
+       (scratchdir: /glade2/scratch2/edrenkar/CCS-inputs)
+
+##### ON YELLOWSTONE 
+
+1) python merge_MERRA_clim_CCMP_anom.py
+          Reads in Clim file	
+	  Reads in daily anomaly
+          Adds the two values together
+          Produces new .nc file for winds w/ 365 time points
+          NOTE: NO INTERPOLATION BETWEEN CLIM USD - accounted for in anomaly  
+
+
+
+
