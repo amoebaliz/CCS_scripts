@@ -1,0 +1,16 @@
+#!/bin/bash
+dir=/Users/elizabethdrenkard/external_data/PHC3.0
+filin=phc3.0_monthly.nc
+
+cp $dir/$filin . 
+
+python edit_SSS_file.py
+
+rm $filin
+
+ncfil=sss_monthly_climatology
+ncatted -O -a cycle_length,sss_time,a,f,365 $ncfil.nc ${ncfil}_flooded.nc
+
+# NOTE: no data difference between flooded and otherwise
+rm $ncfil.nc
+

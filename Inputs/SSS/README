@@ -1,0 +1,15 @@
+# CREATING THE SEA SURFACE SALINITY FILE
+
+i) download the original phc3.0 salinity file 
+
+ii) DROM the fields to cover land points and EDIT format
+
+	./make_monthly_SSS_climatology
+
+     	NOTE: This command calls
+        python edit_SSS_file.py
+
+iii) ADDING DELTA SSS     
+
+
+
