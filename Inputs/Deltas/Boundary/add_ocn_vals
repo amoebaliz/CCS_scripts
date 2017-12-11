@@ -1,0 +1,10 @@
+#!/bin/bash
+
+dir='/glade/p/work/edrenkar/Inputs/current_CCS_inputs'
+runs="6 16 33"
+
+for run in $runs; do
+    runstr=$(printf %03d $run)
+    ncbo --op_typ=add -v zeta_north,zeta_west,zeta_south,temp_north,temp_west,temp_south,salt_north,salt_west,salt_south,u_north,u_west,u_south,ubar_north,ubar_west,ubar_south,v_north,v_west,v_south,vbar_north,vbar_west,vbar_south  $dir/CCS_bdry_soda3.4.1_1981-2010_clim.nc ./bdry/CCS_bdry_${runstr}_ocn_delta_clim.nc ${runstr}_LENS_delta_SODA_bdry.nc
+
+done

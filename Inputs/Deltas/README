@@ -1,0 +1,40 @@
+# CHOOSE RUNS BASED ON CRITERIA (e.g., CCS SST) 
+python /glade/u/home/edrenkar/ANALYSES/assess_RCP85_CCS_SST.py
+
+# GET CESM FIELDS FROM YELLOWSTONE
+./glade/p/work/edrenkar/external_data/LENS/get_his_LENS
+./glade/p/work/edrenkar/external_data/LENS/get_fut_LENS
+    - Edit these two files to extract atmosphere, and 2D and 3D ocean fields
+    * 09-13-2017 NOTE: Atmospheric fields V,U,Q are lowest layer (~70m). 
+                       NOT IDEAL for bulk formula calculations
+    * 12-08-2017 NOTE: Checked against 2m specific humidity delta in ice model
+                       and back calculation for u/v delta from taux/tauy 
+                       Include in manuscript - why reasonable approx
+
+# CREATE SODA/GFDL-SIMILAR GRID FOR LENS OCEAN FILES
+python /glade/p/work/edrenkar/external_data/LENS/make_LENS_grid.py
+
+# DIFFERENCE the CESM fields for Ocean and Atmosphere
+./glade/p/work/edrenkar/external_data/LENS/make_difs
+
+# COMBINE OCEAN FIELDS AND MAKE-SODA COMPATIBLE
+python edit_combine_ocean_deltas.py
+  - renames dimenstions and variables to work w/ remap algorithms
+  - converts cm to meters for ssh, u, v
+  - puts all fields in one monthly file 
+ 
+# PROCESS OCEAN FIELDS FOR INITIAL/BOUNDAY/CLIMATOLOGY
+python /glade/p/work/edrenkar/Inputs/construct/Deltas/Boundary/make_remap_weights_file.py
+python /glade/p/work/edrenkar/Inputs/construct/Deltas/Boundary/make_bdry_file.py
+
+python /glade/p/work/edrenkar/Inputs/construct/Deltas/Clim/make_remap_weights_file.py
+python /glade/p/work/edrenkar/Inputs/construct/Deltas/Clim/make_clim_file.py
+
+python /glade/p/work/edrenkar/Inputs/construct/Deltas/Initial/make_remap_weights_file.py
+python /glade/p/work/edrenkar/Inputs/construct/Deltas/Initial/make_ic_file.py
+
+# DROWN ATMOSHERIC DELTAS
+- ..? 
+
+ADD Deltas to original forcing fields
+

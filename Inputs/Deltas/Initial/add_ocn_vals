@@ -1,0 +1,9 @@
+#!/bin/bash
+
+dir='/glade/p/work/edrenkar/Inputs/current_CCS_inputs'
+runs="6 16 33"
+
+for run in $runs; do
+    runstr=$(printf %03d $run)
+    ncbo --op_typ=add -v zeta,temp,salt,u,ubar,v,vbar $dir/CCS_init_soda3.4.1_1981-2010_clim_01_ic.nc  ./init/CCS_ic_${runstr}_LENS.nc ${runstr}_LENS_delta_SODA_ic.nc
+done
