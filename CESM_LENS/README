@@ -38,7 +38,20 @@ NOTE: Specific humidity and U and V are NOT at the correct levels
 # Qref in the Ice model extends to part of the domain
 # Reasonable match to QBOT in atmospheric file
 
-v) interpolate atmospheric files/salinity to add to the original
+
+
+v) Edit time fields of CESM delta values
+   
+
+vi) Make a land-sea mask for atmospheric and ocean properties
+	python create_landseamask_LENS_atmos.py
+	python create_landseamask_LENS_ocean.py 
+
+vii) drown CESM delta fields
+        ./drown_CESM_delta_atmos # MSL,T2,Q2,U/V10,rads 
+        ./drown_CESM_delta_ocean # Precip/SSS	
+
+vii) interpolate atmospheric files/salinity to add to the original
    forcing fields
    
 	python CESM_2_ERA.py  (non-winds)

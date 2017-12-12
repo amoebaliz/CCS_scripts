@@ -1,0 +1,33 @@
+#!/bin/bash
+SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
+lsmdir=/Users/elizabethdrenkard/external_data/CESM
+dirin=/Users/elizabethdrenkard/Desktop/016
+dirout=$dirin
+
+VARS=(SSS)
+runs="16"
+
+
+for run in $runs; do
+    runstr=$(printf %03d $run)
+    n=0
+    # for varstr in precip; do
+    for varstr in sss; do
+        filin=SSS_${runstr}_delta.nc
+        filout=LENS_$filin
+        ls $dirin/$filout
+        # DROWN CESM FILES
+        #timevar=$( ncdump -h $dirin/$filin | grep time | head -1 | awk '{ print $1 }' )
+        ncvar=${VARS[n]}
+        echo Processing variable $ncvar in file $filout
+        $SOSIE/mask_drown_field_era.x -D -i $dirin/$filin -v $ncvar -t time \
+                                      -m $lsmdir/land_sea_mask/lsm_CESM_roms_precip.nc \
+                                      -p -1 -o $dirout/drowned_$filout  
+        ((n+=1))
+    done
+done
+
+# python edit_drowned_CESM_files.py
+
+#scp $dirin/drowned/drowned_ERAi_*_1981-2010_monthly_clim.nc edrenkar@yellowstone.ucar.edu:/glade/p/work/edrenkar/external_data/ERAinterim/drowned/
+
