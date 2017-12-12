@@ -38,8 +38,10 @@ NOTE: Specific humidity and U and V are NOT at the correct levels
 # Qref in the Ice model extends to part of the domain
 # Reasonable match to QBOT in atmospheric file
 
-v) interpolate atmospheric files to add to the original
+v) interpolate atmospheric files/salinity to add to the original
    forcing fields
-
-
+   
+	python CESM_2_ERA.py  (non-winds)
+        python CESM_2_CCMP.py (winds)
+        python CESM_2_SSS.py  (SSS) 
 
