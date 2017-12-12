@@ -41,7 +41,8 @@ NOTE: Specific humidity and U and V are NOT at the correct levels
 
 
 v) Edit time fields of CESM delta values
-   
+ 	python edit_atmos_deltas.py # MSL,T2,Q2,U/V10,rads
+        python edit_ocean_deltas.py # Precip,SSS
 
 vi) Make a land-sea mask for atmospheric and ocean properties
 	python create_landseamask_LENS_atmos.py
@@ -49,7 +50,7 @@ vi) Make a land-sea mask for atmospheric and ocean properties
 
 vii) drown CESM delta fields
         ./drown_CESM_delta_atmos # MSL,T2,Q2,U/V10,rads 
-        ./drown_CESM_delta_ocean # Precip/SSS	
+        ./drown_CESM_delta_ocean # Precip,SSS	
 
 vii) interpolate atmospheric files/salinity to add to the original
    forcing fields

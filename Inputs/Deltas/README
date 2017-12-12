@@ -12,7 +12,8 @@ python /glade/u/home/edrenkar/ANALYSES/assess_RCP85_CCS_SST.py
                        Include in manuscript - why reasonable approx
 
 # CREATE SODA/GFDL-SIMILAR GRID FOR LENS OCEAN FILES
-python /glade/p/work/edrenkar/external_data/LENS/make_LENS_grid.py
+python /glade/u/home/edrenkar/TOOLS/CCS_scripts/CESM_LENS/create_landseamask_LENS_ocean.py
+python /glade/u/home/edrenkar/TOOLS/CCS_scripts/CESM_LENS/create_landseamask_LENS_atmos.py
 
 # DIFFERENCE the CESM fields for Ocean and Atmosphere
 ./glade/p/work/edrenkar/external_data/LENS/make_difs
@@ -34,7 +35,9 @@ python /glade/p/work/edrenkar/Inputs/construct/Deltas/Initial/make_remap_weights
 python /glade/p/work/edrenkar/Inputs/construct/Deltas/Initial/make_ic_file.py
 
 # DROWN ATMOSHERIC DELTAS
-- ..? 
+/glade/u/home/edrenkar/TOOLS/CCS_scripts/CESM_LENS/drown_CESM_delta_atmos
+/glade/u/home/edrenkar/TOOLS/CCS_scripts/CESM_LENS/drown_CESM_delta_ocean
+
 
 ADD Deltas to original forcing fields
 
