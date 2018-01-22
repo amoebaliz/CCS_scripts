@@ -15,6 +15,9 @@ slat = sss_fid.variables['lat'][:]
 slon = sss_fid.variables['lon'][:]
 slon[slon>180]=slon[slon>180]-360
 
+ny = len(slat)
+nx = len(slon)
+
 Xn, Yn = np.meshgrid(slon,slat)
 destgrid = ESMF.Grid(np.array(Xn.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
 
@@ -22,16 +25,14 @@ destgrid = ESMF.Grid(np.array(Xn.shape), staggerloc = ESMF.StaggerLoc.CENTER, co
 cmod = 16
 
 lens_dir  = '/Users/elizabethdrenkard/Desktop/016/'
-fil_delta = lens_dir + 'SSS_016_delta.nc' 
+fil_delta = lens_dir + 'drowned_LENS_LENS_016_SSS_delta.nc'
 fid_delta = nc.Dataset(fil_delta) 
-delta_var = fid_delta.variables['SALT'][:].squeeze()
-dlon = fid_delta.variables['TLONG'][:]
+delta_var = fid_delta.variables['SSS'][:].squeeze()
+dlon = fid_delta.variables['lon'][:]
 dlon[dlon>180]=dlon[dlon>180]-360
-dlat = sss_fid.variables['TLAT'][:]
+dlat = fid_delta.variables['lat'][:]
 
-#Xi,Yi = np.meshgrid(dlon,dlat)
-#sourcegrid = ESMF.Grid(np.array(Xi.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
-sourcegrid = ESMF.Grid(np.array(dlon.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+sourcegrid = ESMF.Grid(np.array(dlat.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
 
 # Date details
 ndays = [31,28,31,30,31,30,31,31,30,31,30,31]
@@ -65,12 +66,12 @@ var_out = np.zeros(sss_var.shape)
 ## ITERATE OVER ALL MONTHS 
 for nmon in range(12):
     # REGULAR GRID BILINIEAR INTERPOLATION
-    sourcefield.data[...] = lens_var[nmon,:].squeeze()
+    sourcefield.data[...] = delta_var[nmon,:].squeeze()
     regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,  
              unmapped_action = ESMF.UnmappedAction.IGNORE)
     destfield = regrid(sourcefield, destfield) 
    
-    var_out[nmon,:] = era_var[nmon,:].squeeze() + destfield.data
+    var_out[nmon,:] = sss_var[nmon,:].squeeze() + destfield.data
  
 # Save new sss file
 ncfile = 'SSS_CESM_' + str(cmod).zfill(3)+ '_delta.nc'
@@ -88,18 +89,17 @@ fid2.variables['sss_time'][:] = time_vals
 fid2.createVariable('lat','f8',('lat'))
 fid2.variables['lat'].long_name = sss_fid.variables['lat'].long_name
 fid2.variables['lat'].units = sss_fid.variables['lat'].units
-fid2.variables['lat'][:]=lat
+fid2.variables['lat'][:]=slat
 
 fid2.createVariable('lon','f8',('lon'))
 fid2.variables['lon'].long_name = sss_fid.variables['lon'].long_name
 fid2.variables['lon'].units = sss_fid.variables['lon'].units
-fid2.variables['lon'][:]=lon
+fid2.variables['lon'][:]=slon
     
 fid2.createVariable('SSS','f8',('sss_time','lat','lon'),fill_value = np.float(1.0e15))
-fid2.variables['SSS'].long_name = sss_fid.variables[Var_nm[nv]].long_name
-fid2.variables['SSS'].units = sss_fid.variables[Var_nm[nv]].units
-fid2.variables['SSS'].coordinates = sss_fid.variables[Var_nm[nv]].coordinates
-fid2.variables['SSS'].time = sss_fid.variables[Var_nm[nv]].time
+fid2.variables['SSS'].long_name = sss_fid.variables['SSS'].long_name
+fid2.variables['SSS'].units = sss_fid.variables['SSS'].units
+fid2.variables['SSS'].coordinates = sss_fid.variables['SSS'].coordinates
 u_txt = "PHC3.0 climatology + CESM Delta"
 fid2.variables['SSS'].details = u_txt
 fid2.variables['SSS'][:]=var_out

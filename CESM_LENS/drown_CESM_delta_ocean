@@ -13,7 +13,7 @@ for run in $runs; do
     n=0
     # for varstr in precip; do
     for varstr in sss; do
-        filin=SSS_${runstr}_delta.nc
+        filin=LENS_${runstr}_SSS_delta.nc
         filout=LENS_$filin
         ls $dirin/$filout
         # DROWN CESM FILES
