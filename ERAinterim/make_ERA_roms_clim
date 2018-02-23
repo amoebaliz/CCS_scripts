@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# python process_ERAinterim.py
-# NOTE: the above is no longer used
 
 # MACBOOK PRO DIRECTORY
 dir_fc=/Users/elizabethdrenkard/ANALYSES/CCS/ERAinterim
