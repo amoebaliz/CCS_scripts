@@ -3,8 +3,10 @@ fyear=1981
 lyear=2010
 for year in $(seq $fyear $lyear) ; do
     for mon in  $(seq -f "%02g" 1 12); do
-        for var in q2 msl precip radlw radsw t2 u10 v10; do
+        #for var in q2 msl precip radlw radsw t2 u10 v10; do
+        for var in radsw; do     
             ncfil=/Users/liz.drenkard/external_data/ERAinterim/Forecast/$year/${var}_ERAinterim_${year}_${mon}_monthly_ROMS.nc
+            ls -la $ncfil
             if [ ! -f "$ncfil" ]; then
                echo "download:" $year $mon $var
             fi

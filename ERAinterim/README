@@ -38,19 +38,17 @@ i) get/create land-sea mask for drowning ERAi files:
    i) uses sosie to drown files NOTE: need ERAi land mask
   ii) edits attributes of drowned ERAi files
 
-~~~~~~
-# NOTE: REGRID NOT CURRENTLY WORKING THE WAY IT SHOULD - SWITCHING TO DROWNED ERA 
-# INTERPOLATING WINDS TO CCMP GRID
-i) generate the .so library for regrid_atmos.f90:
-   
-    make -f Makefile *OR* f2py -c -m regrid_atmos regrid_atmos.f90 
-    rm -r regrid_atmos.so.dSYM (remove the directory)
+#~~~~~~
+## NOTE: REGRID NOT CURRENTLY WORKING THE WAY IT SHOULD - SWITCHING TO DROWNED ERA 
+## INTERPOLATING WINDS TO CCMP GRID
+## i) generate the .so library for regrid_atmos.f90:
+##   
+##    make -f Makefile *OR* f2py -c -m regrid_atmos regrid_atmos.f90 
+##    rm -r regrid_atmos.so.dSYM (remove the directory)
 
-4) python ERAinterim_interp_2_ROMS.py 
-   
-   i) uses ROMS interpolation scheme to map to model grid
-
-~~~~~~
+## 4) python ERAinterim_interp_2_ROMS.py   
+##   i) uses ROMS interpolation scheme to map to model grid
+#~~~~~~
 IF WINDS - ADD CCMP ANOMALY
 
 

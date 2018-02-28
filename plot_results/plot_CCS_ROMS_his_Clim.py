@@ -94,9 +94,11 @@ def fill_CA_Gulf(field):
 def get_sst(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     mon = MONS[i] 
-    ncfile = '/Users/elizabethdrenkard/Desktop/HIS_4yr_clim_SST.nc'
+#    ncfile = '/Users/elizabethdrenkard/Desktop/HIS_4yr_clim_SST.nc'
+    ncfile = '/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo01Y/CCS_' + str(i+1).zfill(2) + \
+             '-clim.nc'
     fid = nc.Dataset(ncfile)
-    sst = fid.variables['temp'][i,0,:].squeeze()    
+    sst = fid.variables['temp'][:,-1,:,:].squeeze()    
     return sst,mon
 
 def get_vel(i):
@@ -123,9 +125,6 @@ def get_vel(i):
 # DATA LOCATION 
 #dir = '/Users/elizabethdrenkard/Desktop/soda_fils/'
 #fil_pre = 'soda3.4.1_1981-2010_clim_'
-
-dir =  
-fil_pre =
 
 # CCS grid shape ONLY
 GRD = pyroms.grid.get_ROMS_grid('CCS')
@@ -186,7 +185,7 @@ def updatefig(i):
     #im2.remove()
     #if i > 0:
     #   im1.remove()
-    #sst,mon = get_sst(i)
+    sst,mon = get_sst(i)
     #u,v,mag,mon = get_vel(i)
     im1   = m.pcolormesh(glon,glat,sst[1:-1,1:-1], vmin=8,vmax=28,cmap='nipy_spectral',zorder=map_order)
     #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
@@ -201,4 +200,4 @@ def updatefig(i):
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
 ani.save('CCS_ROMS_SST_CLIM.gif', writer = 'ImageMagickWriter',fps=1)
 #ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'ImageMagickWriter',fps=1)
-plt.show()
+#plt.show()

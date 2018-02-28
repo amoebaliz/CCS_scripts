@@ -22,22 +22,26 @@ import os
 import sys
 
 # Define the list of interesting variables with their associated parameter on MARS server
-# NOTE: need to use net short wave radiation (not downward) as above - different code
+# NOTE: need to use net short wave radiation (not downward)
 # ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
 #               'msl' : '151.128' , 'radsw' : '176.128' , 'radlw' : '175.128' , 'precip' : '228.128'}
+# NOTE: NEW NOTE: need to use incident short wave radiation (i.e., downward) as above - different code
+#                 because ESM corrects for albedo affect in their ROMS cod
+# 'radsw' : '169.128'
 
-ecmwf_param = {'t2' : '167.128'}
+#ecmwf_param = {'t2' : '167.128'}
 #ecmwf_param = {'msl' : '151.128'}
 #ecmwf_param = {'d2' : '168.128'}
 #ecmwf_param = {'precip' : '228.128'}
-ecmwf_param = {'radsw' : '176.128'}
-ecmwf_param = {'radlw' : '175.128'}
+ecmwf_param = {'radsw' : '169.128'}
+#ecmwf_param = {'radlw' : '175.128'}
 #ecmwf_param = {'u10' : '165.128'}
 #ecmwf_param = {'v10' : '166.128'}
 
 # Choose years to download
-fyear = 2010
-lyear = 2010
+# FOR CCS PROJECT:
+fyear = 1981
+lyear = 1990
 nday = [31,28,31,30,31,30,31,31,30,31,30,31]
 
 server = ECMWFDataServer()

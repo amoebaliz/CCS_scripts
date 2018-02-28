@@ -166,7 +166,7 @@ class ERAinterim_processing():
                                 # frames to read
                                 # ERAinterim (nframes_per_day = 8) : for kt = 0 (day 1) we read frames 4 and 8
                                 kframe = (kt * self.nframes_per_day) + (kc+1) * self.ncumul
-                                tmp = tmp + self._readnc_oneframe(fid_radsw,'SSR',kframe-1) # C indexing hence -1
+                                tmp = tmp + self._readnc_oneframe(fid_radsw,'SSRD',kframe-1) # C indexing hence -1
                         radsw_out[kt,:,:] = tmp.copy()
                         this_day = dt.datetime(self.year,int(self.month),1,12,0) + dt.timedelta(days=int(kt))
                         time[kt] = (this_day - self.reftime).days + (this_day - self.reftime).seconds / 86400.
