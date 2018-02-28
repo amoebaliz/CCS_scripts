@@ -13,7 +13,8 @@ for n in range(12):
     time_vals[n] = ndays[n]/2.0 + dtot
     dtot += ndays[n]
 
-era_vars = ['t2','q2','u10','v10','msl','radsw','radlw','precip']
+#era_vars = ['t2','q2','u10','v10','msl','radsw','radlw','precip']
+era_vars = ['radsw']
 #dir_in ='/Users/elizabethdrenkard/ANALYSES/CCS/ERAinterim/' 
 dir_in = '/Users/liz.drenkard/external_data/ERAinterim/Forecast/'
 for var in era_vars:

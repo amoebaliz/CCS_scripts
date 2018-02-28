@@ -1,12 +1,19 @@
 #!/bin/bash
+
 # YELLOWSTONE
 SOSIE=/glade/u/home/edrenkar/TOOLS/sosie/bin
 dirin=/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/
+
 # MACBOOK
 #SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
 #dirin=/Users/elizabethdrenkard/external_data/ERAinterim
 
+#SWFSC
+SOSIE=/Users/liz.drenkard/TOOLS/
+dirin=/Users/liz.drenkard/external_data/ERAinterim/
+
 dirout=$dirin/drowned
+
 #ncvar=("Pair" "Qair" "Tair" "Uwind" "Vwind" "swrad" "lwrad" "rain")
 ncvar=("swrad")
 #echo $ncvar
