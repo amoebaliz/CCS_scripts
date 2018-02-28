@@ -53,15 +53,15 @@ jend   = int(326)
 salt = get_salt()
 cs = get_vel()
 print cs.shape
-cs_transect, z, lon, lat = pyroms.tools.transect(cs, istart, iend, jstart, jend, grd,vert=False, Cpos='rho')
+#cs_transect, z, lon, lat = pyroms.tools.transect(cs, istart, iend, jstart, jend, grd,vert=False, Cpos='rho')
 
-x = np.tile(np.array(range(transect[:].shape[1])),(transect[:].shape[0],1))
-v = np.linspace(-1*col_val,col_val, 50, endpoint=True)
+#x = np.tile(np.array(range(transect[:].shape[1])),(transect[:].shape[0],1))
+#v = np.linspace(-1*col_val,col_val, 50, endpoint=True)
 
-fig = plt.figure()
-ax = fig.add_subplot(111,axisbg=[0.5,0.5,0.5])
-v = np.linspace(-1*col_val,col_val, 50, endpoint=True)
-cs = ax.contourf(x,z,transect,v,extend = 'both', cmap='bwr')
+#fig = plt.figure()
+#ax = fig.add_subplot(111,axisbg=[0.5,0.5,0.5])
+#v = np.linspace(-1*col_val,col_val, 50, endpoint=True)
+#cs = ax.contourf(x,z,transect,v,extend = 'both', cmap='bwr')
 plt.colorbar(cs,ticks=[-.001, 0, 0.001])
 plt.show()
 

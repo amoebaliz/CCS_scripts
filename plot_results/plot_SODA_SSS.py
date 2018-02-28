@@ -47,7 +47,7 @@ def get_sss(ncfil):
 
 # DATA LOCATION 
 #ncfil = '/glade/p/work/edrenkar/external_data/SODA/soda_annual_avg_salt.nc'
-ncfil = '/Users/elizabethdrenkard/Desktop/soda_annual_avg_salt.nc'
+#ncfil = '/Users/elizabethdrenkard/Desktop/soda_annual_avg_salt.nc'
 sss, lat, lon = get_sss(ncfil)
 
 # CCS grid shape ONLY

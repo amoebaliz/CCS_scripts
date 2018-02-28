@@ -80,21 +80,28 @@ def outline_mask(mapid,mask_img,val,x0,y0,x1,y1):
 
 def get_sst(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
-    mon = MONS[i] 
-<<<<<<< HEAD
-    nc1 = '/Users/elizabethdrenkard/Desktop/HIS_4yr_clim_SST.nc'
-    nc2 = '/Users/elizabethdrenkard/Desktop/FUT_4yr_clim_SST.nc'
-=======
-    nc1 = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo01Y/4yr_clim_SST.nc'
-    nc2 = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo016_01Y/4yr_clim_SST.nc'
->>>>>>> 5a3e1fe4f1e70bd3874059569db971ddb881831c
+    mon = MONS[i]
+ 
+    # Surface
+    nc1 = '/Volumes/Abalone/CCS/his/clim/SST_10y_clim.nc'
+    nc2 = '/Volumes/Abalone/CCS/016/clim/SST_10y_clim.nc'
+
+    # 50-meter depth
+    # nc1 = '/Volumes/Abalone/CCS/his/clim/T50_10y_clim.nc'
+    # nc2 = '/Volumes/Abalone/CCS/016/clim/T50_10y_clim.nc'
+
+    # BOTTOM
+    #nc1 = '/Volumes/Abalone/CCS/his/clim/BOT_10y_clim.nc'
+    #nc2 = '/Volumes/Abalone/CCS/016/clim/BOT_10y_clim.nc'
+
+
     fid1 = nc.Dataset(nc1)
     sst1 = fid1.variables['temp'][i,:].squeeze()
     
     fid2 = nc.Dataset(nc2)
     sst2 = fid2.variables['temp'][i,:].squeeze()
     sst = sst2-sst1 
-    print np.min(sst),np.max(sst)
+    #print np.min(sst),np.max(sst)
     return sst,mon
 
 
@@ -131,13 +138,16 @@ def get_vel(i):
 
 # CCS grid shape ONLY
 GRD = pyroms.grid.get_ROMS_grid('CCS')
+mask = GRD.hgrid.mask_rho[:]
+glat = GRD.hgrid.lat_rho[:]
+glon = GRD.hgrid.lon_rho[:]
 #glat = GRD.hgrid.lat_rho[1:-1,1:-1]
 #glon = GRD.hgrid.lon_rho[1:-1,1:-1]
 #angs = GRD.hgrid.angle_rho[1:-1,1:-1]
-mask = GRD.hgrid.mask_rho[1:-1,1:-1]
-glat = GRD.hgrid.lat_rho[1:-1,1:-1]
-glon = GRD.hgrid.lon_rho[1:-1,1:-1]
-angs = GRD.hgrid.angle_rho[1:-1,1:-1]
+#mask = GRD.hgrid.mask_rho[1:-1,1:-1]
+#glat = GRD.hgrid.lat_rho[1:-1,1:-1]
+#glon = GRD.hgrid.lon_rho[1:-1,1:-1]
+#angs = GRD.hgrid.angle_rho[1:-1,1:-1]
 
 
 ### OFFSETS
@@ -177,15 +187,12 @@ n=0
 m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 
-<<<<<<< HEAD
 #u,v,mag,mon = get_vel(0)
 sst,mon = get_sst(0)
-im1 = m.pcolor(glon,glat,sst[1:-1,1:-1],vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
-=======
-
+#im1 = m.pcolor(glon,glat,sst[:],vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
+im1 = m.pcolor(glon,glat,sst[:],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
 #u,v,mag,mon = get_vel(0)
 #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
->>>>>>> 5a3e1fe4f1e70bd3874059569db971ddb881831c
 #im2 = m.quiver(glon[::afreq],glat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
 
 #plt.show()
@@ -195,20 +202,15 @@ def updatefig(i):
     print i
     # REMOVE images after first step
     #im1.remove()
-<<<<<<< HEAD
     # im2.remove()
-=======
     #im2.remove()
->>>>>>> 5a3e1fe4f1e70bd3874059569db971ddb881831c
     if i > 0:
        im1.remove()
     sst,mon = get_sst(i)
+    print np.mean(sst), np.std(sst)
     #u,v,mag,mon = get_vel(i)
-<<<<<<< HEAD
-    im1   = m.pcolormesh(glon,glat,sst[1:-1,1:-1],vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
-=======
-    im1   = m.pcolormesh(glon,glat,sst,vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
->>>>>>> 5a3e1fe4f1e70bd3874059569db971ddb881831c
+    #im1   = m.pcolormesh(glon,glat,sst,vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
+    im1   = m.pcolormesh(glon,glat,sst,vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
     #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
     #im2 = m.quiver(glon[::afreq,::afreq],glat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=3,zorder=map_order+2)
     polygon_patch(m,ax)
@@ -219,10 +221,8 @@ def updatefig(i):
        cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
 
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
-<<<<<<< HEAD
-ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'ImageMagickWriter',fps=1)
-=======
+#ani.save('CCS_ROMS_50m_DIFS.gif', writer = 'imagemagick',fps=1)
 ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'imagemagick',fps=1)
->>>>>>> 5a3e1fe4f1e70bd3874059569db971ddb881831c
+# ani.save('CCS_ROMS_BOT_DIFS.gif', writer = 'imagemagick',fps=1)
 #ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'imagemagick',fps=1)
 plt.show()

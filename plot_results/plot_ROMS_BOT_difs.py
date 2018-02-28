@@ -74,66 +74,45 @@ def outline_mask(mapid,mask_img,val,x0,y0,x1,y1):
         v.append((np.nan, np.nan))
     segments = np.array(l)
     vip_segments = np.array(v)
-    mapid.plot(segments[:,0], segments[:,1], latlon=True, color=(0,0,0), linewidth=.75,zorder=map_order+2)
-    mapid.plot(vip_segments[:,0], vip_segments[:,1], latlon=True, color=(0,0,0), linewidth=.75,zorder=map_order+3)
+    mapid.plot(segments[:,0], segments[:,1], latlon=True, color=(0,0,0), linewidth=1,zorder=map_order+2)
+    mapid.plot(vip_segments[:,0], vip_segments[:,1], latlon=True, color=(0,0,0), linewidth=1,zorder=map_order+3)
 
-def fill_CA_Gulf(field):
-    A = 180*np.ones(4,dtype=np.int)
-    B = 178*np.ones(1,dtype=np.int)
-    BB = 176*np.ones(2,dtype=np.int)
-    C = 174*np.ones(4,dtype=np.int)
-    D = 171*np.ones(8,dtype=np.int)
-    E = 164*np.ones(11,dtype=np.int)
-    F = 159*np.ones(12,dtype=np.int)
-    nc = np.append(A,np.append(B,np.append(BB,np.append(C,np.append(D,np.append(E,F))))))
-    for nr in range(40,80+1):
-        field[nr,nc[nr-40]:]=ma.masked
-        
-    return field    
 
 def get_sst(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
-    mon = MONS[i] 
-    ncfile = '/Users/elizabethdrenkard/Desktop/HIS_4yr_clim_SST.nc'
-    fid = nc.Dataset(ncfile)
-    sst = fid.variables['temp'][i,0,:].squeeze()    
-    return sst,mon
-
-def get_vel(i):
-    MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     mon = MONS[i]
-#    ncfile = '/Users/elizabethdrenkard/Desktop/CCS_ROMS_CLIM_FLS/CCS_5y_his_UV_clim.nc'
-#    ncfile = '/Users/elizabethdrenkard/Desktop/4yr_clim_UV.nc'
-    fid = nc.Dataset(ncfile)
-    u_vel = np.squeeze(fid.variables['u'][i,:,:,:])
-    v_vel = np.squeeze(fid.variables['v'][i,:,:,:])
-    # Interpolate
-    u_vel_2 = (u_vel[1:-1,:-1]+u_vel[1:-1,1:])/2
-    v_vel_2 = (v_vel[:-1,1:-1]+v_vel[1:,1:-1])/2
-    # projection
-    u4 = u_vel_2*(np.cos(angs)) + v_vel_2*(np.cos(np.pi/2 + angs))
-    v4 = u_vel_2*(np.sin(angs)) + v_vel_2*(np.sin(np.pi/2 + angs))
 
-    mag = np.sqrt((u_vel_2)**2+(v_vel_2)**2)
-    return u4, v4, mag, mon
+    # BOTTOM
+    nc1 = '/Volumes/Abalone/CCS/his/clim/BOT_10y_clim.nc'
+    nc2 = '/Volumes/Abalone/CCS/016/clim/BOT_10y_clim.nc'
+
+
+    fid1 = nc.Dataset(nc1)
+    sst1 = fid1.variables['temp'][i,:].squeeze()
+    
+    fid2 = nc.Dataset(nc2)
+    sst2 = fid2.variables['temp'][i,:].squeeze()
+    sst = sst2-sst1 
+    print np.min(sst),np.max(sst)
+    return sst,mon
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 
-# DATA LOCATION 
-#dir = '/Users/elizabethdrenkard/Desktop/soda_fils/'
-#fil_pre = 'soda3.4.1_1981-2010_clim_'
-
-dir =  
-fil_pre =
-
 # CCS grid shape ONLY
 GRD = pyroms.grid.get_ROMS_grid('CCS')
-mask = GRD.hgrid.mask_rho[1:-1,1:-1] 
-print mask.shape
-glat = GRD.hgrid.lat_rho[1:-1,1:-1]
-glon = GRD.hgrid.lon_rho[1:-1,1:-1]
-angs = GRD.hgrid.angle_rho[1:-1,1:-1]
+mask = GRD.hgrid.mask_rho[:]
+glat = GRD.hgrid.lat_rho[:]
+glon = GRD.hgrid.lon_rho[:]
+dep  = GRD.vgrid.h[:]
+#glat = GRD.hgrid.lat_rho[1:-1,1:-1]
+#glon = GRD.hgrid.lon_rho[1:-1,1:-1]
+#angs = GRD.hgrid.angle_rho[1:-1,1:-1]
+#mask = GRD.hgrid.mask_rho[1:-1,1:-1]
+#glat = GRD.hgrid.lat_rho[1:-1,1:-1]
+#glon = GRD.hgrid.lon_rho[1:-1,1:-1]
+#angs = GRD.hgrid.angle_rho[1:-1,1:-1]
+
 
 ### OFFSETS
 joffset = 0
@@ -146,7 +125,11 @@ vip_eta = [0,870]
 vip_xi  = [0,376]
 
 # INITIAL FIGURE
-fig, ax = plt.subplots(figsize=(8,8))
+#fig, ax = plt.subplots(figsize=(4,6))
+#fig, ax = plt.subplots(figsize=(4,8))
+#fig, ax = plt.subplots(figsize=(4,4))
+fig, ax = plt.subplots(figsize=(4,6))
+fig.tight_layout()
 m = Basemap(llcrnrlat=np.min(glat)-m_offset,urcrnrlat = np.max(glat)+m_offset,llcrnrlon=np.min(glon)-m_offset,urcrnrlon=np.max(glon)+m_offset, resolution='i', ax=ax)
 
 P = m.pcolormesh(glon,glat,mask,vmin=.5,vmax=.75,edgecolors='face',cmap='Blues',zorder=map_order)
@@ -164,41 +147,68 @@ for ii in range(glat.shape[1]-2):
     m.plot((glon[-1,ii],glon[-1,ii+1]),(glat[-1,ii],glat[-1,ii+1]),linewidth=2,color='k',zorder=map_order+1)
 
 polygon_patch(m,ax)
-afreq = 25
-#plt.title('SST (oC)')
-tx =plt.text(-118,46.5,'', fontsize=20,zorder=map_order+5)
-n=0
 
-m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
-m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
+tx =plt.text(-111.5,31,'', fontsize=20,zorder=map_order+5)
+
+# TOP PLOT
+#m.drawmeridians([-128,-124], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
+#m.drawparallels([42,46,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
+
+# TOP MIDDLE PLOT
+# m.drawmeridians([-128,-124], labels=[0,0,0,0], linewidth=2,fmt='%d', fontsize=18,zorder=map_order+5)
+# m.drawparallels([36,40], labels=[0,0,0,0], linewidth=2,fmt='%d', fontsize=18,zorder=map_order+5)
+
+# BOTTOM MIDDLE PLOT
+# m.drawmeridians([-120,-116], labels=[0,0,0,0], linewidth=2.5,fmt='%d', fontsize=18,zorder=map_order+5)
+# m.drawparallels([32,36], labels=[0,0,0,0], linewidth=2.5,fmt='%d', fontsize=18,zorder=map_order+5)
+
+# BOTTOM PLOT
+m.drawmeridians([-116,-112], labels=[0,0,0,0], linewidth=1,fmt='%d', fontsize=18,zorder=map_order+5)
+m.drawparallels([24,28,32], labels=[0,0,0,0], linewidth=1,fmt='%d', fontsize=18,zorder=map_order+5)
 
 sst,mon = get_sst(0)
-im1 = m.pcolor(glon,glat,sst[1:-1,1:-1],vmin=8,vmax=28, cmap='nipy_spectral',zorder=map_order)
-#im2 = m.quiver(glon[::afreq],glat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
-
-#plt.show()
+im1 = m.pcolor(glon,glat,sst[:],vmin=0,vmax=4,cmap='nipy_spectral',zorder=map_order)
+im2 = m.contour(glon,glat,dep,[100,200],linewidths=1,linestyles='dotted',colors='white',zorder=map_order+1)
 # ANIMATION
 def updatefig(i):
     global im1,im2,tx
     print i
     # REMOVE images after first step
     #im1.remove()
+    # im2.remove()
     #im2.remove()
-    #if i > 0:
-    #   im1.remove()
-    #sst,mon = get_sst(i)
-    #u,v,mag,mon = get_vel(i)
-    im1   = m.pcolormesh(glon,glat,sst[1:-1,1:-1], vmin=8,vmax=28,cmap='nipy_spectral',zorder=map_order)
-    #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
-    #im2 = m.quiver(glon[::afreq,::afreq],glat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=3,zorder=map_order+2)
+    if i > 0:
+       im1.remove()
+    sst,mon = get_sst(i)
+    im1   = m.pcolormesh(glon,glat,sst,vmin=0,vmax=4,cmap='nipy_spectral',zorder=map_order)
+    im2   = m.contour(glon,glat,dep,[100,200],linewidths=.5,linestyles='dotted',colors='white',zorder=map_order+1)
     polygon_patch(m,ax)
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
     tx_str = mon 
     tx.set_text(tx_str)
     # ADD Colorbar on first iteration 
-    if i == 0:
-       cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
+    #if i == 0:
+    #   cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
+
+# TOP PLOT
+# ax.set_ylim(40,np.max(glat)+m_offset-.4)
+# ax.set_xlim(-128.8,-123.8)
+
+# TOP MIDDLE PLOT
+#ax.set_ylim(35.5,41)
+#ax.set_xlim(-125,-121.5)
+
+# BOTTOM MIDDLE PLOT
+# ax.set_ylim(31.5,35)
+# ax.set_xlim(-121,-116.5)
+
+# BOTTOM PLOT
+ax.set_ylim(22.7,32)
+ax.set_xlim(-117,np.max(glon)+m_offset)
 
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
-ani.save('CCS_ROMS_SST_CLIM.gif', writer = 'ImageMagickWriter',fps=1)
-#ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'ImageMagickWriter',fps=1)
+# ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'ImageMagickWriter',fps=1)
+# ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'imagemagick',fps=1)
+ani.save('CCS_ROMS_BOT_DIFS.gif', writer = 'imagemagick',fps=1)
+#ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'imagemagick',fps=1)
 plt.show()
