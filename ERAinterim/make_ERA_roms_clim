@@ -8,8 +8,9 @@ dir_fc=/Users/elizabethdrenkard/ANALYSES/CCS/ERAinterim
 dir_fc=/Users/liz.drenkard/external_data/ERAinterim/Forecast/
 
 # NOTE: need to get from yearly directories
-for var in t2 msl q2 u10 v10 radsw radlw precip; do
-    for mon in $( seq -f %02g 1 12 ) ; do
+#for var in t2 msl q2 u10 v10 radsw radlw precip; do
+for var in radsw; do
+     for mon in $( seq -f %02g 1 12 ) ; do
         for yr in {1981..2010}; do
             cp $dir_fc/$yr/${var}_*_${mon}_monthly_ROMS.nc $dir_fc
         done
