@@ -58,4 +58,4 @@ vii) interpolate atmospheric files/salinity to add to the original
 	python CESM_2_ERA.py  (non-winds)
         python CESM_2_CCMP.py (winds)
         python CESM_2_SSS.py  (SSS) 
-
+NOTE: performed on macbookpro laptop because requires ESMF interpolation 
