@@ -1,0 +1,13 @@
+#!/bin/bash
+fyear=1981
+lyear=2010
+for year in $(seq $fyear $lyear) ; do
+    for var in q2 msl precip radlw radsw t2 u10 v10; do
+    #for var in radsw; do     
+        ncfil=/Users/liz.drenkard/external_data/DFS5.2/drowned_${var}_DFS5.2_y${year}_ROMS_version.nc
+        #ls -la $ncfil
+        if [ ! -f "$ncfil" ]; then
+           echo "download:" $year $var
+        fi
+    done
+done

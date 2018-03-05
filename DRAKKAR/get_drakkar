@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# FOR EACH VARIABLE
+#for var in msl precip q2 radlw radsw t2 u10 v10; do
+#for var in msl; do
+for var in t2 u10 v10; do
+#for var in radsw; do
+    echo $var
+    # FOR EACH YEAR 1981-2010
+    for yr in {1981..2010}; do
+    # for yr in {1997..1999}; do  
+        ncfil=drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc
+        #echo $ncfil
+        scp -o ProxyCommand="ssh alnilam nc triton 22" liz@triton.esm.rutgers.edu:/t3/workdir/forcings_sets/DFS5.2/$ncfil /Users/liz.drenkard/external_data/DFS5.2/
+        # MAKE MONTHLY MEANS... 
+        #for mon in {1..12}; do
+        #    echo $mon
+        #done
+    done
+done
