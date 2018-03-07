@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# MACBOOK PRO DIRECTORY
+# dir_fc=
+
+# NOAA SWFSC DIRECTORY
+dir_fc=/Users/liz.drenkard/external_data/DFS5.2/
+
+
+# NOTE: need to get from yearly directories
+for yr in {1981..2010}; do
+    n=0
+    for var in t2 msl q2 u10 v10 radsw radlw precip; do
+        ncfil=$dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc
+        ncrename -d $var,time $ncfil
+        ((n+=1))     
+    done
+
+done
+
+# Edit time values
+#python edit_ERAinterim_timevar.py
+
+

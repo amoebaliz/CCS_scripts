@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# MACBOOK PRO DIRECTORY
+# dir_fc=
+
+# NOAA SWFSC DIRECTORY
+dir_fc=/Users/liz.drenkard/external_data/DFS5.2/
+
+# number of days in a month; edited for leaps
+nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
+
+# number of daily increments (8 for 3hrls; 1 for daily) for:
+# t2 msl q2 u10 v10 radsw radlw precip
+nts=(8 8 8 8 8 1 1 1)
+
+# variable counter
+nvar=0
+
+for var in t2 msl q2 u10 v10 radsw radlw precip; do
+    echo $var
+    # NOTE: need to get from yearly directories
+    for yr in {1981..1985}; do
+        echo $yr
+        ineq=$((yr%4))  
+        if (($ineq == 0)); then
+            nmdays[1]=29
+        else
+            nmdays[1]=28
+        fi
+
+        # bounds
+        a=1
+        b=0
+        # get monthly mean
+        for mon in {1..12} ; do
+
+            # number of time values in a month
+            c=$((${nts[$nvar]}*${nmdays[$((mon-1))]}))
+            echo $c
+            ((b+=$c))
+
+            monstr=`printf %02g $mon`
+            ncrcat -O -F -d time,$a,$b $dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc $dir_fc/${var}_DFS5.2_${yr}_${monstr}_monthly_ROMS.nc # TESTING
+            #ncra -O -F -d time,$a,$b $dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc $dir_fc/${var}_DFS5.2_${yr}_${monstr}_monthly_ROMS.nc   # ACTUAL  
+            ((a+=$c))
+
+        done
+    done
+
+    ncrcat -O -h $dir_fc/${var}_1981-2010_monthly_clim_??.nc $dir_fc/${var}_1981-2010_monthly_clim.nc # TESTING
+    #ncra -O -h $dir_fc/${var}_1981-2010_monthly_clim_??.nc $dir_fc/${var}_1981-2010_monthly_clim.nc   # ACTUAL 
+    #rm $dir_fc/${var}_1981-2010_monthly_clim_??.nc
+    #ncatted -O -h -a cycle_length,time,a,f,365 $dir_fc/${var}_1981-2010_monthly_clim.nc
+    ((nvar+=1))
+
+done
+
+# Edit time values
+#python edit_ERAinterim_timevar.py
+
+

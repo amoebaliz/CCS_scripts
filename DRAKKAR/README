@@ -1,0 +1,14 @@
+# ACCESSING/PROCESSING DRAKKAR FILES
+
+1) ./get_drakkar
+# Access the Rutgers ESM computer for original drakkar files
+# NOTE: these file are already "drowned" by SOSIE
+
+2) ./prelim_file_edit 
+# Sorts files by year and changes the record dimension name to 'time'
+# NOTE: only run once
+
+3) ./make_DFS5.3_roms_clim
+# Creates monthly climatologies for the years of interest
+# NOTE: the 3-hrly fields start at hr 3 of a given day and end
+#       with midnight of the next; always 8 time vals per day 

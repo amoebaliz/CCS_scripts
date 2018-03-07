@@ -9,5 +9,6 @@ for year in $(seq $fyear $lyear) ; do
         if [ ! -f "$ncfil" ]; then
            echo "download:" $year $var
         fi
+        ncview $ncfil
     done
 done

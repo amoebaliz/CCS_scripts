@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# ORGANIZING YEARLY FOLDERS
+#
+# for yr in {1981..1981}; do
+#     mkdir $dir_fc/$yr
+#     mv $dir_fc/drowned_*_DFS5.2_y${yr}_ROMS_version.nc $dir_fc/$yr
+# done
+
+
+# CHANGING RECORD VARIABLE TO 'TIME'
+#
+# NOAA SWFSC DIRECTORY
+dir_fc=/Users/liz.drenkard/external_data/DFS5.2/
+
+# time dimension names
+var_time=(tair_time pair_time qair_time wind_time wind_time srf_time lrf_time rain_time)
+
+# variable counter
+nvar=0
+for var in t2 msl q2 u10 v10 radsw radlw precip; do
+
+    timstr=${var_time[$nvar]}
+    echo $timstr
+    for yr in {1982..2010}; do
+        echo $yr
+        ncrename -d $timstr,time $dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc 
+        # reverse old and new dimension names if want to return to prior state
+    done
+
+    ((nvar+=1))
+done
+
+
+# ADDING MIDNIGHT FROM PRIOR YEAR/ SUBTRACTING MIDNIGHT FROM NEXT YEAR
+# Decided doesn't really matter - either way gaining/losing 1.5 hrs, 
+# just depends if losing it at beginning or end of day
+
+
+
+
+
