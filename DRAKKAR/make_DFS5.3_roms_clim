@@ -4,7 +4,7 @@
 # dir_fc=
 
 # NOAA SWFSC DIRECTORY
-dir_fc=/Users/liz.drenkard/external_data/DFS5.2/
+dir_fc=/Users/liz.drenkard/external_data/DFS5.2
 
 # number of days in a month; edited for leaps
 nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
@@ -19,8 +19,9 @@ nvar=0
 for var in t2 msl q2 u10 v10 radsw radlw precip; do
     echo $var
     # NOTE: need to get from yearly directories
-    for yr in {1981..1985}; do
+    for yr in {1981..2010}; do
         echo $yr
+        # Leap year check
         ineq=$((yr%4))  
         if (($ineq == 0)); then
             nmdays[1]=29
@@ -28,34 +29,52 @@ for var in t2 msl q2 u10 v10 radsw radlw precip; do
             nmdays[1]=28
         fi
 
-        # bounds
+        # variable time bounds
         a=1
         b=0
         # get monthly mean
         for mon in {1..12} ; do
 
-            # number of time values in a month
+            # number of time values in a month:
+            #   daily = 1*(#days in month)
+            #   3hrly = 8*(#days in month)
             c=$((${nts[$nvar]}*${nmdays[$((mon-1))]}))
             echo $c
             ((b+=$c))
 
             monstr=`printf %02g $mon`
-            ncrcat -O -F -d time,$a,$b $dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc $dir_fc/${var}_DFS5.2_${yr}_${monstr}_monthly_ROMS.nc # TESTING
-            #ncra -O -F -d time,$a,$b $dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc $dir_fc/${var}_DFS5.2_${yr}_${monstr}_monthly_ROMS.nc   # ACTUAL  
+            # CHECK if getting correct time points together
+            #ncrcat -O -F -d time,$a,$b $dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc $dir_fc/${var}_DFS5.2_${yr}_${monstr}_monthly_ROMS.nc # TESTING
+            
+            # AVERAGE OVER MONTHLY VALUES
+            ncra -O -F -d time,$a,$b $dir_fc/$yr/drowned_${var}_DFS5.2_y${yr}_ROMS_version.nc $dir_fc/${var}_DFS5.2_${yr}_${monstr}_monthly_ROMS.nc   # ACTUAL  
             ((a+=$c))
 
         done
     done
 
-    ncrcat -O -h $dir_fc/${var}_1981-2010_monthly_clim_??.nc $dir_fc/${var}_1981-2010_monthly_clim.nc # TESTING
-    #ncra -O -h $dir_fc/${var}_1981-2010_monthly_clim_??.nc $dir_fc/${var}_1981-2010_monthly_clim.nc   # ACTUAL 
-    #rm $dir_fc/${var}_1981-2010_monthly_clim_??.nc
-    #ncatted -O -h -a cycle_length,time,a,f,365 $dir_fc/${var}_1981-2010_monthly_clim.nc
+    # average monthly value over all years 
+    for mon in {1..12} ; do
+        monstr=`printf %02g $mon`
+
+        # CHECK ACCUMULATING CORRECT TIMES
+        #ncrcat -O -h $dir_fc/${var}_DFS5.2_????_${monstr}_monthly_ROMS.nc $dir_fc/${var}_DFS5.2_${monstr}_1981-1985_all.nc # TESTING
+        
+        # AVERAGE OVER ALL YEARS
+        ncra -O -h $dir_fc/${var}_DFS5.2_????_${monstr}_monthly_ROMS.nc $dir_fc/${var}_${monstr}_monthly_clim.nc   # ACTUAL 
+        rm $dir_fc/${var}_DFS5.2_????_${monstr}_monthly_ROMS.nc
+        
+        # ADD CYCLE LENGTH ATTRIBUTE FOR USE WITH CLIMATOLOGICAL FORCING
+        ncatted -O -h -a cycle_length,time,a,f,365 $dir_fc/${var}_${monstr}_monthly_clim.nc
+
+    done
+    # CONCATENATE ALL MONTHLY MEANS TO GET CLIM
+    ncrcat $dir_fc/${var}_??_monthly_clim.nc $dir_fc/climatologies/${var}_1981-2010_monthly_clim.nc
+    rm $dir_fc/${var}_??_monthly_clim.nc
     ((nvar+=1))
 
 done
 
-# Edit time values
-#python edit_ERAinterim_timevar.py
-
+# Edit time values attributes to say NOLEAP
+python edit_DFS_timevar.py
 

@@ -4,6 +4,9 @@
 # Access the Rutgers ESM computer for original drakkar files
 # NOTE: these file are already "drowned" by SOSIE
 
+   ./check_dfs5.2_fils
+# Check if any files are missing
+     
 2) ./prelim_file_edit 
 # Sorts files by year and changes the record dimension name to 'time'
 # NOTE: only run once
