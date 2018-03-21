@@ -11,7 +11,7 @@
 # CHANGING RECORD VARIABLE TO 'TIME'
 #
 # NOAA SWFSC DIRECTORY
-# dir_fc=/Users/liz.drenkard/external_data/DFS5.2/
+# dir_fc=/Users/liz.drenkard/external_data/DFS5.2
 
 # time dimension names
 # var_time=(tair_time pair_time qair_time wind_time wind_time srf_time lrf_time rain_time)
