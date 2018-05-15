@@ -239,17 +239,17 @@ for nm in range(nmons):
 
     dif_all_stor[:,ROMS_MASK] = np.ma.masked
     avg_dif_sst[nm,:] = np.ma.mean(np.ma.mean(dif_all_stor,axis=2),axis=1).squeeze()
-    print avg_dif_sst
+    #print avg_dif_sst
     ##########
     # OUTPUT #
     ##########
-    #print "COLDEST"
+    print "COLDEST"
     #print 'ABS', np.argsort(avg_fut_sst)[:5]+1
-    #print 'DIF', np.argsort(avg_dif_sst)[:5]+1
+    print 'DIF', np.argsort(avg_dif_sst[nm,:].squeeze())[:5]+1
 
-    #print "WARMEST"
+    print "WARMEST"
     #print 'ABS', np.argsort(avg_fut_sst)[-5:]+1
-    #print 'DIF', np.argsort(avg_dif_sst)[-5:]+1
+    print 'DIF', np.argsort(avg_dif_sst[nm,:].squeeze())[-5:]+1
 
     #print "MIDDLE"
     #print np.argsort(sst_stor)[(33/2)-2:(33/2)+3]+1   
