@@ -25,8 +25,8 @@ import sys
 # NOTE: need to use net short wave radiation (not downward)
 # ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
 #               'msl' : '151.128' , 'radsw' : '176.128' , 'radlw' : '175.128' , 'precip' : '228.128'}
-# NOTE: NEW NOTE: need to use incident short wave radiation (i.e., downward) as above - different code
-#                 because ESM corrects for albedo affect in their ROMS cod
+# NOTE: UPDATE ABOVE  NOTE: need to use incident short wave radiation (i.e., downward) as above - different code
+#                 because ESM corrects for albedo affect in their ROMS code
 # 'radsw' : '169.128'
 
 #ecmwf_param = {'t2' : '167.128'}

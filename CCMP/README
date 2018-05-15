@@ -40,7 +40,22 @@ v)  ./concat_daily_anoms
 #
 # INTERPOLATE CCMP and ADD TO ERAi CLIMATOLOGY
 ##########
-vi) python CCMP_2_ROMS.py
+# MAY 15, 2018: DROWNING CCMP:
+vi) ./get_ERAi_.25deg_grid.py
+    CCMP does not appear to have a LSM. However, "it uses ERAi
+    0.25 deg model wind fields as a first guess". So, assuming 
+    CCMP shares the ERAi grid (may be inacurate but it's something).
+    Need to use the ERAi .125deg LSM so  
+
+vii) python ERAi_LSM2_CCMP.py
+     Uses ESMF to interpolate ERAi .125deg grid to CCMP coordinates. 
+     Also converts any very small values resulting from interpolation 
+     to 0.
+
+viii) 
+      Drown CCMP wind anomalies using SOSIE and above the generated grid 
+
+iv) python CCMP_2_ROMS.py
 
         # Daily anomaly files are created and stored @ 
         /glade/p/work/edrenkar/external_data/CCMP

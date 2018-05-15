@@ -7,12 +7,14 @@ invar = ['swrad']
 
 #invar = ['Uwind','Vwind']
 for nvar in range(len(invar)):
+    ncfil1 = '/Users/elizabethdrenkard/Desktop/' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
+    ncfil2 = '/Users/elizabethdrenkard/Desktop/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'  
     #ncfil1 = '/Users/elizabethdrenkard/external_data/ERAinterim/global/' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
     #ncfil2 = '/Users/elizabethdrenkard/external_data/ERAinterim/global/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
     #ncfil1 = '/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/global/'+ filvar[nvar] + '_1981-2010_monthly_clim.nc'
     #ncfil2 = '/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/global/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
-    ncfil1 = '/Users/liz.drenkard/external_data/ERAinterim/Forecast/climatologies/'+ filvar[nvar] + '_1981-2010_monthly_clim.nc'
-    ncfil2 = '/Users/liz.drenkard/external_data/ERAinterim/Forecast/climatologies/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
+#    ncfil1 = '/Users/liz.drenkard/external_data/ERAinterim/Forecast/climatologies/'+ filvar[nvar] + '_1981-2010_monthly_clim.nc'
+#    ncfil2 = '/Users/liz.drenkard/external_data/ERAinterim/Forecast/climatologies/drowned/drowned_ERAi_' + filvar[nvar] + '_1981-2010_monthly_clim.nc'
     fid1 = nc.Dataset(ncfil1)
     fid2 = nc.Dataset(ncfil2,'a')
 
