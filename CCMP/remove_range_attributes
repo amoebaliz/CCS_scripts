@@ -3,7 +3,8 @@
 # REMOVES THE VARIABLES: VALID_MIN AND VALID_MAX. 
 # ANYTHING EXCEEDING THESE VALUES GETS FILLED/treated as 0
 #ncfil=/glade/p/work/edrenkar/external_data/CCMP/CCMP_MAY01-APR02_daily_anom.nc 
-FILES=/glade/p/work/edrenkar/Inputs/construct/Deltas/Forcings/drowned/*
+#FILES=/glade/p/work/edrenkar/Inputs/construct/Deltas/Forcings/drowned/*
+FILES=./drowned_CCMP_?_anom.nc
 for ncfil in $FILES; do
     ncatted -O -a valid_range,,d,, $ncfil $ncfil
     ncatted -O -a valid_min,,d,, -a valid_max,,d,, $ncfil $ncfil

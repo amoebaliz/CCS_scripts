@@ -10,18 +10,18 @@ import ESMF
 #fidVclim = nc.Dataset('/glade2/scratch2/edrenkar/CCS-inputs/drowned_ERAi_v10_1981-2010_monthly_clim.nc')
 
 # MacBook
-fidUclim = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned_winds/drowned_ERAi_u10_1981-2010_monthly_clim.nc')
-fidVclim = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned_winds/drowned_ERAi_v10_1981-2010_monthly_clim.nc')
+fidUclim = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned/drowned_ERAi_u10_1981-2010_monthly_clim.nc')
+fidVclim = nc.Dataset('/Users/elizabethdrenkard/external_data/ERAinterim/drowned/drowned_ERAi_v10_1981-2010_monthly_clim.nc')
 
 Uclim = fidUclim.variables['Uwind'][:]
 Vclim = fidVclim.variables['Vwind'][:]
 
-clon = fidUclim.variables['lon'][:]
-clon[clon>180]=clon[clon>180]-360
-clat = fidUclim.variables['lat'][:]
+elon = fidUclim.variables['lon'][:]
+elon[elon>180]=elon[elon>180]-360
+elat = fidUclim.variables['lat'][:]
 
-Xi,Yi = np.meshgrid(clon,clat)
-sourcegrid = ESMF.Grid(np.array(Yi.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+Xn,Yn = np.meshgrid(elon,elat)
+destgrid = ESMF.Grid(np.array(Yn.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
 
 
 # CCMP file
@@ -32,18 +32,18 @@ CCMP_fil = '/Users/elizabethdrenkard/external_data/CCMP/CCMP_'+yr+'_daily_anom.n
 # YELLOWSTONE
 #CCMP_fil = '/glade/p/work/edrenkar/external_data/CCMP/CCMP_'+yr+'_daily_anom.nc'   
 fidCCMP = nc.Dataset(CCMP_fil)
-FinU = fidCCMP.variables['u_anom'][:]
-FinV = fidCCMP.variables['v_anom'][:]
+anomU = fidCCMP.variables['u_anom'][:]
+anomV = fidCCMP.variables['v_anom'][:]
 
-lon = fidCCMP.variables['longitude'][:]
-lon[lon>180]=lon[lon>180]-360
-lat = fidCCMP.variables['latitude'][:]
+clon = fidCCMP.variables['longitude'][:]
+clon[clon>180]=clon[clon>180]-360
+clat = fidCCMP.variables['latitude'][:]
 
-nx = len(lon)
-ny = len(lat)
+nx = len(elon)
+ny = len(elat)
 
-Xn, Yn = np.meshgrid(lon,lat)
-destgrid = ESMF.Grid(np.array(Xn.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+Xi, Yi = np.meshgrid(clon,clat)
+sourcegrid = ESMF.Grid(np.array(Xi.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
 ## POINTERS
 source_lon = sourcegrid.get_coords(0)
 source_lat = sourcegrid.get_coords(1)
@@ -55,43 +55,48 @@ source_lat[...] = Yi
 dest_lon[...] = Xn
 dest_lat[...] = Yn
 
-sourcefieldU = ESMF.Field(sourcegrid, name = 'ERAi_Clim_Uwind')
-sourcefieldV = ESMF.Field(sourcegrid, name = 'ERAi_Clim_Vwind')
-destfieldU = ESMF.Field(destgrid, name = 'CCMP_Anom')
-destfieldV = ESMF.Field(destgrid, name = 'CCMP_Anom')
+# CCMP to ERAi
+sourcefieldU = ESMF.Field(sourcegrid, name = 'CCMP_Anom')
+sourcefieldV = ESMF.Field(sourcegrid, name = 'CCMP_Anom')
+
+destfieldU = ESMF.Field(destgrid, name = 'ERAi_CCMPanom_Uwind')
+destfieldV = ESMF.Field(destgrid, name = 'ERAi_CCMPanom_Vwind')
+
 # Allocate output variables
-Uout = np.zeros(FinU.shape)
-Vout = np.zeros(FinV.shape)
+Uout = np.zeros((365,ny,nx))
+Vout = np.zeros((365,ny,nx))
 
 ## ITERATE OVER ALL DAYS TO ADD MONTHLY CLIM   
 ## CCMP FILE (Starts with MAY, ends with APRIL)
 ndays = np.array((31,30,31,31,30,31,30,31,31,28,31,30))
+n2 = 0
 for nmon in range(12):
-    # REGULAR GRID BILINIEAR INTERPOLATION
-    #regCU =  griddata(clon,clat,Uclim[nmon,:].squeeze(),lon,lat)
-    #regCV =  griddata(clon,clat,Vclim[nmon,:].squeeze(),lon,lat)
-    sourcefieldU.data[...] = Uclim[nmon,:].squeeze()
-    sourcefieldV.data[...] = Vclim[nmon,:].squeeze()
-    regridU = ESMF.Regrid(sourcefieldU, destfieldU, regrid_method = ESMF.RegridMethod.BILINEAR,  
-                     unmapped_action = ESMF.UnmappedAction.IGNORE)
-    regridV = ESMF.Regrid(sourcefieldV, destfieldV, regrid_method = ESMF.RegridMethod.BILINEAR,
-                     unmapped_action = ESMF.UnmappedAction.IGNORE)
-    destfieldU = regridU(sourcefieldU, destfieldU) 
-    destfieldV = regridV(sourcefieldV, destfieldV)    
  
     md = nmon-(mon0-1)
     nd = np.sum(ndays[:md])
-    for nt in range(ndays[md]):
+    
+    for nt in range(ndays[md]):        
         # daily index in CCMP file
         n = nd + nt
+        print nmon, n, n2
         # add regridded clim to CCMP anomaly 
-        #if n == 112:
-        #   plt.figure();plt.pcolor(destfieldU.data);plt.colorbar()
-        #   plt.figure();plt.pcolor(FinU[n,:].squeeze());plt.colorbar()
-        #   plt.figure();plt.pcolor(FinU[n,:].squeeze()+destfieldU.data);plt.colorbar()
-        #   plt.show()
-        Uout[n,:] = FinU[n,:].squeeze() + destfieldU.data
-        Vout[n,:] = FinV[n,:].squeeze() + destfieldV.data
+        sourcefieldU.data[...] = anomU[n,:].squeeze()
+        sourcefieldV.data[...] = anomV[n,:].squeeze()
+
+        # REGULAR GRID BILINIEAR INTERPOLATION
+        regridU = ESMF.Regrid(sourcefieldU, destfieldU, regrid_method = ESMF.RegridMethod.BILINEAR,
+                     unmapped_action = ESMF.UnmappedAction.IGNORE)
+        regridV = ESMF.Regrid(sourcefieldV, destfieldV, regrid_method = ESMF.RegridMethod.BILINEAR,
+                     unmapped_action = ESMF.UnmappedAction.IGNORE)
+
+        destfieldU = regridU(sourcefieldU, destfieldU)
+        destfieldV = regridV(sourcefieldV, destfieldV)
+
+        Uout[n2,:] = Uclim[nmon,:].squeeze() + destfieldU.data
+        Vout[n2,:] = Vclim[nmon,:].squeeze() + destfieldV.data
+
+        n2+=1
+
 # Save new wind files
 ncfilU = 'ERAi_CCMPanom_' + yr + '_Uwind.nc'
 fid2 = nc.Dataset(ncfilU,'w')
@@ -108,12 +113,12 @@ fid2.variables['time'][:] = np.arange(1,365+1)
 fid2.createVariable('lat','f8',('lat'))
 fid2.variables['lat'].long_name = fidUclim.variables['lat'].long_name
 fid2.variables['lat'].units = fidUclim.variables['lat'].units
-fid2.variables['lat'][:]=lat
+fid2.variables['lat'][:]=elat
 
 fid2.createVariable('lon','f8',('lon'))
 fid2.variables['lon'].long_name = fidUclim.variables['lon'].long_name
 fid2.variables['lon'].units = fidUclim.variables['lon'].units
-fid2.variables['lon'][:]=lon
+fid2.variables['lon'][:]=elon
     
 fid2.createVariable('Uwind','f8',('time','lat','lon'),fill_value = np.float(1.0e15))
 fid2.variables['Uwind'].long_name = fidUclim.variables['Uwind'].long_name
@@ -141,12 +146,12 @@ fid2.variables['time'][:] = np.arange(1,365+1)
 fid2.createVariable('lat','f8',('lat'))
 fid2.variables['lat'].long_name = fidVclim.variables['lat'].long_name
 fid2.variables['lat'].units = fidVclim.variables['lat'].units
-fid2.variables['lat'][:]=lat
+fid2.variables['lat'][:]=elat
     
 fid2.createVariable('lon','f8',('lon'))
 fid2.variables['lon'].long_name = fidVclim.variables['lon'].long_name
 fid2.variables['lon'].units = fidVclim.variables['lon'].units
-fid2.variables['lon'][:]=lon
+fid2.variables['lon'][:]=elon
     
 fid2.createVariable('Vwind','f8',('time','lat','lon'),fill_value = np.float(1.0e15))
 fid2.variables['Vwind'].long_name = fidVclim.variables['Vwind'].long_name

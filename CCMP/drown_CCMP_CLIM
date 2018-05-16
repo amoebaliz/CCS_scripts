@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# CHEYENNE - needs recompile
+#SOSIE=/glade/u/home/edrenkar/TOOLS/sosie/bin
+#dirin=/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/
+
+# MACBOOK
+SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
+dirin=/Users/elizabethdrenkard/TOOLS/CCS_scripts/CCMP
+
+#SWFSC
+#SOSIE=/Users/liz.drenkard/TOOLS/sosie/bin
+#dirin=/Users/liz.drenkard/external_data/ERAinterim/Forecast/climatologies
+
+dirout=$dirin
+
+filin=CCMP_MAY01-APR02_daily_anom.nc
+
+ncvar=("u_anom" "v_anom")
+
+for varstr in u_anom v_anom; do
+
+    echo $varstr
+    filout=CCMP_$varstr.nc
+
+    # DROWN CCMP FILES
+    timevar=$( ncdump -h $dirin/$filin | grep time | head -1 | awk '{ print $1 }' )
+    ncvar=$( ncdump -h $dirin/$filin | grep float | tail -1 | sed -e "s/(/ /" | awk '{ print $2 }' )
+
+    echo Processing variable $ncvar in file $filin
+    $SOSIE/mask_drown_field_ccmp.x -D -i $dirin/$filin -v $varstr -t $timevar \
+                                     -m $dirin/ERAi_CCMP_LSM.nc\
+                                     -p -1 -o $dirout/drowned_$filout  
+done
+
+python edit_drowned_CCMP_files.py
+
+

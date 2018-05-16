@@ -45,20 +45,36 @@ vi) ./get_ERAi_.25deg_grid.py
     CCMP does not appear to have a LSM. However, "it uses ERAi
     0.25 deg model wind fields as a first guess". So, assuming 
     CCMP shares the ERAi grid (may be inacurate but it's something).
-    Need to use the ERAi .125deg LSM so  
+    Need to use the ERAi .125deg LSM because CCMP is between falls
+    between .25 grid coordinates
+  
+    RETURNS: ERAinterim_.125_lsm.nc
 
 vii) python ERAi_LSM2_CCMP.py
      Uses ESMF to interpolate ERAi .125deg grid to CCMP coordinates. 
      Also converts any very small values resulting from interpolation 
-     to 0.
+     to 0. Reverses land(ocean) = 1(0) to land(ocean) = 0(1)
+ 
+     RETURNS: ERAi_CCMP_LSM.nc
 
-viii) 
-      Drown CCMP wind anomalies using SOSIE and above the generated grid 
+viii) ./drown_CCMP_CLIM 
+      Drowns CCMP wind anomalies using SOSIE and the above generated grid 
 
-iv) python CCMP_2_ROMS.py
+      RETURNS: drowned_CCMP_u_anom.nc
+               drowned_CCMP_v_anom.nc
+
+iv) ./remove_range_attributes 
+    removes valid_range, valid_min, valid_max attributes inserted by SOSIE
+
+v) python CCMP_2_ERAi.py
+   Regrids CCMP to the ERAinterim grid and adds it to the ERAi wind field
+   climatology    
+
+   RETURNS: ERAi_CCMPanom_MAY01-APR02_Vwind.nc
+            ERAi_CCMPanom_MAY01-APR02_Uwind.nc
 
         # Daily anomaly files are created and stored @ 
-        /glade/p/work/edrenkar/external_data/CCMP
+        # /glade/p/work/edrenkar/external_data/CCMP
 
 # Inspect wind stats with 
 1) evaluate_wind_anoms.py # generates stats file

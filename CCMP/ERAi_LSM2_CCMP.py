@@ -57,29 +57,33 @@ regrid_LSM = ESMF.Regrid(source_LSM, dest_LSM, regrid_method = ESMF.RegridMethod
 
 dest_LSM = regrid_LSM(source_LSM, dest_LSM) 
 
-new_LSM = dest_LSM.data
+tmp_LSM = dest_LSM.data
 
 # convert near-zero values to zero
-new_LSM[new_LSM<.5] = 0
+tmp_LSM[tmp_LSM<.5] = 0
+
+# reverse land/ocean mask values
+new_LSM = np.zeros(tmp_LSM.shape)
+new_LSM[tmp_LSM==0]=1
 
 # Save new LSM file
 ncfil_new = 'ERAi_CCMP_LSM.nc'
 fid2 = nc.Dataset(ncfil_new,'w')
 
-fid2.createDimension('lat', ny)
-fid2.createDimension('lon', nx)
+fid2.createDimension('latitude', ny)
+fid2.createDimension('longitude', nx)
 
-fid2.createVariable('lat','f8',('lat'))
-fid2.variables['lat'].long_name = fid_ERAi.variables['lat'].long_name
-fid2.variables['lat'].units = fid_ERAi.variables['lat'].units
-fid2.variables['lat'][:]=clat
+fid2.createVariable('latitude','f8',('latitude'))
+fid2.variables['latitude'].long_name = fid_ERAi.variables['lat'].long_name
+fid2.variables['latitude'].units = fid_ERAi.variables['lat'].units
+fid2.variables['latitude'][:]=clat
 
-fid2.createVariable('lon','f8',('lon'))
-fid2.variables['lon'].long_name = fid_ERAi.variables['lon'].long_name
-fid2.variables['lon'].units = fid_ERAi.variables['lon'].units
-fid2.variables['lon'][:]=clon
+fid2.createVariable('longitude','f8',('longitude'))
+fid2.variables['longitude'].long_name = fid_ERAi.variables['lon'].long_name
+fid2.variables['longitude'].units = fid_ERAi.variables['lon'].units
+fid2.variables['longitude'][:]=clon
     
-fid2.createVariable('LSM','f8',('lat','lon'),fill_value = np.float(1.0e15))
+fid2.createVariable('LSM','f8',('latitude','longitude'),fill_value = np.float(1.0e15))
 fid2.variables['LSM'].long_name = fid_ERAi.variables['LSM'].long_name
 fid2.variables['LSM'].code = fid_ERAi.variables['LSM'].code
 fid2.variables['LSM'].table = fid_ERAi.variables['LSM'].table
