@@ -19,6 +19,9 @@ iii) python make_anomalies.py
      create new anomaly file
      change longitude from 0to360 to -90to90 
 
+#      Daily anomaly files are created and stored @ 
+#      /glade/p/work/edrenkar/external_data/CCMP
+
 iv) python evaluate_wind_anoms.py
     generate stats on u v wind anomalies relative to 21yr clim for 
     CCMP sub_domain 
@@ -32,14 +35,6 @@ v)  ./concat_daily_anoms
     generates daily anomaly files for each year - need to do manually 
     if not a complete JAN-DEC year
  
-####### NOTE: no longer interpolatin with this methodg
-# BUILDING .so file:
-# Copy Makefile command (also below) - run in command line:
-#
-#     f2py -c -m regrid_atmos regrid_atmos.f90
-#
-# INTERPOLATE CCMP and ADD TO ERAi CLIMATOLOGY
-##########
 # MAY 15, 2018: DROWNING CCMP:
 vi) ./get_ERAi_.25deg_grid.py
     CCMP does not appear to have a LSM. However, "it uses ERAi
@@ -71,16 +66,26 @@ iv) python CCMP_2_ERAi.py
     RETURNS: ERAi_CCMPanom_MAY01-APR02_Vwind.nc
              ERAi_CCMPanom_MAY01-APR02_Uwind.nc
 
-#NOTE: LD 5-17-18: ISSUE WITH OLD FILES - have May 1 as first time step 
-#      In composite wind files... so previously was using 4 month shift
-#      In atmospheric vs. ocean fields..
+# NOTE: LD 5-17-18: ISSUE WITH OLD FILES - have May 1 as first time step 
+#       In composite wind files... so previously was using 4 month shift
+#       In atmospheric vs. ocean fields..
 
-#      Daily anomaly files are created and stored @ 
-#      /glade/p/work/edrenkar/external_data/CCMP
+# ISSUE FOUND:
 
+# ORIGINAL CODE was CCMP_2_ROMS.py 
 
-
-
+# for nmon in range(12):           # ITERATED OVER ALL MONTHS IN ERAi CLIM
+#     md = nmon-(mon0-1)           # WHERE mon0 = MAY (5) for MAY 2001
+#     nd = np.sum(ndays[:md])      # add number of days before beginning of nmon
+#     for nt in range(ndays[md]):  # ITERATE OVER ALL DAYS IN nmon
+#         n = nd + nt              # index for CCMP amonaly fields
+#
+#         ##ERROR##
+#         Uout[n,:] = FinU[n,:].squeeze() + destfieldU.data
+#         Vout[n,:] = FinV[n,:].squeeze() + destfieldV.data
+#
+# SHOULD NOT HAVE USED SAME INDEX 'n' FOR ?out VARIABLE. THIS MAINTAINS
+# ORIGINAL CCMP ORERING. INSTEAT, SHOULD HAVE STARTED WITH COUNTER AT 0
 
 MISSING CCMP FILES
 NOTE: CLIMATOLOGY DOES NOT INCLUDE VALUES FOR THESE DATES

@@ -16,6 +16,9 @@ NOTE: must have .ecmwfapirc file in home directory
 This file also processes ERAi files based on lib_python, places them in external_data
 directory under given year and deletes original .grb and .nc files
 
+VARIABLE NOTE: need to get downward shortwave radiation if using ESM version of ROMS 
+because corrects for albedo
+
 --------------------------
 ADDITIONAL FILE PROCESSING
 --------------------------
