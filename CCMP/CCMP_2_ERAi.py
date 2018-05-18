@@ -28,16 +28,19 @@ destgrid = ESMF.Grid(np.array(Yn.shape), staggerloc = ESMF.StaggerLoc.CENTER, co
 mon0 = 5 # START MONTH (MAY) FOR CCMP
 yr = 'MAY01-APR02'
 # MACBOOK
-CCMP_fil = '/Users/elizabethdrenkard/external_data/CCMP/CCMP_'+yr+'_daily_anom.nc'  
+CCMP_u = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/CCMP/drowned_CCMP_u_anom.nc'
+CCMP_v = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/CCMP/drowned_CCMP_v_anom.nc' 
 # YELLOWSTONE
 #CCMP_fil = '/glade/p/work/edrenkar/external_data/CCMP/CCMP_'+yr+'_daily_anom.nc'   
-fidCCMP = nc.Dataset(CCMP_fil)
-anomU = fidCCMP.variables['u_anom'][:]
-anomV = fidCCMP.variables['v_anom'][:]
+fidCCMPu = nc.Dataset(CCMP_u)
+fidCCMPv = nc.Dataset(CCMP_v)
 
-clon = fidCCMP.variables['longitude'][:]
+anomU = fidCCMPu.variables['u_anom'][:]
+anomV = fidCCMPv.variables['v_anom'][:]
+
+clon = fidCCMPu.variables['lon'][:]
 clon[clon>180]=clon[clon>180]-360
-clat = fidCCMP.variables['latitude'][:]
+clat = fidCCMPu.variables['lat'][:]
 
 nx = len(elon)
 ny = len(elat)
@@ -108,7 +111,7 @@ fid2.createDimension('lon', nx)
 fid2.createVariable('time', 'f8', ('time'))
 fid2.variables['time'].units = fidUclim.variables['time'].units
 fid2.variables['time'].cycle_length = fidUclim.variables['time'].cycle_length
-fid2.variables['time'][:] = np.arange(1,365+1)
+fid2.variables['time'][:] = np.arange(.5,364.5+1)
 
 fid2.createVariable('lat','f8',('lat'))
 fid2.variables['lat'].long_name = fidUclim.variables['lat'].long_name
@@ -141,7 +144,7 @@ fid2.createDimension('lon',nx)
 fid2.createVariable('time', 'f8', ('time'))
 fid2.variables['time'].units = fidVclim.variables['time'].units
 fid2.variables['time'].cycle_length = fidVclim.variables['time'].cycle_length
-fid2.variables['time'][:] = np.arange(1,365+1)    
+fid2.variables['time'][:] = np.arange(.5,364.5+1)    
 
 fid2.createVariable('lat','f8',('lat'))
 fid2.variables['lat'].long_name = fidVclim.variables['lat'].long_name

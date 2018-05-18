@@ -1,7 +1,6 @@
 import numpy as np
 import netCDF4 as nc
 import matplotlib.pyplot as plt
-from scipy.interpolate import griddata
 import ESMF
 
 # MacBook
@@ -67,7 +66,7 @@ new_LSM = np.zeros(tmp_LSM.shape)
 new_LSM[tmp_LSM==0]=1
 
 # Save new LSM file
-ncfil_new = 'ERAi_CCMP_LSM.nc'
+ncfil_new = 'CCMP_LSM.nc'
 fid2 = nc.Dataset(ncfil_new,'w')
 
 fid2.createDimension('latitude', ny)

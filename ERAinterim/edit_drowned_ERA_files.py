@@ -3,7 +3,8 @@ import netCDF4 as nc
 #filvar = ['q2','msl','t2','u10','v10','radsw','radlw','precip']
 #invar = ['Qair','Pair','Tair','Uwind','Vwind','swrad','lwrad_down','rain']
 
-filvar = ['u10', 'v10']
+#filvar = ['u10', 'v10']
+filvar = ['swrad']
 invar = ['swrad']
 
 #invar = ['Uwind','Vwind']

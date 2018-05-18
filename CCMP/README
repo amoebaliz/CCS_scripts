@@ -50,7 +50,7 @@ vi) ./get_ERAi_.25deg_grid.py
   
     RETURNS: ERAinterim_.125_lsm.nc
 
-vii) python ERAi_LSM2_CCMP.py
+vii) python ERAi_LSM_2_CCMP.py
      Uses ESMF to interpolate ERAi .125deg grid to CCMP coordinates. 
      Also converts any very small values resulting from interpolation 
      to 0. Reverses land(ocean) = 1(0) to land(ocean) = 0(1)
@@ -59,26 +59,26 @@ vii) python ERAi_LSM2_CCMP.py
 
 viii) ./drown_CCMP_CLIM 
       Drowns CCMP wind anomalies using SOSIE and the above generated grid 
+      removes valid_range, valid_min, valid_max attributes inserted by SOSIE
 
       RETURNS: drowned_CCMP_u_anom.nc
                drowned_CCMP_v_anom.nc
 
-iv) ./remove_range_attributes 
-    removes valid_range, valid_min, valid_max attributes inserted by SOSIE
+iv) python CCMP_2_ERAi.py
+    Regrids CCMP to the ERAinterim grid and adds it to the ERAi wind field
+    climatology    
+ 
+    RETURNS: ERAi_CCMPanom_MAY01-APR02_Vwind.nc
+             ERAi_CCMPanom_MAY01-APR02_Uwind.nc
 
-v) python CCMP_2_ERAi.py
-   Regrids CCMP to the ERAinterim grid and adds it to the ERAi wind field
-   climatology    
+#NOTE: LD 5-17-18: ISSUE WITH OLD FILES - have May 1 as first time step 
+#      In composite wind files... so previously was using 4 month shift
+#      In atmospheric vs. ocean fields..
 
-   RETURNS: ERAi_CCMPanom_MAY01-APR02_Vwind.nc
-            ERAi_CCMPanom_MAY01-APR02_Uwind.nc
+#      Daily anomaly files are created and stored @ 
+#      /glade/p/work/edrenkar/external_data/CCMP
 
-        # Daily anomaly files are created and stored @ 
-        # /glade/p/work/edrenkar/external_data/CCMP
 
-# Inspect wind stats with 
-1) evaluate_wind_anoms.py # generates stats file
-2) check_avg_anoms.py     # various stats plots
 
 
 

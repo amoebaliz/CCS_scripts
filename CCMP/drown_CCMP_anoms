@@ -29,8 +29,15 @@ for varstr in u_anom v_anom; do
 
     echo Processing variable $ncvar in file $filin
     $SOSIE/mask_drown_field_ccmp.x -D -i $dirin/$filin -v $varstr -t $timevar \
-                                     -m $dirin/ERAi_CCMP_LSM.nc\
+                                     -m $dirin/CCMP_LSM.nc\
                                      -p -1 -o $dirout/drowned_$filout  
+
+    # REMOVES THE VARIABLES: VALID_MIN AND VALID_MAX. 
+    # ANYTHING EXCEEDING THESE VALUES GETS FILLED/treated as 0
+
+    ncatted -O -a valid_range,,d,, $dirout/drowned_$filout $dirout/drowned_$filout
+    ncatted -O -a valid_min,,d,, -a valid_max,,d,, $dirout/drowned_$filout $dirout/drowned_$filout
+
 done
 
 python edit_drowned_CCMP_files.py
