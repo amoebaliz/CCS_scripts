@@ -45,7 +45,7 @@ def write_lsm(lon_array,lat_array,var):
 
 
 ncfil = '/Users/elizabethdrenkard/external_data/CESM/LENS_016_precip_delta.nc'
-
+ncfil = '/glade/p/work/edrenkar/Inputs/construct/Deltas/LENS_deltas_ocn/017/LENS_017_precip_delta.nc'
 lon = readnc(ncfil,'lon')
 lat = readnc(ncfil,'lat')
 frac_land = readnc(ncfil,'rain')[0,:].squeeze()

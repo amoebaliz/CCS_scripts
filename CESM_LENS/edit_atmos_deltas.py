@@ -18,7 +18,7 @@ def build_atmos_fil(run,nvar):
     OLD_VAR = fidin.variables[vars[nvar]]
 
     # NEW FILE BEING CREATED
-    ncfil = '/glade/p/work/edrenkar/Inputs/construct/Deltas/atm_LENS_deltas/' \
+    ncfil = '/glade/p/work/edrenkar/Inputs/construct/Deltas/LENS_deltas_atm/' \
             + runstr + '/' + 'LENS_' + runstr +'_' + tit_vars[nvar] + '_delta.nc'
     fid = nc.Dataset(ncfil,'w')
 
@@ -56,7 +56,7 @@ def build_atmos_fil(run,nvar):
     fid.close() 
     print ncfil
 # -----------
-vars= ['Q','PSL','TREFHT','U','V','FSNS','FLDS'] #,'PREC_F'}
+vars= ['Q','PSL','TREFHT','U','V','FSDS','FLDS'] #,'PREC_F'}
 #vars = ['PREC_F']
 tit_vars = ['q2','msl','t2','u10','v10','radsw','radlw'] #,'precip'}
 #tit_vars = ['precip']
@@ -65,7 +65,7 @@ new_vars = ['Qair','Pair','Tair','Uwind','Vwind','swrad', 'lwrad'] #,'rain')
 
 dir = '/glade/p/work/edrenkar/external_data/LENS/difs/'
 
-for run in (6,16,33):
+for run in [17]:
     runstr = str(run).zfill(3)
     for nvar in range(len(vars)):
         # CREATE NEW MONTHLY CLIM FILE WITH ALL OCEAN FIELDS
