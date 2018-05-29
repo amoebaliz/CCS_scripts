@@ -9,12 +9,14 @@ import ESMF
 #fidVclim = nc.Dataset('/glade2/scratch2/edrenkar/CCS-inputs/drowned_ERAi_v10_1981-2010_monthly_clim.nc')
 
 # variable file names
-avars = ['msl','q2','radlw','radsw','t2']
-#avars = ['precip']
-Var_nm = ['Pair','Qair','lwrad_down','swrad','Tair']
-#Var_nm = ['rain']
+#avars = ['msl','q2','radlw','radsw','t2']
+avars = ['precip']
+#Var_nm = ['Pair','Qair','lwrad_down','swrad','Tair']
+Var_nm = ['rain']
 
-lens_dir = '/Users/elizabethdrenkard/Desktop/016/'
+lens_dir = '/Users/elizabethdrenkard/external_data/CESM/drowned/'
+era_dir = '/Users/elizabethdrenkard/external_data/ERAinterim/drowned/' 
+
 ndays = [31,28,31,30,31,30,31,31,30,31,30,31]
 time_vals = np.zeros(12)
 dtot = 0 
@@ -25,11 +27,11 @@ for n in range(12):
 
 for nv in range(len(avars)):
     print Var_nm[nv]
-    Encfil = lens_dir + 'drowned_ERAi_' + avars[nv] + '_1981-2010_monthly_clim.nc'
+    Encfil = era_dir + 'drowned_ERAi_' + avars[nv] + '_1981-2010_monthly_clim.nc'
     fid_clim = nc.Dataset(Encfil)
     era_var = fid_clim.variables[Var_nm[nv]][:].squeeze()
 
-    Lncfil = lens_dir + 'drowned_LENS_016_' + avars[nv] + '_delta.nc'
+    Lncfil = lens_dir + 'drowned_LENS_017_' + avars[nv] + '_delta.nc'
     fid_delta = nc.Dataset(Lncfil)
 
     if nv == 2:
@@ -44,9 +46,11 @@ for nv in range(len(avars)):
     dlon[dlon>180]=dlon[dlon>180]-360
     dlat = fid_delta.variables['lat'][:]
 
-    Xi,Yi = np.meshgrid(dlon,dlat)
-    sourcegrid = ESMF.Grid(np.array(Xi.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
-    #sourcegrid = ESMF.Grid(np.array(dlon.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+    # FOR 1D lat/lon grids
+    # Xi,Yi = np.meshgrid(dlon,dlat)
+    #sourcegrid = ESMF.Grid(np.array(Xi.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+    # FOR 2D lat/lon grids (i.e., precip)
+    sourcegrid = ESMF.Grid(np.array(dlon.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
 
 
     lon = fid_clim.variables['lon'][:]
@@ -66,10 +70,10 @@ for nv in range(len(avars)):
     dest_lat = destgrid.get_coords(1)
 
     ## FILLS
-    source_lon[...] = Xi
-    source_lat[...] = Yi
-    #source_lon[...] = dlon # precip
-    #source_lat[...] = dlat # precip
+    # source_lon[...] = Xi
+    # source_lat[...] = Yi
+    source_lon[...] = dlon # precip
+    source_lat[...] = dlat # precip
     dest_lon[...] = Xn
     dest_lat[...] = Yn
 
@@ -89,8 +93,8 @@ for nv in range(len(avars)):
    
         var_out[nmon,:] = era_var[nmon,:].squeeze() + destfield.data
  
-    # Save new wind files
-    ncfile = 'ERAi_CESM_016_delta_' + avars[nv] + '.nc'
+    # Save new files
+    ncfile = 'ERAi_CESM_017_delta_' + avars[nv] + '.nc'
     fid2 = nc.Dataset(ncfile,'w')
 
     fid2.createDimension('time', None)
@@ -117,7 +121,7 @@ for nv in range(len(avars)):
     fid2.variables[Var_nm[nv]].units = fid_clim.variables[Var_nm[nv]].units
     fid2.variables[Var_nm[nv]].coordinates = fid_clim.variables[Var_nm[nv]].coordinates
     fid2.variables[Var_nm[nv]].time = fid_clim.variables[Var_nm[nv]].time
-    u_txt = "ERAinterim climatology (1981-2010) + CESM Delta"
+    u_txt = "ERAinterim climatology (1981-2010) + CESM LENS 017 Delta"
     fid2.variables[Var_nm[nv]].details = u_txt
     fid2.variables[Var_nm[nv]][:]=var_out
 

@@ -22,10 +22,10 @@ Xn, Yn = np.meshgrid(slon,slat)
 destgrid = ESMF.Grid(np.array(Xn.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
 
 # MacBook LENS salinity 
-cmod = 16
+cmod = 17
 
-lens_dir  = '/Users/elizabethdrenkard/Desktop/016/'
-fil_delta = lens_dir + 'drowned_LENS_LENS_016_SSS_delta.nc'
+lens_dir  = '/Users/elizabethdrenkard/external_data/CESM/drowned/'
+fil_delta = lens_dir + 'drowned_LENS_017_SSS_delta.nc'
 fid_delta = nc.Dataset(fil_delta) 
 delta_var = fid_delta.variables['SSS'][:].squeeze()
 dlon = fid_delta.variables['lon'][:]
