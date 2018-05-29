@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
 A = np.load('/Users/elizabethdrenkard/Desktop/LENS_clim_difs.npy')
 
 avg_A = np.mean(A,axis=0)
