@@ -45,6 +45,7 @@ def write_lsm(lon_array,lat_array,var):
 
 
 ncfil = '/Users/elizabethdrenkard/external_data/CESM/land_sea_mask/OCNFRAC_81-05_mean.nc'
+ncfil = 'OCNFRAC_81-05_mean.nc'
 
 lon = readnc(ncfil,'lon')
 lat = readnc(ncfil,'lat')

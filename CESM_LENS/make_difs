@@ -4,18 +4,18 @@
 dir=.
 # COLDEST, WARMEST, MIDDLE
 # runs="6 16 33"
-runs="16"
+runs="17"
 # --- VARIABLES ---------------------
 vars="SSH TEMP SALT UVEL VVEL" # PREC_F PSL TREFHT FLDS FSNS U V Q"
-# vars="PSL TREFHT FLDS FSNS U V Q PREC_F"
-vars="Qref"
-vars="TAUX TAUY"
-vars="Uwind Vwind"
+#vars="PSL TREFHT FLDS FSDS U V Q PREC_F"
+#vars="Qref"
+#vars="TAUX TAUY"
+#vars="Uwind Vwind"
 runstr=$(printf %03d $runs)
 for var in $vars; do
-    his_fil=$dir/his/${var}_81-05_clim.nc
+    his_fil=$dir/his_017/${var}_81-05_clim.nc
     echo $his_fil
-    run_fil=$dir/$runstr/${var}_${runstr}_76-00_clim.nc
+    run_fil=$dir/$runstr/${var}_RCP85_76-00_clim.nc
     echo $run_fil
     ncdiff -O -v $var $run_fil $his_fil $dir/difs/${runstr}_${var}_clim_delta.nc
     

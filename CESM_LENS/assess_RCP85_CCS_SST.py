@@ -45,16 +45,22 @@ def ccs_roms_region(lat,lon):
     sourcefield = ESMF.Field(sourcegrid, name = 'CCS ROMS')
     destfield = ESMF.Field(destgrid, name = 'CESM Sub')
 
-    sourcefield.data[...] = fid.variables['h'][:].squeeze()
+    sourcefield.data[...] = fid.variables['mask_rho'][:].squeeze()
     regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,
              unmapped_action = ESMF.UnmappedAction.IGNORE)
     destfield = regrid(sourcefield, destfield)
     
     return_val = destfield.data
 
-    # CONVERTING TO 1/0 boolean for mask_where
-    return_val[return_val==0]=1  # TRUE MASK 
-    return_val[return_val>1]=0   # FALSE MASK
+    # CONVERTING TO 1/0 boolean for mask_where: TRUE (1) where you want to mask
+    return_val[return_val<.5]=0    # FALSE (initially land and ocean outside ROMS domain) 
+    return_val[return_val>.5]=1    # TRUE  (initially water inside ROMS domain)
+
+    # CHECK NUMBER OF POINTS USED vs. TOTAL CESM SUB-DOMAIN 
+    # print 'ROMS OCEAN:', np.sum(return_val)
+    # print 'CESM SIZE:', return_val.shape[0]*return_val.shape[1]
+
+    return_val = -1*return_val + 1 # REVERSE MASK VALUES FOR where_mask 
     return_val2 = return_val.astype(np.bool) # MAKE BOOLEAN
 
     return return_val2
@@ -228,12 +234,15 @@ for nm in range(nmons):
        lat = fid_his.variables['TLAT'][a:b,c:d]
        lon = fid_his.variables['TLONG'][a:b,c:d]
        ROMS_MASK = ccs_roms_region(lat,lon)
+       #plt.pcolor(ROMS_MASK); plt.colorbar();plt.show()
 
-    # Generate CESM mask (land + ROMS) 
-    #SST_H[ROMS_MASK] = np.ma.masked
-    #LENS_MASK = SST_H.mask
-
-    # Apply masks and spatially average
+    # OLD WAY OF Generating CESM mask (land + ROMS)
+    # WHEN SST_F did not preserve mask: 
+    # SST_H[ROMS_MASK] = np.ma.masked
+    # LENS_MASK = SST_H.mask
+ 
+    # CESM MASK is preserved by current method
+    # Apply ROMS mask and spatially average
     sst_all_stor[:,ROMS_MASK] = np.ma.masked
     avg_fut_sst = np.ma.mean(np.ma.mean(sst_all_stor,axis=2),axis=1).squeeze()
 
@@ -260,16 +269,16 @@ for nm in range(nmons):
     ###########
 
     # Generating and masking 2D fields for plotting
-    # sst_all_ind = np.ma.array(np.argsort(sst_all_stor,axis=0)[-1]+1)
-    # sst_all_ind[SST_H.mask + ROMS_MASK] = np.ma.masked
+    sst_all_ind = np.ma.array(np.argsort(sst_all_stor,axis=0)[-1]+1)
+    sst_all_ind[SST_H.mask + ROMS_MASK] = np.ma.masked
 
-    # dif_all_ind = np.ma.array(np.argsort(dif_all_stor,axis=0)+1)
+    dif_all_ind = np.ma.array(np.argsort(dif_all_stor,axis=0)+1)
     # Note: The land mask needs to be reapplied bc argsort does not retain ???_all_stor mask 
-    # dif_all_ind[:,(SST_H.mask + ROMS_MASK)] = np.ma.masked
+    dif_all_ind[:,(SST_H.mask + ROMS_MASK)] = np.ma.masked
 
     # Figure rendering
-    # if nmons == 1:
-    #  plot_annual_maps()
+    if nmons == 1:
+       plot_annual_maps()
 
 # LINE PLOT
 if nmons>1:
@@ -286,4 +295,4 @@ if nmons>1:
     
 #ax.errorbar(np.arange(1,33+1),sst_stor,yerr=sst_std,fmt='o')
 #ax.plot(np.arange(1,33+1),sst_stor,'o')
-#plt.show()
+plt.show()

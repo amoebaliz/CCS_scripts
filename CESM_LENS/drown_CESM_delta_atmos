@@ -5,8 +5,8 @@ dirout=$dirin/drowned
 
 VARS=(Pair Qair Tair Uwind Vwind swrad lwrad)
 #VARS=(rain)
-runs="6 16 33"
-
+#runs="6 16 33"
+runs="17"
 #ncvar=("rain")
 
 
