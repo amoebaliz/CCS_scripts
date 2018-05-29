@@ -1,28 +1,31 @@
 #!/bin/bash
 SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
-lsmdir=/Users/elizabethdrenkard/external_data/CESM
-dirin=/Users/elizabethdrenkard/Desktop/016
-dirout=$dirin
+dirin=/Users/elizabethdrenkard/external_data/CESM
+dirout=$dirin/drowned
 
-VARS=(SSS)
-runs="16"
-
+runs="17"
+ncvar="rain"
 
 for run in $runs; do
     runstr=$(printf %03d $run)
     n=0
-    # for varstr in precip; do
-    for varstr in sss; do
-        filin=LENS_${runstr}_SSS_delta.nc
+    for varstr in precip; do
+    #for varstr in sss; do
+        filin=${runstr}_${varstr}_delta.nc
         filout=LENS_$filin
         ls $dirin/$filout
         # DROWN CESM FILES
         #timevar=$( ncdump -h $dirin/$filin | grep time | head -1 | awk '{ print $1 }' )
-        ncvar=${VARS[n]}
         echo Processing variable $ncvar in file $filout
-        $SOSIE/mask_drown_field_era.x -D -i $dirin/$filin -v $ncvar -t time \
-                                      -m $lsmdir/land_sea_mask/lsm_CESM_roms_precip.nc \
+        $SOSIE/mask_drown_field_era.x -D -i $dirin/$filout -v $ncvar -t time \
+                                      -m $dirin/land_sea_mask/lsm_CESM_roms_precip.nc \
                                       -p -1 -o $dirout/drowned_$filout  
+
+
+        ncatted -O -a valid_range,,d,, $dirout/drowned_$filout $dirout/drowned_$filout
+        ncatted -O -a valid_min,,d,, -a valid_max,,d,, $dirout/drowned_$filout $dirout/drowned_$filout
+
+
         ((n+=1))
     done
 done

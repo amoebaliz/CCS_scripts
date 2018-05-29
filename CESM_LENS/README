@@ -39,7 +39,6 @@ NOTE: Specific humidity and U and V are NOT at the correct levels
 # Reasonable match to QBOT in atmospheric file
 
 
-
 v) Edit time fields of CESM delta values
  	python edit_atmos_deltas.py # MSL,T2,Q2,U/V10,rads
         python edit_ocean_deltas.py # Precip,SSS

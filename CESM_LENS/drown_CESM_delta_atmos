@@ -26,6 +26,11 @@ for run in $runs; do
         $SOSIE/mask_drown_field_era.x -D -i $dirin/$filout -v $ncvar -t time \
                                       -m $dirin/land_sea_mask/lsm_CESM_roms.nc \
                                       -p -1 -o $dirout/drowned_$filout  
+
+
+        ncatted -O -a valid_range,,d,, $dirout/drowned_$filout $dirout/drowned_$filout
+        ncatted -O -a valid_min,,d,, -a valid_max,,d,, $dirout/drowned_$filout $dirout/drowned_$filout
+
         ((n+=1))
     done
 done
