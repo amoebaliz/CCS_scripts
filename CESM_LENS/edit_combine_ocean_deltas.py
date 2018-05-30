@@ -5,7 +5,7 @@ def build_ocean_fil(run,mon):
     runstr = str(run).zfill(3)
     monstr = str(mon).zfill(2)
           
-    ncfil = '/glade/p/work/edrenkar/Inputs/construct/Deltas/ocn_LENS_deltas/' + runstr + '/' + runstr + '_ocn_' + monstr + '.nc'
+    ncfil = '/glade/p/work/edrenkar/Inputs/construct/Deltas/LENS_deltas_ocn/' + runstr + '/' + runstr + '_ocn_' + monstr + '.nc'
 
     fid = nc.Dataset(ncfil,'w')
 
@@ -19,51 +19,50 @@ def build_ocean_fil(run,mon):
     fid.createDimension('xu_ocean',80)
 
     # TIME
-    src_fil = dir + runstr + '_SSH_' + monstr +'_delta.nc'
+    src_fil = dir + runstr + '_SSH_clim_delta.nc'
     fid.createVariable('time', 'f8', ('time'))
     fid.variables['time'].units = "days since 0000-01-01 00:00:00"
-    fid.variables['time'][:] = nc.Dataset(src_fil).variables['time'][:]
- 
+    fid.variables['time'][:] = nc.Dataset(src_fil).variables['time'][mon-1].squeeze()
+
     # SSH
-    # src_fil = dir + runstr + '_SSH_' + monstr +'_delta.nc'
+    src_fil = dir + runstr + '_SSH_clim_delta.nc'
     srcSSH = nc.Dataset(src_fil).variables['SSH']
-    print srcSSH[:].squeeze().shape
     fid.createVariable('ssh', 'f8', ('time','yt_ocean', 'xt_ocean'),fill_value = np.float(1.0e15))
     fid.variables['ssh'].missing_value = np.float(1.0e15)
     fid.variables['ssh'].units = "meters"
-    fid.variables['ssh'][0] = srcSSH[:].squeeze()/100.
+    fid.variables['ssh'][0] = srcSSH[mon-1,:].squeeze()/100.
 
     # TEMP
-    src_fil = dir + runstr + '_TEMP_' + monstr +'_delta.nc'
+    src_fil = dir + runstr + '_TEMP_clim_delta.nc'
     srcTEMP = nc.Dataset(src_fil).variables['TEMP']
     fid.createVariable('temp', 'f8', ('time','st_ocean','yt_ocean', 'xt_ocean'),fill_value = np.float(1.0e15))
     fid.variables['temp'].missing_value = np.float(1.0e15)
     fid.variables['temp'].units = srcTEMP.units
-    fid.variables['temp'][:] = srcTEMP[:]
+    fid.variables['temp'][0,:] = srcTEMP[mon-1,:].squeeze()
 
     # SALT
-    src_fil = dir + runstr + '_SALT_' + monstr +'_delta.nc'
+    src_fil = dir + runstr + '_SALT_clim_delta.nc'
     srcSALT = nc.Dataset(src_fil).variables['SALT']
     fid.createVariable('salt', 'f8', ('time','st_ocean','yt_ocean', 'xt_ocean'),fill_value = np.float(1.0e15))
     fid.variables['salt'].missing_value = np.float(1.0e15)
     fid.variables['salt'].units = srcSALT.units
-    fid.variables['salt'][:] = srcSALT[:]
+    fid.variables['salt'][0,:] = srcSALT[mon-1,:].squeeze()
 
     # UVEL
-    src_fil = dir + runstr + '_UVEL_' + monstr +'_delta.nc'
+    src_fil = dir + runstr + '_UVEL_clim_delta.nc'
     srcUVEL = nc.Dataset(src_fil).variables['UVEL']
     fid.createVariable('u', 'f8', ('time','st_ocean','yu_ocean', 'xu_ocean'),fill_value = np.float(1.0e15))
     fid.variables['u'].missing_value = np.float(1.0e15)
     fid.variables['u'].units = "meters/s"
-    fid.variables['u'][:] = srcUVEL[:]/100.
+    fid.variables['u'][0,:] = srcUVEL[mon-1,:].squeeze()/100.
 
     # VVEL
-    src_fil = dir + runstr + '_VVEL_' + monstr +'_delta.nc'
+    src_fil = dir + runstr + '_VVEL_clim_delta.nc'
     srcVVEL = nc.Dataset(src_fil).variables['VVEL']
     fid.createVariable('v', 'f8', ('time','st_ocean','yu_ocean', 'xu_ocean'),fill_value = np.float(1.0e15))
     fid.variables['v'].missing_value = np.float(1.0e15)
     fid.variables['v'].units = "meters/s"
-    fid.variables['v'][:] = srcVVEL[:]/100.
+    fid.variables['v'][0,:] = srcVVEL[mon-1,:].squeeze()/100.
 
     fid.close() 
     print ncfil
@@ -72,12 +71,12 @@ vars={'SSH','TEMP','SALT','UVEL','VVEL'}
 new_vars = {'ssh', 'temp','salt','u','v'}
 
 dir = '/glade/p/work/edrenkar/external_data/LENS/difs/'
+dir = '/glade/u/home/edrenkar/TOOLS/CCS_scripts/CESM_LENS/difs/'
 grd = nc.Dataset('/glade/p/work/edrenkar/external_data/LENS/LENS_grid.nc')
 
-for run in (6,16,33):
+for run in [17]:
 
     for mon in range(12):
-        monstr = str(mon+1).zfill(2)
 
         # CREATE NEW MONTHLY CLIM FILE WITH ALL OCEAN FIELDS
         build_ocean_fil(run,mon+1)

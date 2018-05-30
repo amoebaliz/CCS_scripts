@@ -51,8 +51,6 @@ vi) Make a land-sea mask for atmospheric and ocean properties
 vii) drown CESM delta fields
         ./drown_CESM_delta_atmos # MSL,T2,Q2,U/V10,rads 
         ./drown_CESM_delta_ocean # Precip,SSS	
-        # NOTE: does not include any edits to time because the 12 clim
-        #       values just get added sequentially
 
 vii) interpolate atmospheric files/salinity to add to the original
    forcing fields
