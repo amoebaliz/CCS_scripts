@@ -17,9 +17,9 @@ from remap_bdry_uv import remap_bdry_uv
 #my_year=int(sys.argv[-1])
 
 dst_dir='bdry/'
-for run in (6,16,33):
+for run in [17]:
     runstr = str(run).zfill(3)
-    data_dir = '/glade/p/work/edrenkar/Inputs/construct/Deltas/ocn_LENS_deltas/' + runstr + '/'
+    data_dir = '/glade/p/work/edrenkar/Inputs/construct/Deltas/LENS_deltas_ocn/' + runstr + '/'
     filelst = subprocess.check_output(['ls', data_dir]).replace('/n',' ').split()
     print filelst
     soda_grd = '/glade/p/work/edrenkar/external_data/LENS/LENS_grid.nc'

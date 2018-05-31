@@ -21,7 +21,7 @@ def build_ocean_fil(run,mon):
     # TIME
     src_fil = dir + runstr + '_SSH_clim_delta.nc'
     fid.createVariable('time', 'f8', ('time'))
-    fid.variables['time'].units = "days since 0000-01-01 00:00:00"
+    fid.variables['time'].units = "days since 1900-01-01 00:00:00"
     fid.variables['time'][:] = nc.Dataset(src_fil).variables['time'][mon-1].squeeze()
 
     # SSH
