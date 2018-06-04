@@ -3,6 +3,7 @@ import pyroms_toolbox
 
 # load the grid
 soda_grd = '/glade/p/work/edrenkar/external_data/LENS/LENS_grid.nc'
+soda_grd = '/Users/elizabethdrenkard/Desktop/LENS_deltas_ocn/017/LENS_grid.nc'
 srcgrd = pyroms_toolbox.BGrid_GFDL.get_nc_BGrid_GFDL(soda_grd, 'LENS',xrange=(1,78),yrange=(1,78))
 dstgrd = pyroms.grid.get_ROMS_grid('CCS')
 

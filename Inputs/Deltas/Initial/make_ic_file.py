@@ -11,16 +11,17 @@ from remap_uv import remap_uv
 
 #start = datetime.now()
 dst_dir='init/'
-for run in (6,16,33):
+for run in [17]:
     runstr = str(run).zfill(3)
     filein = '/glade/p/work/edrenkar/Inputs/construct/Deltas/ocn_LENS_deltas/' + runstr + '/' + runstr + '_ocn_01.nc'
-
+    filein = '/Users/elizabethdrenkard/Desktop/LENS_deltas_ocn/' + runstr + '/' + runstr + '_ocn_01.nc' 
     print 'Build IC file from the following file:'
     print filein
     print ' '
 
     # load grids
     soda_grd = '/glade/p/work/edrenkar/external_data/LENS/LENS_grid.nc'
+    soda_grd = '/Users/elizabethdrenkard/Desktop/LENS_deltas_ocn/017/LENS_grid.nc'
     src_grd = pyroms_toolbox.BGrid_GFDL.get_nc_BGrid_GFDL(soda_grd, 'LENS',xrange=(1,78),yrange=(1,78))
     dst_grd = pyroms.grid.get_ROMS_grid('CCS')
 

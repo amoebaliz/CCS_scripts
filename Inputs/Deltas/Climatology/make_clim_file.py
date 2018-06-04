@@ -17,12 +17,14 @@ from remap_uv import remap_uv
 #my_year=int(sys.argv[-1])
 
 dst_dir='clim/'
-for run in (6,16,33):
+for run in [17]:
     runstr = str(run).zfill(3)
     data_dir = '/glade/p/work/edrenkar/Inputs/construct/Deltas/ocn_LENS_deltas/' + runstr + '/'
+    data_dir = '/Users/elizabethdrenkard/Desktop/LENS_deltas_ocn/' + runstr + '/'
     filelst = subprocess.check_output(['ls', data_dir]).replace('/n',' ').split()
     print filelst
     soda_grd = '/glade/p/work/edrenkar/external_data/LENS/LENS_grid.nc'
+    soda_grd = '/Users/elizabethdrenkard/Desktop/LENS_deltas_ocn/017/LENS_grid.nc'
     src_grd = pyroms_toolbox.BGrid_GFDL.get_nc_BGrid_GFDL(soda_grd, 'LENS',xrange=(1,78),yrange=(1,78))
     dst_grd = pyroms.grid.get_ROMS_grid('CCS')
 
