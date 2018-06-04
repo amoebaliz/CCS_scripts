@@ -19,7 +19,6 @@ from remap_uv import remap_uv
 dst_dir='clim/'
 for run in [17]:
     runstr = str(run).zfill(3)
-    data_dir = '/glade/p/work/edrenkar/Inputs/construct/Deltas/ocn_LENS_deltas/' + runstr + '/'
     data_dir = '/Users/elizabethdrenkard/Desktop/LENS_deltas_ocn/' + runstr + '/'
     filelst = subprocess.check_output(['ls', data_dir]).replace('/n',' ').split()
     print filelst

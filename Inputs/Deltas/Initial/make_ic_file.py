@@ -13,7 +13,6 @@ from remap_uv import remap_uv
 dst_dir='init/'
 for run in [17]:
     runstr = str(run).zfill(3)
-    filein = '/glade/p/work/edrenkar/Inputs/construct/Deltas/ocn_LENS_deltas/' + runstr + '/' + runstr + '_ocn_01.nc'
     filein = '/Users/elizabethdrenkard/Desktop/LENS_deltas_ocn/' + runstr + '/' + runstr + '_ocn_01.nc' 
     print 'Build IC file from the following file:'
     print filein

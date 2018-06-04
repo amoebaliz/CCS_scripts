@@ -1,7 +1,6 @@
 #!/bin/bash
 
-dir='/glade/p/work/edrenkar/Inputs/current_CCS_inputs'
-runs="6 16 33"
+dir='/glade/p/work/edrenkar/Inputs/current_CCS_inputs/historical'
 runs="17"
 
 for run in $runs; do
