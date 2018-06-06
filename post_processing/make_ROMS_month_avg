@@ -1,0 +1,34 @@
+#!/bin/bash
+
+FYEAR=7
+LYEAR=7
+
+in_dir=/glade/scratch/edrenkar/tmpdir_CCS-LD.FCo017/outputs
+out_dir=/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo017
+nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
+
+
+for year in $( seq -f %04g $FYEAR $LYEAR ) ; do
+
+    fil_dir=$in_dir/$year
+    nmon=0
+    for mon in $( seq -f %02g 1 12 ) ; do
+        # IF THE CORRECT NUMBER OF FILES FOR THAT MONTH
+        n=0
+        #for fil in $fil_dir/CCS-LD.HCo02Y_avg_$year-$mon*.nc; do
+        for fil in $fil_dir/CCS-LD.FCo017_avg_$year-$mon*.nc; do 
+            if [ -f $fil ] ; then
+               ((n+=1))
+            fi
+        done 
+
+        if (( $n == ${nmdays[$nmon]} )); then
+           echo $year $mon 'GOOD'      
+           #ncra -O -h $fil_dir/CCS-LD.HCo02Y_avg_$year-$mon*.nc $out_dir/$year/CCS-LD.HCo02Y_$year-${mon}.nc
+           ncra -O -h $fil_dir/CCS-LD.FCo017_avg_$year-$mon*.nc $out_dir/$year/CCS-LD.FCo017_$year-${mon}.nc
+        fi
+        ((nmon+=1))
+    done
+   
+done
+
