@@ -1,0 +1,21 @@
+#!/bin/bash
+
+FYEAR=1
+LYEAR=10
+
+for yr in $( seq $FYEAR $LYEAR ) ; do
+    year=$(printf %04d $yr)
+    fil_dir=/glade2/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo02Y/$year
+    n=0
+
+    for fil in $fil_dir/*.nc; do
+    
+        if [ ! -f $fil ] ; then
+           echo $fil
+        else
+           ((n+=1)) 
+        fi
+
+    done
+    echo $year $n
+done 
