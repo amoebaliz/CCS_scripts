@@ -15,15 +15,19 @@ pos_trans_dif = np.zeros((4,12))
 neg_trans_dif = np.zeros((4,12))
 
 for mon in range(12):
-    ncfil_p = '/Volumes/Abalone/CCS/his/clim/CCS_' + str(mon+1).zfill(2) + '-clim.nc'
-    ncfil_f = '/Volumes/Abalone/CCS/016/clim/CCS_' + str(mon+1).zfill(2) + '-clim.nc'
+    #ncfil_p = '/Volumes/Abalone/CCS/his/clim/CCS_' + str(mon+1).zfill(2) + '-clim.nc'
+    #ncfil_f = '/Volumes/Abalone/CCS/016/clim/CCS_' + str(mon+1).zfill(2) + '-clim.nc'
+
+    ncfil_p = '/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo02Y/CCS-LD.HCo02Y_5yr_his_clim_uv.nc'
+    ncfil_f = '/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.FCo017/CCS-LD.FCo017_5yr_fut_clim_uv.nc'
+
     fid_p = nc.Dataset(ncfil_p)
     fid_f = nc.Dataset(ncfil_f)
 
-    u_p = fid_p.variables['u'][:].squeeze()
-    u_f = fid_f.variables['u'][:].squeeze()
-    v_p = fid_p.variables['v'][:].squeeze()
-    v_f = fid_f.variables['v'][:].squeeze()
+    u_p = fid_p.variables['u'][mon,:].squeeze()
+    u_f = fid_f.variables['u'][mon,:].squeeze()
+    v_p = fid_p.variables['v'][mon,:].squeeze()
+    v_f = fid_f.variables['v'][mon,:].squeeze()
 
     pos_his_v = v_p.copy()
     pos_his_v[v_p<0] = 0

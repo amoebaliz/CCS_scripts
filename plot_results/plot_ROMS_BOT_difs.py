@@ -83,9 +83,8 @@ def get_sst(i):
     mon = MONS[i]
 
     # BOTTOM
-    nc1 = '/Volumes/Abalone/CCS/his/clim/BOT_10y_clim.nc'
-    nc2 = '/Volumes/Abalone/CCS/016/clim/BOT_10y_clim.nc'
-
+    nc1 = '/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo02Y/5yr_his_BOT_TEMP_clim.nc'
+    nc2 = '/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.FCo017/5yr_fut_BOT_TEMP_clim.nc'
 
     fid1 = nc.Dataset(nc1)
     sst1 = fid1.variables['temp'][i,:].squeeze()
@@ -126,9 +125,9 @@ vip_xi  = [0,376]
 
 # INITIAL FIGURE
 #fig, ax = plt.subplots(figsize=(4,6))
-#fig, ax = plt.subplots(figsize=(4,8))
+fig, ax = plt.subplots(figsize=(4,8))
 #fig, ax = plt.subplots(figsize=(4,4))
-fig, ax = plt.subplots(figsize=(4,6))
+#fig, ax = plt.subplots(figsize=(4,6))
 fig.tight_layout()
 m = Basemap(llcrnrlat=np.min(glat)-m_offset,urcrnrlat = np.max(glat)+m_offset,llcrnrlon=np.min(glon)-m_offset,urcrnrlon=np.max(glon)+m_offset, resolution='i', ax=ax)
 
@@ -148,23 +147,23 @@ for ii in range(glat.shape[1]-2):
 
 polygon_patch(m,ax)
 
-tx =plt.text(-111.5,31,'', fontsize=20,zorder=map_order+5)
+tx =plt.text(-113,31.5,'', fontsize=20,zorder=map_order+5)
 
 # TOP PLOT
 #m.drawmeridians([-128,-124], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 #m.drawparallels([42,46,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 
 # TOP MIDDLE PLOT
-# m.drawmeridians([-128,-124], labels=[0,0,0,0], linewidth=2,fmt='%d', fontsize=18,zorder=map_order+5)
-# m.drawparallels([36,40], labels=[0,0,0,0], linewidth=2,fmt='%d', fontsize=18,zorder=map_order+5)
+m.drawmeridians([-128,-124], labels=[0,0,0,0], linewidth=2,fmt='%d', fontsize=18,zorder=map_order+5)
+m.drawparallels([36,40], labels=[0,0,0,0], linewidth=2,fmt='%d', fontsize=18,zorder=map_order+5)
 
 # BOTTOM MIDDLE PLOT
-# m.drawmeridians([-120,-116], labels=[0,0,0,0], linewidth=2.5,fmt='%d', fontsize=18,zorder=map_order+5)
-# m.drawparallels([32,36], labels=[0,0,0,0], linewidth=2.5,fmt='%d', fontsize=18,zorder=map_order+5)
+#m.drawmeridians([-120,-116], labels=[0,0,0,0], linewidth=2.5,fmt='%d', fontsize=18,zorder=map_order+5)
+#m.drawparallels([32,36], labels=[0,0,0,0], linewidth=2.5,fmt='%d', fontsize=18,zorder=map_order+5)
 
 # BOTTOM PLOT
-m.drawmeridians([-116,-112], labels=[0,0,0,0], linewidth=1,fmt='%d', fontsize=18,zorder=map_order+5)
-m.drawparallels([24,28,32], labels=[0,0,0,0], linewidth=1,fmt='%d', fontsize=18,zorder=map_order+5)
+#m.drawmeridians([-116,-112], labels=[0,0,0,0], linewidth=1,fmt='%d', fontsize=18,zorder=map_order+5)
+#m.drawparallels([24,28,32], labels=[0,0,0,0], linewidth=1,fmt='%d', fontsize=18,zorder=map_order+5)
 
 sst,mon = get_sst(0)
 im1 = m.pcolor(glon,glat,sst[:],vmin=0,vmax=4,cmap='nipy_spectral',zorder=map_order)
@@ -191,24 +190,24 @@ def updatefig(i):
     #   cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
 
 # TOP PLOT
-# ax.set_ylim(40,np.max(glat)+m_offset-.4)
-# ax.set_xlim(-128.8,-123.8)
+#ax.set_ylim(40,np.max(glat)+m_offset-.4)
+#ax.set_xlim(-128.8,-123.8)
 
 # TOP MIDDLE PLOT
-#ax.set_ylim(35.5,41)
-#ax.set_xlim(-125,-121.5)
+ax.set_ylim(35.5,41)
+ax.set_xlim(-125,-121.5)
 
 # BOTTOM MIDDLE PLOT
-# ax.set_ylim(31.5,35)
-# ax.set_xlim(-121,-116.5)
+#ax.set_ylim(31.5,35)
+#ax.set_xlim(-121,-116.5)
 
 # BOTTOM PLOT
-ax.set_ylim(22.7,32)
-ax.set_xlim(-117,np.max(glon)+m_offset)
+#ax.set_ylim(24.4,32)
+#ax.set_xlim(-117,-112+m_offset)
 
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
 # ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'ImageMagickWriter',fps=1)
 # ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'imagemagick',fps=1)
 ani.save('CCS_ROMS_BOT_DIFS.gif', writer = 'imagemagick',fps=1)
 #ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'imagemagick',fps=1)
-plt.show()
+#plt.show()
