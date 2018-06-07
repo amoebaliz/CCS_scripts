@@ -83,9 +83,10 @@ def get_sst(i):
     mon = MONS[i]
  
     # Surface
-    nc1 = '/Volumes/Abalone/CCS/his/clim/SST_10y_clim.nc'
-    nc2 = '/Volumes/Abalone/CCS/016/clim/SST_10y_clim.nc'
-
+    #nc1 = '/Volumes/Abalone/CCS/his/clim/SST_10y_clim.nc'
+    #nc2 = '/Volumes/Abalone/CCS/016/clim/SST_10y_clim.nc'
+    nc1 = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_5yr_his_clim.nc'    
+    nc2 = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_5yr_fut_clim.nc'  
     # 50-meter depth
     # nc1 = '/Volumes/Abalone/CCS/his/clim/T50_10y_clim.nc'
     # nc2 = '/Volumes/Abalone/CCS/016/clim/T50_10y_clim.nc'
@@ -211,8 +212,6 @@ def updatefig(i):
     #u,v,mag,mon = get_vel(i)
     #im1   = m.pcolormesh(glon,glat,sst,vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
     im1   = m.pcolormesh(glon,glat,sst,vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
-    #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
-    #im2 = m.quiver(glon[::afreq,::afreq],glat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=3,zorder=map_order+2)
     polygon_patch(m,ax)
     tx_str = mon 
     tx.set_text(tx_str)
@@ -221,8 +220,5 @@ def updatefig(i):
        cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
 
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
-#ani.save('CCS_ROMS_50m_DIFS.gif', writer = 'imagemagick',fps=1)
 ani.save('CCS_ROMS_SST_DIFS.gif', writer = 'imagemagick',fps=1)
-# ani.save('CCS_ROMS_BOT_DIFS.gif', writer = 'imagemagick',fps=1)
-#ani.save('CCS_ROMS_VEL_CLIM.gif', writer = 'imagemagick',fps=1)
 plt.show()

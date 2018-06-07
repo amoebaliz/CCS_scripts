@@ -92,14 +92,17 @@ def fill_CA_Gulf(field):
 def get_sst(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     mon = MONS[i] 
-    ncfile = dir + str(i+1).zfill(2) + '.nc'
+    ncfile = dir
     fid = nc.Dataset(ncfile)
-    sst = fid.variables['temp'][0,0,:].squeeze()
+    sst = fid.variables['temp'][i,:].squeeze()
     #sst[sst>100]=np.nan
-    sst=ma.masked_where(sst>100,sst) 
+    sst=ma.masked_where(sst>100,sst)
+    plt.figure()
+    plt.pcolor(sst)
+    plt.show() 
 #    sst = fill_CA_Gulf(sst)
-    lat = gfid.variables['geolat_t'][:]
-    lon = gfid.variables['geolon_t'][:]
+    lat = gfid.variables['lat'][:]
+    lon = gfid.variables['lon'][:]
     lon[lon>180] = lon[lon>180]-360
     return sst,lat,lon, mon
 
@@ -125,8 +128,10 @@ def get_vel(i):
 
 
 # DATA LOCATION 
-dir = '/Users/elizabethdrenkard/Desktop/deltas/ocn_LENS_deltas/016/016_ocn_'
-grd_fil = '/Users/elizabethdrenkard/Desktop/deltas/ocn_LENS_deltas/LENS_grid.nc'
+#dir = '/Users/elizabethdrenkard/Desktop/deltas/ocn_LENS_deltas/016/016_ocn_'
+#grd_fil = '/Users/elizabethdrenkard/Desktop/deltas/ocn_LENS_deltas/LENS_grid.nc'
+dir = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_DELTA_017.nc'
+grd_fil = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES//LENS_grid.nc'
 gfid = nc.Dataset(grd_fil)
 
 # CCS grid shape ONLY
@@ -186,11 +191,10 @@ def updatefig(i):
     if i > 0:
        im1.remove()
     sst,lat,lon,mon = get_sst(i)
-    #u,v,mag,lat,lon,mon = get_vel(i)
-    im1   = m.pcolor(lon,lat,sst,vmin=2.5,vmax=4.5,cmap='nipy_spectral',zorder=map_order)
+    im1   = m.pcolor(lon,lat,sst,vmin=2,vmax=6,cmap='nipy_spectral',zorder=map_order)
     #im1 = m.pcolor(lon,lat,mag,vmin=0,vmax=0.05,cmap='nipy_spectral',zorder=map_order)
     #im2 = m.quiver(lon[::afreq,::afreq],lat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=.5,zorder=map_order+2)
-    polygon_patch(m,ax)
+    #polygon_patch(m,ax)
     tx_str = mon 
     tx.set_text(tx_str)
     # ADD Colorbar on first iteration 
@@ -198,6 +202,6 @@ def updatefig(i):
        cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
 
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
-#ani.save('CESM_SST_Delta.gif', writer = 'imagemagick',fps=1)
-ani.save('CESM_VEL_Delta.gif', writer = 'imagemagick',fps=1)
+ani.save('CESM_SST_Delta.gif', writer = 'imagemagick',fps=1)
+#ani.save('CESM_VEL_Delta.gif', writer = 'imagemagick',fps=1)
 plt.show()
