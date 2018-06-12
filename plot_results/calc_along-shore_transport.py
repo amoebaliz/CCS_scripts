@@ -18,8 +18,8 @@ for mon in range(12):
     #ncfil_p = '/Volumes/Abalone/CCS/his/clim/CCS_' + str(mon+1).zfill(2) + '-clim.nc'
     #ncfil_f = '/Volumes/Abalone/CCS/016/clim/CCS_' + str(mon+1).zfill(2) + '-clim.nc'
 
-    ncfil_p = '/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo02Y/CCS-LD.HCo02Y_5yr_his_clim_uv.nc'
-    ncfil_f = '/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.FCo017/CCS-LD.FCo017_5yr_fut_clim_uv.nc'
+    ncfil_p = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/CCS-LD.HCo02Y_5yr_his_clim_uv.nc'
+    ncfil_f = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/CCS-LD.FCo017_5yr_fut_clim_uv.nc'
 
     fid_p = nc.Dataset(ncfil_p)
     fid_f = nc.Dataset(ncfil_f)
@@ -60,15 +60,21 @@ fig, ax = plt.subplots(4, sharex=True, figsize=(4,6))
 fig.subplots_adjust(hspace=.2)
 for nt in range(4):
         ax[3-nt].plot([-1,13],[0,0],'-.k')
-        if nt == 0:
-           ax[3-nt].set_ylim(-3,4)
-        else:
-           ax[3-nt].set_ylim(-1,3)
+        #if nt == 0:
+        #   ax[3-nt].set_ylim(-3,4)
+        #else:
+        #ax[3-nt].set_ylim(-1.5,3)
 
         ax[3-nt].set_xlim(-.2,11.2) 
         ax[3-nt].plot(range(12),  pos_trans_dif[nt,:],'-o', mec='k',linewidth=3,markersize=5)
         ax[3-nt].plot(range(12),  neg_trans_dif[nt,:],'-o', mec='k',linewidth=3,markersize=5)
         ax[3-nt].set_xticks([1,4,7,10]) 
         ax[3-nt].set_xticklabels([])
+
+ax[0].set_ylim(-.5,.75)
+ax[1].set_ylim(-1,2)
+ax[2].set_ylim(-1.5,2.1)
+ax[3].set_ylim(-2.5,4.1)
+
 plt.savefig('TRANSPORTS')
 plt.show()

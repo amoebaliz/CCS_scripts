@@ -86,20 +86,18 @@ def fill_CA_Gulf(field):
 def get_sst(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     mon = MONS[i] 
-    ncfile = '/Users/elizabethdrenkard/Desktop/CESM_TEMP/016_TEMP_' + str(i+1).zfill(2) + '_delta.nc'
+    #ncfile = '/Users/elizabethdrenkard/Desktop/CESM_TEMP/016_TEMP_' + str(i+1).zfill(2) + '_delta.nc'
+    ncfile = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_DELTA_017.nc' 
     fid = nc.Dataset(ncfile)
-    #sst = fid.variables['TEMP'][0,0,:].squeeze()    
-    sst = np.mean(fid.variables['TEMP'][0,32:34,:].squeeze(),axis=0)
+    sst = np.ma.masked_array(fid.variables['temp'][i,0,:].squeeze())    
+    sst[sst >100] = -1
     print sst.shape 
-    sst[sst.mask==True]=-1
     sst = fill_CA_Gulf(sst)
-    lat = fid.variables['TLAT'][:] 
-    lon = fid.variables['TLONG'][:]
-    lon[lon>180]=lon[lon>180]-360   
-   # plt.pcolor(lon,lat,sst)
-   # plt.show()
-    return sst,lat,lon, mon
-
+    #lat = fid.variables['lat'][:] 
+    #lon = fid.variables['lon'][:]
+    #lon[lon>180]=lon[lon>180]-360   
+    #return sst,lat,lon, mon
+    return sst, mon
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 # CCS grid shape ONLY
@@ -126,6 +124,11 @@ m = Basemap(llcrnrlat=np.min(glat)-m_offset,urcrnrlat = np.max(glat)+m_offset,ll
 #P.cmap.set_under('white')
 #P.cmap.set_over([.9,.97,1])
 
+grd_fil = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/LENS_grid.nc'
+lsm = nc.Dataset(grd_fil).variables['lsm'][:]
+lats = nc.Dataset(grd_fil).variables['lat'][:]
+lons = nc.Dataset(grd_fil).variables['lon'][:]
+lons[lons>180]=lons[lons>180]-360
 outline_mask(m,mask,mask_val,glon[0,0],glat[0,0],glon[-1,-1],glat[-1,-1])
 
 #DOMAIN OUTLINE
@@ -136,8 +139,6 @@ for ii in range(glat.shape[1]-2):
     m.plot((glon[0,ii],glon[0,ii+1]),(glat[0,ii],glat[0,ii+1]),linewidth=2,color='k',zorder=map_order+1)
     m.plot((glon[-1,ii],glon[-1,ii+1]),(glat[-1,ii],glat[-1,ii+1]),linewidth=2,color='k',zorder=map_order+1)
 
-polygon_patch(m,ax)
-afreq = 8
 #plt.title('SST (oC)')
 tx =plt.text(-118,46.5,'', fontsize=20,zorder=map_order+5)
 n=0
@@ -145,34 +146,28 @@ n=0
 m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 
-#u,v,mag,lats,lons,mon = get_vel(0)
-#im1 = m.pcolor(lons,lats,mag,vmin=0,vmax=.1,cmap='Oranges',zorder=map_order)
-#im2 = m.quiver(lons[::afreq],lats[::afreq],u[::afreq,::afreq],v[::afreq,::afreq],zorder=map_order+2)
-
-sst,lats,lons,mon = get_sst(0)
-#im1   = m.pcolormesh(lons,lats,sst,vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
-im1 = m.pcolormesh(lons,lats,sst[:],vmin=0,vmax=4,cmap='nipy_spectral',zorder=map_order)
+sst,mon = get_sst(0)
+im1 = m.pcolormesh(lons,lats,sst[:],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
 im1.cmap.set_under('w')
-#plt.show()
+polygon_patch(m,ax)
 # ANIMATION
 def updatefig(i):
     global im1,im2,tx
     print i
     # REMOVE images after first step
-    #if i > 0:
-    #   im1.remove()
-    sst,lats,lons,mon = get_sst(i)
-    print np.mean(sst[23:73,28:68]), np.std(sst[23:73,28:68])
-    #im1   = m.pcolormesh(lons,lats,sst,vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
-    im1 = m.pcolormesh(lons,lats,sst[:],vmin=0,vmax=4,cmap='nipy_spectral',zorder=map_order)
+    if i > 0:
+       im1.remove()
+    sst, mon = get_sst(i)
+    im1 = m.pcolormesh(lons,lats,sst[:],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
     im1.cmap.set_under('w')
     polygon_patch(m,ax)
     tx_str = mon 
     tx.set_text(tx_str)
+   
     # ADD Colorbar on first iteration 
     if i == 0:
        cbar = m.colorbar(im1, location='bottom',size="5%", pad="3%",ticks=[])
 
 ani = animation.FuncAnimation(fig, updatefig,frames=12, blit=False)
-ani.save('CESM_50m_DELTA_CLIM.gif', writer = 'imagemagick',fps=1)
+ani.save('CESM_SST_DELTA_CLIM.gif', writer = 'imagemagick',fps=1)
 plt.show()
