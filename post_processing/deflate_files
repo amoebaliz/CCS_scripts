@@ -1,0 +1,17 @@
+#!/bin/bash
+
+OUT_DIR=/glade/p/work/edrenkar/
+SRC_DIR=/glade/scratch/edrenkar/tmpdir_MaPhil-LD.HCo04T/
+
+cd $SRC_DIR
+
+for INFIL in $( ls MaPhil-LD.HCo04T_avg_* ); do 
+    OUTFIL=$OUT_DIR${INFIL}_def
+    ncks -4 -L 1 $INFIL $OUTFIL
+    echo $OUTFIL
+done
+
+#infil=$SRC_DIR/MaPhil-LD.HCo04T_avg_$num2.nc
+#outfil=$OUT_DIR/MaPhil-LD.HCo04T_avg_$num2_def.nc
+#ncks -4 -L 1 infil outfil
+#done
