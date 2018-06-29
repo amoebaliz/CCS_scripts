@@ -1,0 +1,29 @@
+#!/bin/bash
+
+url=ftp://podaac-ftp.jpl.nasa.gov/allData/avhrr/L3/pathfinder_v5/monthly/day/04km/
+n=1
+for yr in {1985..2009}; do
+    echo $yr
+
+    for mon in {1..12} ; do
+        monstr=$(printf %02d $mon)
+        echo $monstr
+        hdf_fil=$yr$monstr.s04m3pfv50-sst-16b
+        ncfil=SST_$yr_$monstr.nc
+
+        #WEGET
+        wget $url/$yr/$monstr/$hdf_fil.hdf
+
+        #CONVERT TO .hdf to .nc        
+        ncl_convert2nc $hdf_fil.hdf
+        rm $hdf_fil.hdf       
+           
+        #CUT FILE SIZE
+        ncks -d lon,800,1100 -d lat,300,600 $hdf_fil.nc $ncfil
+        rm $hdf_fil.nc
+
+        #ADD TIMEDIM
+        ncap2 -s 'defdim("time",1);time[time]=$n;time@long_name="Time"' -O $ncfil
+        ncks --mk_rec_dmn time -O $ncfil $ncfil
+    done
+done
