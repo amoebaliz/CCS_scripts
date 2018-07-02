@@ -1,7 +1,7 @@
 #!/bin/bash
 
-FYEAR=7
-LYEAR=7
+FYEAR=9
+LYEAR=12
 
 in_dir=/glade/scratch/edrenkar/tmpdir_CCS-LD.FCo017/outputs
 out_dir=/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo017
