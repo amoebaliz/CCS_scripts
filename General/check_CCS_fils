@@ -1,0 +1,31 @@
+#!/bin/bash
+
+FYEAR=5
+LYEAR=5
+
+orig_dir=/Volumes/Abalone/CCS/his2
+orig_dir=/Volumes/Abalone/CCS/fut_017
+
+nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
+
+for yr in $( seq $FYEAR $LYEAR ) ; do
+    year=$(printf %04d $yr)
+    n=0
+
+    for month in {1..12} ; do
+        mon=$(printf %02d $month)
+        dmon=${nmdays[$((month-1))]}
+         
+        for day_val in $( seq 1 $dmon ) ; do
+            day=$(printf %02d $day_val)
+            fil_base=CCS-LD.HCo02Y_avg_$year-$mon-${day}T12:00:00.nc
+            fil_base=CCS-LD.FCo017_avg_$year-$mon-${day}T12:00:00.nc
+
+            if [ ! -f $orig_dir/$year/$fil_base ] ; then
+               echo $fil_base
+               ((n+=1))
+            fi
+        done
+    done
+    echo $year $n
+done 
