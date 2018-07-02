@@ -1,7 +1,7 @@
 #!/bin/bash
 
-FYEAR=5
-LYEAR=8
+FYEAR=11
+LYEAR=12
 
 orig_dir=/Volumes/Abalone/CCS/his2
 orig_dir=/Volumes/Abalone/CCS/fut_017

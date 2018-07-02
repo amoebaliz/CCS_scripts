@@ -1,0 +1,55 @@
+#!/bin/bash
+
+n=1
+for yr in {1981..2009}; do
+    echo $yr
+
+    if (($yr < 1985 )); then
+       url=ftp://podaac-ftp.jpl.nasa.gov/allData/avhrr/L3/pathfinder_v51/monthly/night/04km/
+       hdf_fil=s04m1pfv51-bsst
+    else
+       url=ftp://podaac-ftp.jpl.nasa.gov/allData/avhrr/L3/pathfinder_v5/monthly/night/04km/
+       if   (($yr > 2006)); then
+          hdf_fil=s04m1pfrt-bsst
+       elif (($yr > 2005)); then
+          hdf_fil=s04m1pfv50-bsst
+       elif (($yr > 2002)); then
+          hdf_fil=s04m4pfv50-bsst
+       elif (($yr > 2001)); then
+          hdf_fil=s04m1pfv50-bsst
+       else
+          hdf_fil=s04m1pfv50-bsst-16b
+       fi
+    fi
+
+    for mon in {1..12} ; do
+        monstr=$(printf %02d $mon)
+        echo $monstr
+        ncfil=SST_${yr}_$monstr.nc
+        if (( $yr == 2005 && $mon > 5 )); then
+           hdf_fil=s04m1pfv50-bsst
+        fi
+        #WEGET
+        wget $url/$yr/$monstr/$yr$monstr.$hdf_fil.hdf
+
+        #CONVERT TO .hdf to .nc        
+        ncl_convert2nc $yr$monstr.$hdf_fil.hdf
+        rm $yr$monstr.$hdf_fil.hdf       
+        mv $yr$monstr.$hdf_fil.nc $ncfil
+
+        #ADD TIMEDIM
+        ncap2 -s "defdim(\"time\",1,0);time[time]=$n;time@long_name=\"Time\";BSST[time,lat,lon]=bsst" -O $ncfil
+        ncks -x -v bsst -O $ncfil $ncfil
+
+        #CUT FILESIZE 
+        ncks -d lat,600,2000 -d lon,400,2000 -O $ncfil $ncfil
+        ((n+=1))
+    done
+done
+
+for mon in {1..12} ; do
+    monstr=$(printf %02d $mon)
+    ncra *$monstr.nc SST_pm_${monstr}_clim.nc
+    rm *$monstr.nc
+
+done
