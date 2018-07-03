@@ -1,7 +1,7 @@
 #!/bin/bash
 
 n=1
-for yr in {1981..2009}; do
+for yr in {2001..2002}; do
     echo $yr
 
     if (($yr < 1985 )); then
@@ -47,9 +47,9 @@ for yr in {1981..2009}; do
     done
 done
 
-for mon in {1..12} ; do
-    monstr=$(printf %02d $mon)
-    ncra *$monstr.nc SST_pm_${monstr}_clim.nc
-    rm *$monstr.nc
+#for mon in {1..12} ; do
+#    monstr=$(printf %02d $mon)
+#    ncra *$monstr.nc SST_pm_${monstr}_clim.nc
+#    rm *$monstr.nc
 
-done
+#done

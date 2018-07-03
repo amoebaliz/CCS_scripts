@@ -1,0 +1,10 @@
+
+1) get_am_SST; get_pm_SST for MAY 2001 - APRIL 2002
+
+2) average across day and night SST (modified average_day_and_night):
+     for mon in $( seq -f %02g 1 12 ) ; do
+         ncra SST_?m_????_${mon}.nc SST_all_$mon.nc
+     done
+
+3) compare_CCS_AVHRR.py with AVHRR MAY2001-APR2002 years only
+ 

@@ -79,7 +79,6 @@ def plot_annual_maps():
         m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
         ax.text(m_lon[0]-2, m_lat[-1]+.8, str_val[n], fontsize=14)
         if n:
-           print 'MEEP'
            # plot colorbar axis
            bbox = ax.get_position()
            cax = fig.add_axes([bbox.xmax*1.0+.02, bbox.ymin, bbox.width*0.08, bbox.height-.085])
@@ -124,8 +123,12 @@ SST_roms = SST_roms - soda_bias
 #SST_roms = nc.Dataset('soda_clim_sst.nc').variables['temp'][:].squeeze()
 avh_dir = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/'
 
+#CCMP YEAR
+#avh_dir = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCMP_check/'
+
 for nmon in range(12):
     avh_fil = avh_dir + 'AVHRR_SST_clim_' + str(nmon+1).zfill(2) + '.nc' 
+    #avh_fil = avh_dir + 'SST_all_' + str(nmon+1).zfill(2) + '.nc'
     fid_avh = nc.Dataset(avh_fil)
     avh_sst = fid_avh.variables['BSST'][:].squeeze()
     
