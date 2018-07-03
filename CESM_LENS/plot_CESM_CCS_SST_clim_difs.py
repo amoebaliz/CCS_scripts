@@ -12,8 +12,8 @@ fig = plt.figure(figsize=(10,4))
 for nl in range(A.shape[1]):
     if nl == (17-1):
        colr = 'red'; mec_clr = 'firebrick'; zord = 4
-#    elif nl == (19-1):
-#       colr = 'blue'; mec_clr = 'darkblue'; zord = 4
+    elif nl == (19-1):
+       colr = 'blue'; mec_clr = 'darkblue'; zord = 4
 
     # COMPARITIVE COLOR
     # elif nl == (34-1):
@@ -28,6 +28,6 @@ for nl in range(A.shape[1]):
 
 labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG','SEP','OCT','NOV','DEC']
 plt.xticks(np.arange(1,12+1),labels)
-plt.savefig('fig2')
+plt.savefig('fig0')
 plt.show()
 
