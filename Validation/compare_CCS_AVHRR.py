@@ -73,7 +73,7 @@ def plot_annual_maps():
         ax = plt.subplot(gs[n])
         m = Basemap(llcrnrlat=m_lat[0]-m_off,urcrnrlat=m_lat[1]+m_off,\
             llcrnrlon=m_lon[0]-m_off,urcrnrlon=m_lon[1]+m_off, resolution='i', ax=ax)
-        P = m.pcolormesh(lon,lat,stor_vars[n,:].squeeze(),vmin=0,vmax=3.5,cmap='jet')
+        P = m.pcolormesh(lon,lat,stor_vars[n,:].squeeze(),vmin=-3,vmax=3,cmap='jet')
         polygon_patch(m,ax)
         m.drawmeridians(m_lon, labels=[0,0,1,0], fmt='%d', fontsize=14)
         m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
@@ -82,7 +82,7 @@ def plot_annual_maps():
            # plot colorbar axis
            bbox = ax.get_position()
            cax = fig.add_axes([bbox.xmax*1.0+.02, bbox.ymin, bbox.width*0.08, bbox.height-.085])
-           cb = plt.colorbar(P,cax=cax,ticks=np.linspace(0,3,4))
+           cb = plt.colorbar(P,cax=cax,ticks=np.linspace(-3,3,3))
            cb.ax.set_yticklabels(cb.ax.get_yticklabels(), fontsize=12)
            cb.ax.set_title('$^\circ$C',horizontalalignment='center',\
                            multialignment='center')
@@ -113,21 +113,21 @@ sourcefield = ESMF.Field(sourcegrid, name = 'CCS ROMS')
 
 ###########
 # SODA BIAS
-soda_bias = -2.75704143254
+#soda_bias = -2.75704143254
 
 # ACCESS ROMS SST CLIM
-SST_roms = nc.Dataset('/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCS_HCo02Y_SST_clim.nc').variables['temp'][:].squeeze()
-SST_roms = SST_roms - soda_bias
+#SST_roms = nc.Dataset('/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCS_HCo02Y_SST_clim.nc').variables['temp'][:].squeeze()
+#SST_roms = SST_roms - soda_bias
  
 # SODA SST CLIM
-#SST_roms = nc.Dataset('soda_clim_sst.nc').variables['temp'][:].squeeze()
+SST_roms = nc.Dataset('soda_clim_sst.nc').variables['temp'][:].squeeze()
 avh_dir = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/'
 
 #CCMP YEAR
 #avh_dir = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCMP_check/'
 
 for nmon in range(12):
-    avh_fil = avh_dir + 'AVHRR_SST_clim_' + str(nmon+1).zfill(2) + '.nc' 
+    avh_fil = avh_dir + 'AVHRR_SST_clim_' + str(nmon+1).zfill(2) + '_clim.nc' 
     #avh_fil = avh_dir + 'SST_all_' + str(nmon+1).zfill(2) + '.nc'
     fid_avh = nc.Dataset(avh_fil)
     avh_sst = fid_avh.variables['BSST'][:].squeeze()

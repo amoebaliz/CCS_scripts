@@ -80,9 +80,7 @@ def outline_mask(mapid,mask_img,val,x0,y0,x1,y1):
 # ~~~~~~~~~~~~~
 
 # MODEL DATA FILES 
-mean_salt_fil ='/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo02Y/CCS-LD.HCo02Y_5yr_his_clim_salt.nc' 
-#mean_salt_fil ='/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.FCo017/CCS-LD.FCo017_5yr_fut_clim_salt.nc'
-#mean_salt_fil = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo016_01Y/FUT_SALT_4yr_avg.nc'
+mean_salt_fil = '/Volumes/Abalone/CCS/his2/CCS-LD.HCo02Y_10yr_clim_salt.nc'
 
 # SALT DATA
 fid = nc.Dataset(mean_salt_fil)
@@ -90,7 +88,7 @@ salt = np.mean(fid.variables['salt'][:],axis=0).squeeze()
 
 ## CCS ROMS GRID INFORMATION
 grd = pyroms.grid.get_ROMS_grid('CCS')
-#mask = grd.hgrid.mask_rho
+mask = grd.hgrid.mask_rho
 lat = grd.hgrid.lat_rho
 lon = grd.hgrid.lon_rho
 h = grd.vgrid.h[:]
@@ -113,66 +111,66 @@ ccs_eta = [0,872]
 ccs_xi  = [240,378]
 
 # Find and Store salinity minimum
-#smin = np.amin(salt[:],axis=(2,0)) # CCS
+smin = np.amin(salt[:],axis=(2,0)) # CCS
 
 # Initialize variable lat_x_lon variable to store depths
-#depth_store = np.zeros(salt.shape[1:3])
+depth_store = np.zeros(salt.shape[1:3])
 
 # MAP FIGURE
-#fig = plt.figure(figsize=(10,10))
-#fig.subplots_adjust(left=.1, right=.9, bottom=0, top=1)
-#ax = fig.add_subplot(111, aspect='equal', autoscale_on=False)
+fig = plt.figure(figsize=(10,10))
+fig.subplots_adjust(left=.1, right=.9, bottom=0, top=1)
+ax = fig.add_subplot(111, aspect='equal', autoscale_on=False)
 
 # BASEMAP OBJECT
-#m = Basemap(llcrnrlat=20-m_offset,urcrnrlat = 50+m_offset, llcrnrlon=-150-m_offset, urcrnrlon=-110+m_offset, resolution='f', ax=ax)
+m = Basemap(llcrnrlat=20-m_offset,urcrnrlat = 50+m_offset, llcrnrlon=-150-m_offset, urcrnrlon=-110+m_offset, resolution='f', ax=ax)
 
+# 3D interpolation nonsense - trying to get latititudinal evaluation
 # GRID DEFS
-sourcegrid = ESMF.Grid(np.array(salt.shape),staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
-destgrid = ESMF.Grid(np.array(salt.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+#sourcegrid = ESMF.Grid(np.array(salt.shape),staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+#destgrid = ESMF.Grid(np.array(salt.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
 
-new_lon = np.linspace(np.floor(np.min(lon)),np.ceil(np.max(lon)),num=salt.shape[2])
-new_lat = np.linspace(np.floor(np.min(lat)),np.ceil(np.max(lat)),num=salt.shape[1])
-new_dep = np.linspace(0,np.ceil(np.min(z)),num=salt.shape[0])
+#new_lon = np.linspace(np.floor(np.min(lon)),np.ceil(np.max(lon)),num=salt.shape[2])
+#new_lat = np.linspace(np.floor(np.min(lat)),np.ceil(np.max(lat)),num=salt.shape[1])
+#new_dep = np.linspace(0,np.ceil(np.min(z)),num=salt.shape[0])
 
-Zn,Yn,Xn = np.meshgrid(new_dep,new_lat,new_lon,indexing='ij')
+#Zn,Yn,Xn = np.meshgrid(new_dep,new_lat,new_lon,indexing='ij')
 
 ## POINTERS
-source_lon = sourcegrid.get_coords(0)
-source_lat = sourcegrid.get_coords(1)
-source_dep = sourcegrid.get_coords(2)
+#source_lon = sourcegrid.get_coords(0)
+#source_lat = sourcegrid.get_coords(1)
+#source_dep = sourcegrid.get_coords(2)
 
-dest_lon = destgrid.get_coords(0)
-dest_lat = destgrid.get_coords(1)
-dest_dep = destgrid.get_coords(2)
+#dest_lon = destgrid.get_coords(0)
+#dest_lat = destgrid.get_coords(1)
+#dest_dep = destgrid.get_coords(2)
 
 # FILLS
-source_lon[...] = np.tile(lon,(50,1,1)) 
-source_lat[...] = np.tile(lat,(50,1,1)) 
-source_dep[...] = z
+#source_lon[...] = np.tile(lon,(50,1,1)) 
+#source_lat[...] = np.tile(lat,(50,1,1)) 
+#source_dep[...] = z
 
-dest_lon[...] = Xn
-dest_lat[...] = Yn
-dest_dep[...] = Zn
+#dest_lon[...] = Xn
+#dest_lat[...] = Yn
+#dest_dep[...] = Zn
 
-sourcefield = ESMF.Field(sourcegrid, name = 'ROMS_salt')
-destfield = ESMF.Field(destgrid, name = 'regrid_salt')
+#sourcefield = ESMF.Field(sourcegrid, name = 'ROMS_salt')
+#destfield = ESMF.Field(destgrid, name = 'regrid_salt')
 
 # DATA
-sourcefield.data[...] = salt
+#sourcefield.data[...] = salt
 
-regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,
-                     unmapped_action = ESMF.UnmappedAction.IGNORE)
+#regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR, unmapped_action = ESMF.UnmappedAction.IGNORE)
 
-destfield = regrid(sourcefield, destfield)
+#destfield = regrid(sourcefield, destfield)
 
-print destfield.data.shape
-
+#print destfield.data.shape
+print 'MEEP'
 # Identify Regions that are within 0.5 psu of minimum
 for ny in range(salt.shape[1]):
     depth_slab = ma.masked_array(np.zeros((50,salt.shape[2])))
-    #tmp_salt = salt[:,ny,:].squeeze()
+    tmp_salt = salt[:,ny,:].squeeze()
     # ROMS EVALUATION
-    #tmp_z    =    z[:,ny,:].squeeze()
+    tmp_z    =    z[:,ny,:].squeeze()
     depth_slab[tmp_salt <= (smin[ny]+0.5)] = tmp_z[tmp_salt <= (smin[ny]+0.5)]    
     # SURFACE CRITERIA: ROMS
     for nc in range(salt.shape[2]):
@@ -215,6 +213,6 @@ m.drawmeridians([-150,-110], labels=[0,0,1,0], fmt='%d', fontsize=18,zorder=map_
 m.drawparallels([20,50], labels=[1,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 #m.drawmeridians([-142,-111], labels=[0,0,1,0], fmt='%d', fontsize=18,zorder=map_order+5)
 #m.drawparallels([18,50], labels=[1,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
-plt.savefig('5yr_his_salt_min.png')
+plt.savefig('10yr_his_salt_min.png')
 plt.show()
 
