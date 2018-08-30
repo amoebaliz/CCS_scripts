@@ -1,9 +1,0 @@
-#!/bin/bash
-
-for mon in $( seq -f %02g 1 12 ) ; do
-
-    ncra SST_??_${mon}_clim.nc AVHRR_SST_clim_${mon}.nc
-    #rm SST_??_${mon}_clim.nc
-
-done
-
