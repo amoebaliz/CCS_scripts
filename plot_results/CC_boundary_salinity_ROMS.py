@@ -80,14 +80,15 @@ def outline_mask(mapid,mask_img,val,x0,y0,x1,y1):
 # ~~~~~~~~~~~~~
 
 # MODEL DATA FILES 
-mean_salt_fil ='/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo02Y/CCS-LD.HCo02Y_5yr_his_clim_salt.nc' 
+mean_salt_fil ='/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo02Y/CCS-LD.HCo02Y_10yr_his_clim_salt.nc' 
+#mean_salt_fil ='/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.HCo02Y/CCS-LD.HCo02Y_5yr_his_clim_salt.nc' 
 #mean_salt_fil ='/glade/p/work/edrenkar/MODELS/CCS/ANALYSES/CCS-LD.FCo017/CCS-LD.FCo017_5yr_fut_clim_salt.nc'
 #mean_salt_fil = '/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo016_01Y/FUT_SALT_4yr_avg.nc'
 
 # SALT DATA
 fid = nc.Dataset(mean_salt_fil)
 salt = np.mean(fid.variables['salt'][:],axis=0).squeeze()
-
+print 'MEEP0'
 ## CCS ROMS GRID INFORMATION
 grd = pyroms.grid.get_ROMS_grid('CCS')
 #mask = grd.hgrid.mask_rho
@@ -144,7 +145,7 @@ source_dep = sourcegrid.get_coords(2)
 dest_lon = destgrid.get_coords(0)
 dest_lat = destgrid.get_coords(1)
 dest_dep = destgrid.get_coords(2)
-
+print 'MEEP1' 
 # FILLS
 source_lon[...] = np.tile(lon,(50,1,1)) 
 source_lat[...] = np.tile(lat,(50,1,1)) 
@@ -160,13 +161,12 @@ destfield = ESMF.Field(destgrid, name = 'regrid_salt')
 # DATA
 sourcefield.data[...] = salt
 
-regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,
-                     unmapped_action = ESMF.UnmappedAction.IGNORE)
+regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR, unmapped_action = ESMF.UnmappedAction.IGNORE)
 
 destfield = regrid(sourcefield, destfield)
 
 print destfield.data.shape
-
+'MEEP2'
 # Identify Regions that are within 0.5 psu of minimum
 for ny in range(salt.shape[1]):
     depth_slab = ma.masked_array(np.zeros((50,salt.shape[2])))
@@ -183,7 +183,7 @@ for ny in range(salt.shape[1]):
     depth_store[ny,:] = np.amin(depth_slab,axis=0)
     #depth_store[ny,:] = np.amax(depth_slab,axis=0)
 depth_store[depth_store==0]=np.nan
-
+'MEEP3'
 #ROMS * -1
 P = m.contourf(lon,lat,depth_store*-1,10*np.arange(2,28,2),edgecolors='face',cmap=cmap,zorder=map_order)
 C = m.contour(lon,lat,depth_store*-1,[100,200], colors='k',zorder=map_order)
@@ -215,6 +215,6 @@ m.drawmeridians([-150,-110], labels=[0,0,1,0], fmt='%d', fontsize=18,zorder=map_
 m.drawparallels([20,50], labels=[1,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 #m.drawmeridians([-142,-111], labels=[0,0,1,0], fmt='%d', fontsize=18,zorder=map_order+5)
 #m.drawparallels([18,50], labels=[1,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
-plt.savefig('5yr_his_salt_min.png')
+plt.savefig('10yr_his_salt_min.png')
 plt.show()
 

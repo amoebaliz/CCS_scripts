@@ -1,21 +1,10 @@
 #!/bin/bash
 
-FYEAR=3
-LYEAR=7
-
 in_dir=/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo02Y
 in_dir=/glade/p/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo017
 
 for mon in $( seq -f %02g 1 12 ) ; do
     echo $mon  
-    for year in $( seq -f %04g $FYEAR $LYEAR ) ; do
-        fil_dir=$in_dir/$year
-        # COPY ALL MEANS OF A GIVEN MONTH INTO PARENT DIRECTORY 
-        # cp $fil_dir/CCS-LD.HCo02Y_$year-${mon}.nc $in_dir
-        cp $fil_dir/CCS-LD.FCo017_$year-${mon}.nc $in_dir
-    done 
-    ncra -O -h $in_dir/CCS-LD.FCo017_????-${mon}.nc $in_dir/CCS-LD.FCo017_clim_${mon}.nc
-    rm -rf $in_dir/CCS-LD.FCo017_????-${mon}.nc
+    #ncra -O -h $in_dir/monthly_means/????/CCS-LD.HCo02Y_????-${mon}.nc $in_dir/CCS-LD.HCo02Y_clim_${mon}.nc
+    ncra -O -h $in_dir/monthly_means/????/CCS-LD.FCo017_????-${mon}.nc $in_dir/CCS-LD.FCo017_clim_${mon}.nc
 done
-ncrcat $in_dir/CCS-LD.FCo017_clim_??.nc CCS-LD.FCo017_5yr_fut_clim.nc
-rm -rf $in_dir/CCS-LD.FCo017_clim_??.nc  
