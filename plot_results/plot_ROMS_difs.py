@@ -85,8 +85,12 @@ def get_sst(i):
     # Surface
     #nc1 = '/Volumes/Abalone/CCS/his/clim/SST_10y_clim.nc'
     #nc2 = '/Volumes/Abalone/CCS/016/clim/SST_10y_clim.nc'
-    nc1 = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_5yr_his_clim.nc'    
-    nc2 = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_5yr_fut_clim.nc'  
+    #nc1 = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_5yr_his_clim.nc'    
+    #nc2 = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_5yr_fut_clim.nc'  
+
+    nc1 = '/Users/elizabethdrenkard/Desktop/SST_10yr_his_clim.nc'    
+    nc2 = '/Users/elizabethdrenkard/Desktop/SST_10yr_fut017_clim.nc'  
+
     # 50-meter depth
     # nc1 = '/Volumes/Abalone/CCS/his/clim/T50_10y_clim.nc'
     # nc2 = '/Volumes/Abalone/CCS/016/clim/T50_10y_clim.nc'

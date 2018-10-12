@@ -73,7 +73,7 @@ def plot_annual_maps():
         ax = plt.subplot(gs[n])
         m = Basemap(llcrnrlat=m_lat[0]-m_off,urcrnrlat=m_lat[1]+m_off,\
             llcrnrlon=m_lon[0]-m_off,urcrnrlon=m_lon[1]+m_off, resolution='i', ax=ax)
-        P = m.pcolormesh(lon,lat,stor_vars[n,:].squeeze(),vmin=0,vmax=3.5,cmap='jet')
+        P = m.pcolormesh(lon,lat,stor_vars[n,:].squeeze(),vmin=-1,vmax=1,cmap='jet')
         polygon_patch(m,ax)
         m.drawmeridians(m_lon, labels=[0,0,1,0], fmt='%d', fontsize=14)
         m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
@@ -116,7 +116,7 @@ sourcefield = ESMF.Field(sourcegrid, name = 'CCS ROMS')
 #soda_bias = -2.75704143254
 
 # ACCESS ROMS SST CLIM
-SST_roms = nc.Dataset('/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCS_HCo02Y_SST_clim.nc').variables['temp'][:].squeeze()
+SST_roms = nc.Dataset('/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCS_HCo03Y_SST_clim.nc').variables['temp'][:].squeeze()
 #SST_roms = SST_roms - soda_bias
  
 # SODA SST CLIM
@@ -131,7 +131,8 @@ avh_dir = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/OISST_daily/'
 
 #CCMP YEAR
 #avh_dir = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCMP_check/'
-
+m_lat = [20,50]; m_lon = [-140,-110]; m_off=3
+str_val = ['a','b']
 for nmon in range(12):
     #avh_fil = avh_dir + 'AVHRR_SST_clim_' + str(nmon+1).zfill(2) + '_clim.nc' 
     #avh_fil = avh_dir + 'SST_all_' + str(nmon+1).zfill(2) + '.nc'
@@ -153,20 +154,28 @@ for nmon in range(12):
     diff_vals[nmon,:] = (regrid(sourcefield, destfield).data - avh_sst)
     squar_err[nmon,:] = (regrid(sourcefield, destfield).data - avh_sst)**2
 
-    #diff_vals[nmon,avh_mask]=np.ma.masked
-    #plt.pcolor(lon,lat,diff_vals[nmon,:].squeeze(),vmax=1,cmap='jet'); plt.colorbar(); plt.show()
+    diff_vals[nmon,avh_mask]=np.ma.masked
+    fig, ax = plt.subplots()
+    m = Basemap(llcrnrlat=m_lat[0]-m_off,urcrnrlat=m_lat[1]+m_off,\
+            llcrnrlon=m_lon[0]-m_off,urcrnrlon=m_lon[1]+m_off, resolution='i', ax=ax)
+    P = m.pcolormesh(lon,lat,diff_vals[nmon,:].squeeze(),vmin=-1,vmax=1,cmap='jet')
+    plt.colorbar(P)
+    polygon_patch(m,ax)
+    m.drawmeridians(m_lon, labels=[0,0,1,0], fmt='%d', fontsize=14)
+    m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
 
-rms_err = np.sqrt(np.mean(squar_err,axis=0))
-avg_dif = np.ma.mean(diff_vals,axis=0)
 
-stor_vars[0,:]=avg_dif
-stor_vars[1,:]=rms_err
-stor_vars[:,avh_mask] = np.ma.masked
+#rms_err = np.sqrt(np.mean(squar_err,axis=0))
+#avg_dif = np.ma.mean(diff_vals,axis=0)
+
+#stor_vars[0,:]=avg_dif
+#stor_vars[1,:]=rms_err
+#stor_vars[:,avh_mask] = np.ma.masked
 
 # DETERMINING AVERAGE SODA BIAS IN CCS DOMAIN
 #avg_dif[avh_mask] = np.ma.masked
 #avg_dif[np.abs(avg_dif)>100] = np.ma.masked
 #print np.ma.mean(avg_dif)
-plot_annual_maps()
-
+#plot_annual_maps()
+plt.show()
 
