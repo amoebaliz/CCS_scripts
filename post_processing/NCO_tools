@@ -1,0 +1,4 @@
+# USEFUL NCO notes
+
+#Removes all global attributes and history:
+ncatted -O -h -a ,global,d,, test_001.nc

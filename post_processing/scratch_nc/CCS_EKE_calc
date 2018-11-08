@@ -1,0 +1,24 @@
+#!/bin/bash
+for yr in $( seq -f %03g 1 3 ) ; do
+    echo $yr
+
+    # Concatenate u and v fields from MAM for each ear
+    ncrcat -O -d s_rho,4 -v u,v $yr/CCS_test_avg_$yr-0[345]*  CCS_MAM_$yr.nc
+
+    # Square field as new variable
+    ncap2 -O -s 'usq=u^2' -s 'vsq=v^2' CCS_MAM_$yr.nc CCS_MAM_$yr.nc
+
+    # Average all fields 
+    ncra -O CCS_MAM_$yr.nc CCS_MAM_${yr}_avg.nc
+    rm CCS_MAM_$yr.nc
+    
+    # Calculate mean(U^2) - (mean(U))^2
+    ncap2 -O -s 'u_eke=usq-u^2' -s 'v_eke=vsq-v^2' CCS_MAM_${yr}_avg.nc CCS_MAM_uveke_$yr.nc
+    rm CCS_MAM_${yr}_avg.nc
+    
+    # Isolate just the eke fields
+    ncks -O -v u_eke,v_eke CCS_MAM_uveke_$yr.nc CCS_MAM_uveke_$yr.nc 
+done
+
+echo MEEP
+
