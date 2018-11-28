@@ -1,0 +1,32 @@
+#!/bin/bash
+
+dir=.
+# COLDEST, WARMEST, MIDDLE
+runs="17"
+# --- VARIABLES ---------------------
+vars="diatChl diazChl spChl"
+#vars="SSH TEMP SALT UVEL VVEL" # PREC_F PSL TREFHT FLDS FSNS U V Q"
+#vars="PSL TREFHT FLDS FSDS U V Q PREC_F"
+#vars="Qref"
+#vars="TAUX TAUY"
+#vars="Uwind Vwind"
+runstr=$(printf %03d $runs)
+for var in $vars; do
+    his_fil=$dir/his_${var}_MAM.nc
+    echo $his_fil
+    run_fil=$dir/fut017_${var}_MAM.nc
+    echo $run_fil
+    ncdiff -O -v $var $run_fil $his_fil $dir/${var}_MAM_delta.nc
+    
+#    for mon in {1..12}; do
+#        monstr=$(printf %02d $mon)
+#        his_fil=$dir/his/${var}_81-05_clim_$monstr.nc
+#        echo $his_fil 
+#        for run in $runs; do
+#            runstr=$(printf %03d $run)
+#            run_fil=$dir/$runstr/${var}_RCP85_${runstr}_76-00_clim_${monstr}.nc 
+#            ncdiff -O -v $var $run_fil $his_fil $dir/difs/${runstr}_${var}_${monstr}_delta.nc
+#            ncrcat -O $dir/difs/${runstr}_${var}_??_delta.nc $dir/difs/${runstr}_${var}_clim_delta.nc 
+#        done
+#    done
+done

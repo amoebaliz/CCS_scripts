@@ -108,7 +108,7 @@ fid2.createDimension('time', None)
 fid2.createDimension('lat', ny)
 fid2.createDimension('lon', nx)
 
-fid2.createVariable('time', 'f8', ('time'))
+time = fid2.createVariable('time', 'f8', ('time'))
 fid2.variables['time'].units = fidUclim.variables['time'].units
 fid2.variables['time'].cycle_length = fidUclim.variables['time'].cycle_length
 fid2.variables['time'][:] = np.arange(.5,364.5+1)
@@ -131,7 +131,7 @@ fid2.variables['Uwind'].time = fidUclim.variables['Uwind'].time
 u_txt = "ERAinterim climatology (1981-2010) + CCMP " + yr + " Anomaly (relative to 1990-2010)"
 fid2.variables['Uwind'].details = u_txt
 fid2.variables['Uwind'][:]=Uout
-
+print time
 fid2.close()
 
 ncfilV = 'ERAi_CCMPanom_' +yr+'_Vwind.nc'
