@@ -48,7 +48,7 @@ def make_mask(regrid,destfield):
     avh_mask[avh_mask<.5]=0
     avh_mask[avh_mask>.5]=1
     # reverse masking convention
-    avh_mask = -1*avh_mask + 1
+    #avh_mask = -1*avh_mask + 1
     # make boolean
     avh_mask = avh_mask.astype(np.bool)
 
@@ -95,11 +95,14 @@ def plot_annual_maps():
 
 ############
 # ROMS Grid Information
-grdfile = '/Users/elizabethdrenkard/ANALYSES/CCS/Inputs/Grid/CCS_grd_high_res_bathy_jerlov.nc'
+
+grdfile = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/ucsc_sst_81-10_clim.nc'
 fid_roms = nc.Dataset(grdfile)
 r_lat = fid_roms.variables['lat_rho'][:]
 r_lon = fid_roms.variables['lon_rho'][:]
-r_mask = fid_roms.variables['mask_rho'][:]
+SST_roms = fid_roms.variables['temp'][:].squeeze()
+r_mask = SST_roms.mask[0,:].squeeze().astype(int)
+#r_mask = fid_roms.variables['mask_rho'][:]
 #r_mask = -1*r_mask+1
 
 
@@ -118,7 +121,7 @@ sourcefield = ESMF.Field(sourcegrid, name = 'CCS ROMS')
 #soda_bias = -2.75704143254
 
 # ACCESS ROMS SST CLIM
-SST_roms = nc.Dataset('/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCS_HCo03Y_SST_clim.nc').variables['temp'][:].squeeze()
+#SST_roms = nc.Dataset('/Users/elizabethdrenkard/TOOLS/CCS_scripts/Validation/CCS_HCo03Y_SST_clim.nc').variables['temp'][:].squeeze()
 #SST_roms = SST_roms - soda_bias
  
 # SODA SST CLIM
@@ -142,7 +145,6 @@ for nmon in range(12):
     fid_avh = nc.Dataset(avh_fil)
     #avh_sst = fid_avh.variables['BSST'][:].squeeze()
     avh_sst = fid_avh.variables['sst'][:].squeeze()    
-
     if nmon==0:
        lat = fid_avh.variables['lat'][:]
        lon = fid_avh.variables['lon'][:]
@@ -157,6 +159,19 @@ for nmon in range(12):
     squar_err[nmon,:] = (regrid(sourcefield, destfield).data - avh_sst)**2
 
     diff_vals[nmon,avh_mask]=np.ma.masked
+
+    #plt.pcolor(diff_vals[nmon,:].squeeze(),vmin=-1,vmax=1,cmap='jet')
+    #plt.colorbar()
+    #plt.show()
+
+    #fig, ax = plt.subplots()
+    #m = Basemap(llcrnrlat=m_lat[0]-m_off,urcrnrlat=m_lat[1]+m_off,\
+    #        llcrnrlon=m_lon[0]-m_off,urcrnrlon=m_lon[1]+m_off, resolution='i', ax=ax)
+    #P = m.pcolormesh(lon,lat,diff_vals[nmon,:].squeeze(),vmin=-1,vmax=1,cmap='jet')
+    #plt.colorbar(P)
+    #polygon_patch(m,ax)
+    #m.drawmeridians(m_lon, labels=[0,0,1,0], fmt='%d', fontsize=14)
+    #m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
 fig, ax = plt.subplots()
 m = Basemap(llcrnrlat=m_lat[0]-m_off,urcrnrlat=m_lat[1]+m_off,\
     llcrnrlon=m_lon[0]-m_off,urcrnrlon=m_lon[1]+m_off, resolution='i', ax=ax)
@@ -166,6 +181,10 @@ polygon_patch(m,ax)
 m.drawmeridians(m_lon, labels=[0,0,1,0], fmt='%d', fontsize=14)
 m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
 
+
+#plt.pcolor(np.mean(diff_vals,axis=0).squeeze(),vmin=-1,vmax=1,cmap='jet')
+#plt.colorbar()
+#plt.show()
 
 #rms_err = np.sqrt(np.mean(squar_err,axis=0))
 #avg_dif = np.ma.mean(diff_vals,axis=0)

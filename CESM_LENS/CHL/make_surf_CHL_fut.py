@@ -66,7 +66,7 @@ fid4 = nc.Dataset(wifs_nc)
 chl_his = fid4.variables['Chla'][:]
 
 # Save new files
-ncfile = 'SeaWiFS_CESMfut017_CCS_Clim_MAM.nc'
+ncfile = 'SeaWiFS_CESMfut017_CCS_Clim_MAM.nc.full_rho'
 fid2 = nc.Dataset(ncfile,'w')
 
 fid2.createDimension('lat', ny)
@@ -85,7 +85,7 @@ fid2.variables['Chla'].long_name = fid4.variables['Chla'].long_name
 fid2.variables['Chla'].units = fid4.variables['Chla'].units
 u_txt = "mass_concentration_chlorophyll_concentration_in_sea_water"
 fid2.variables['Chla'].standard_name = u_txt
-fid2.variables['Chla'][:]= #out_var#+chl_his
+fid2.variables['Chla'][:]= out_var + chl_his
 
 fid2.close()
 

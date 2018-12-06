@@ -157,14 +157,14 @@ for nmon in range(12):
     squar_err[nmon,:] = (regrid(sourcefield, destfield).data - avh_sst)**2
 
     diff_vals[nmon,avh_mask]=np.ma.masked
-fig, ax = plt.subplots()
-m = Basemap(llcrnrlat=m_lat[0]-m_off,urcrnrlat=m_lat[1]+m_off,\
-    llcrnrlon=m_lon[0]-m_off,urcrnrlon=m_lon[1]+m_off, resolution='i', ax=ax)
-P = m.pcolormesh(lon,lat,np.mean(diff_vals,axis=0).squeeze(),vmin=-1,vmax=1,cmap='jet')
-plt.colorbar(P)
-polygon_patch(m,ax)
-m.drawmeridians(m_lon, labels=[0,0,1,0], fmt='%d', fontsize=14)
-m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
+    fig, ax = plt.subplots()
+    m = Basemap(llcrnrlat=m_lat[0]-m_off,urcrnrlat=m_lat[1]+m_off,\
+            llcrnrlon=m_lon[0]-m_off,urcrnrlon=m_lon[1]+m_off, resolution='i', ax=ax)
+    P = m.pcolormesh(lon,lat,diff_vals[nmon,:].squeeze(),vmin=-1,vmax=1,cmap='jet')
+    plt.colorbar(P)
+    polygon_patch(m,ax)
+    m.drawmeridians(m_lon, labels=[0,0,1,0], fmt='%d', fontsize=14)
+    m.drawparallels(m_lat, labels=[0,0,0,0], fmt='%d')
 
 
 #rms_err = np.sqrt(np.mean(squar_err,axis=0))

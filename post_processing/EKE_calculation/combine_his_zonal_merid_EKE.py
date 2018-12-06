@@ -19,11 +19,13 @@ for nt in range(10):
     fid = nc.Dataset(ncfil)  
     u_eke = fid.variables['u_eke'][:].squeeze()
     v_eke = fid.variables['v_eke'][:].squeeze()
+    temp  = fid.variables['temp'][:].squeeze()
+
     # average u over xi dimension
     EKE = ((u_eke[1:-1,:-1]+u_eke[1:-1,1:])/2. + (v_eke[:-1,1:-1]+v_eke[1:,1:-1])/2.)/2
-    # Save EKE as netCDF  
+    # Save SST and EKE as netCDF  
     # Create new file    
-    new_ncfil =  'CCS_MAM_EKE_' + str(nt+3).zfill(4) + '.nc' 
+    new_ncfil =  'CCS_MAM_his_EKE_' + str(nt+3).zfill(4) + '.nc' 
     fid2 = nc.Dataset(new_ncfil, 'w') 
     
     # Write EKE to file
@@ -42,9 +44,16 @@ for nt in range(10):
     fid2.createVariable('lon_rho','f8',('eta_rho','xi_rho'))
     fid2.variables['lon_rho'].units = 'longitude'
     fid2.variables['lon_rho'][:]=lon
+
+    SST = fid2.createVariable('SST','f8',('ocean_time','eta_rho','xi_rho'))
+    fid2.variables['SST'].units = 'oC'
+    fid2.variables['SST']._FillValue=np.max(temp)
+    fid2.variables['SST'].long_name = 'Sea Surface Temperature'
+    fid2.variables['SST'][0,:]= temp[1:-1,1:-1]
      
     EKE2 = fid2.createVariable('EKE','f8',('ocean_time','eta_rho','xi_rho'))
     fid2.variables['EKE'].units = 'm^2/s^2'
+    fid2.variables['EKE']._FillValue=np.max(EKE)
     fid2.variables['EKE'].long_name = 'total eddy kinetic energy'
     fid2.variables['EKE'][0,:]= EKE
 
