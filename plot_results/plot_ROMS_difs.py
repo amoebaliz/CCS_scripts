@@ -123,8 +123,6 @@ ioffset = 0
 m_offset = 0.05
 mask_val = 0
 map_order = 30
-vip_eta = [0,870]
-vip_xi  = [0,376]
 
 # INITIAL FIGURE
 fig, ax = plt.subplots(figsize=(8,8))

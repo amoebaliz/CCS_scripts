@@ -1,4 +1,3 @@
-import pyroms
 import numpy as np
 import numpy.ma as ma
 import netCDF4 as nc
@@ -28,54 +27,23 @@ def outline_mask(mapid,mask_img,val,x0,y0,x1,y1):
     v = []
     # horizonal segments
     for p in zip(*hor_seg):
-        if (vip_eta[0] < p[0] < vip_eta[1] and vip_xi[0] < p[1] < vip_xi[1]):
-           v.append((glon[p[0]+1,p[1]],glat[p[0]+1,p[1]]))
-        else :
-           l.append((glon[p[0]+1,p[1]],glat[p[0]+1,p[1]]))
-
-        if p[1] == mask_img.shape[1] - 1 :
-           if (vip_eta[0] < p[0] < vip_eta[1] and vip_xi[0] < p[1] < vip_xi[1]):
-               v.append((glon[p[0]+1,p[1]],glat[p[0]+1,p[1]]))
-           else:
-               l.append((glon[p[0]+1,p[1]],glat[p[0]+1,p[1]]))
-        else :
-           if (vip_eta[0] < p[0] < vip_eta[1] and vip_xi[0] < p[1] < vip_xi[1]):
-              v.append((glon[p[0]+1,p[1]+1],glat[p[0]+1,p[1]+1]))
-           else:
-              l.append((glon[p[0]+1,p[1]+1],glat[p[0]+1,p[1]+1]))
+        v.append((plon[p[0]+1,p[1]],plat[p[0]+1,p[1]]))
+        v.append((plon[p[0]+1,p[1]+1],plat[p[0]+1,p[1]+1]))
 
         l.append((np.nan,np.nan))
         v.append((np.nan,np.nan))
     #vertical segments
     for p in zip(*ver_seg):
-        if p[1] == mask_img.shape[1]-1:
-           if (vip_eta[0] < p[0] < vip_eta[1] and vip_xi[0] < p[1] < vip_xi[1]):
-              v.append((glon[p[0],p[1]],glat[p[0],p[1]]))
-              v.append((glon[p[0]+1,p[1]],glat[p[0]+1,p[1]]))
-           else:
-              l.append((glon[p[0],p[1]],glat[p[0],p[1]]))
-              l.append((glon[p[0]+1,p[1]],glat[p[0]+1,p[1]]))
-        elif p[0] == mask_img.shape[0]-1:
-             if (vip_eta[0] < p[0] < vip_eta[1] and vip_xi[0] < p[1] < vip_xi[1]):
-              v.append((glon[p[0],p[1]],glat[p[0],p[1]]))
-              v.append((glon[p[0]+1,p[1]],glat[p[0]+1,p[1]]))
-             else:
-              l.append((glon[p[0],p[1]],glat[p[0],p[1]]))
-              l.append((glon[p[0],p[1]+1],glat[p[0],p[1]+1]))
-        else:
-           if (vip_eta[0] < p[0] < vip_eta[1] and vip_xi[0] < p[1] < vip_xi[1]):
-              v.append((glon[p[0],p[1]+1],glat[p[0],p[1]+1]))
-              v.append((glon[p[0]+1,p[1]+1],glat[p[0]+1,p[1]+1]))
-           else:
-              l.append((glon[p[0],p[1]+1],glat[p[0],p[1]+1]))
-              l.append((glon[p[0]+1,p[1]+1],glat[p[0]+1,p[1]+1]))
+        l.append((plon[p[0],p[1]+1],plat[p[0],p[1]+1]))
+        l.append((plon[p[0]+1,p[1]+1],plat[p[0]+1,p[1]+1]))
 
         l.append((np.nan, np.nan))
         v.append((np.nan, np.nan))
-    segments = np.array(l)
-    vip_segments = np.array(v)
-    mapid.plot(segments[:,0], segments[:,1], latlon=True, color=(0,0,0), linewidth=.75,zorder=map_order+2)
-    mapid.plot(vip_segments[:,0], vip_segments[:,1], latlon=True, color=(0,0,0), linewidth=.75,zorder=map_order+3)
+
+    l_segments = np.array(l)
+    v_segments = np.array(v)
+    mapid.plot(l_segments[:,0], l_segments[:,1], latlon=True, color=(0,0,0), linewidth=.75,zorder=map_order+2)
+    mapid.plot(v_segments[:,0], v_segments[:,1], latlon=True, color=(0,0,0), linewidth=.75,zorder=map_order+3)
 
 def fill_CA_Gulf(field):
     A = 180*np.ones(4,dtype=np.int)
@@ -113,8 +81,8 @@ def get_vel(i):
     u_vel_2 = (u_vel[1:-1,:-1]+u_vel[1:-1,1:])/2
     v_vel_2 = (v_vel[:-1,1:-1]+v_vel[1:,1:-1])/2
     # projection
-    u4 = u_vel_2*(np.cos(angs)) + v_vel_2*(np.cos(np.pi/2 + angs))
-    v4 = u_vel_2*(np.sin(angs)) + v_vel_2*(np.sin(np.pi/2 + angs))
+    u4 = u_vel_2*(np.cos(rang[1:-1,1:-1])) + v_vel_2*(np.cos(np.pi/2 + rang[1:-1,1:-1]))
+    v4 = u_vel_2*(np.sin(rang[1:-1,1:-1])) + v_vel_2*(np.sin(np.pi/2 + rang[1:-1,1:-1]))
 
     mag = np.sqrt((u_vel_2)**2+(v_vel_2)**2)
     return u4, v4, mag, mon
@@ -126,13 +94,15 @@ def get_vel(i):
 #dir = '/Users/elizabethdrenkard/Desktop/soda_fils/'
 #fil_pre = 'soda3.4.1_1981-2010_clim_'
 
-# CCS grid shape ONLY
-GRD = pyroms.grid.get_ROMS_grid('CCS')
-mask = GRD.hgrid.mask_rho[1:-1,1:-1] 
-print mask.shape
-glat = GRD.hgrid.lat_rho[1:-1,1:-1]
-glon = GRD.hgrid.lon_rho[1:-1,1:-1]
-angs = GRD.hgrid.angle_rho[1:-1,1:-1]
+# ROMS Grid information
+grdfile = '/Users/elizabethdrenkard/ANALYSES/CCS/Inputs/Grid/CCS_grd_high_res_bathy_jerlov.nc'
+fid = nc.Dataset(grdfile)
+mask_rho = fid.variables['mask_rho'][:]
+rlat = fid.variables['lat_rho'][:]
+rlon = fid.variables['lon_rho'][:]
+rang = fid.variables['angle_rho'][:]
+plat = fid.variables['lat_psi'][:]
+plon = fid.variables['lon_psi'][:]
 
 ### OFFSETS
 joffset = 0
@@ -141,26 +111,24 @@ ioffset = 0
 m_offset = 0.05
 mask_val = 0
 map_order = 30
-vip_eta = [0,870]
-vip_xi  = [0,376]
 
 # INITIAL FIGURE
 fig, ax = plt.subplots(figsize=(8,8))
-m = Basemap(llcrnrlat=np.min(glat)-m_offset,urcrnrlat = np.max(glat)+m_offset,llcrnrlon=np.min(glon)-m_offset,urcrnrlon=np.max(glon)+m_offset, resolution='i', ax=ax)
+m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset, resolution='i', ax=ax)
 
-P = m.pcolormesh(glon,glat,mask,vmin=.5,vmax=.75,edgecolors='face',cmap='Blues',zorder=map_order)
+P = m.pcolormesh(plon,plat,mask_rho[1:-1,1:-1],vmin=.5,vmax=.75,edgecolors='face',cmap='Blues',zorder=map_order)
 P.cmap.set_under('white')
 P.cmap.set_over([.9,.97,1])
 
-outline_mask(m,mask,mask_val,glon[0,0],glat[0,0],glon[-1,-1],glat[-1,-1])
+outline_mask(m,mask_rho[1:-1,1:-1],mask_val,plon[0,0],plat[0,0],plon[-1,-1],plat[-1,-1])
 
 #DOMAIN OUTLINE
-for j in range(glat.shape[0]-2):
-    m.plot((glon[j,0],glon[j+1,0]),(glat[j,0],glat[j+1,0]),linewidth=2,color='k',zorder=map_order+1)
-    m.plot((glon[j,-1],glon[j+1,-1]),(glat[j,-1],glat[j+1,-1]),linewidth=2,color='k',zorder=map_order+1)
-for ii in range(glat.shape[1]-2):
-    m.plot((glon[0,ii],glon[0,ii+1]),(glat[0,ii],glat[0,ii+1]),linewidth=2,color='k',zorder=map_order+1)
-    m.plot((glon[-1,ii],glon[-1,ii+1]),(glat[-1,ii],glat[-1,ii+1]),linewidth=2,color='k',zorder=map_order+1)
+for j in range(plat.shape[0]-1):
+    m.plot((plon[j,0],plon[j+1,0]),(plat[j,0],plat[j+1,0]),linewidth=2,color='k',zorder=map_order+1)
+    m.plot((plon[j,-1],plon[j+1,-1]),(plat[j,-1],plat[j+1,-1]),linewidth=2,color='k',zorder=map_order+1)
+for ii in range(plat.shape[1]-1):
+    m.plot((plon[0,ii],plon[0,ii+1]),(plat[0,ii],plat[0,ii+1]),linewidth=2,color='k',zorder=map_order+1)
+    m.plot((plon[-1,ii],plon[-1,ii+1]),(plat[-1,ii],plat[-1,ii+1]),linewidth=2,color='k',zorder=map_order+1)
 
 polygon_patch(m,ax)
 afreq = 25
@@ -172,8 +140,8 @@ m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_
 m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 
 sst,mon = get_sst(0)
-im1 = m.pcolor(glon,glat,sst[1:-1,1:-1],vmin=8,vmax=28, cmap='nipy_spectral',zorder=map_order)
-#im2 = m.quiver(glon[::afreq],glat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
+im1 = m.pcolormesh(plon,plat,sst[1:-1,1:-1],vmin=8,vmax=28, cmap='nipy_spectral',zorder=map_order)
+#im2 = m.quiver(rlon[::afreq],rlat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
 
 #plt.show()
 # ANIMATION
@@ -187,9 +155,9 @@ def updatefig(i):
     #   im1.remove()
     sst,mon = get_sst(i)
     #u,v,mag,mon = get_vel(i)
-    im1   = m.pcolormesh(glon,glat,sst[1:-1,1:-1], vmin=8,vmax=28,cmap='nipy_spectral',zorder=map_order)
-    #im1 = m.pcolor(glon,glat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
-    #im2 = m.quiver(glon[::afreq,::afreq],glat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=3,zorder=map_order+2)
+    im1   = m.pcolormesh(plon,plat,sst[1:-1,1:-1], vmin=8,vmax=28,cmap='nipy_spectral',zorder=map_order)
+    #im1 = m.pcolormesh(plon,plat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
+    #im2 = m.quiver(rlon[1:-1:afreq,1:-1:afreq],rlat[::afreq,::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=3,zorder=map_order+2)
     polygon_patch(m,ax)
     tx_str = mon 
     tx.set_text(tx_str)
