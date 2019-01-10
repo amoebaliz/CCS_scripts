@@ -1,4 +1,3 @@
-import pyroms
 import numpy as np
 import numpy.ma as ma
 import netCDF4 as nc
@@ -50,39 +49,38 @@ def get_sss(ncfil):
 #ncfil = '/Users/elizabethdrenkard/Desktop/soda_annual_avg_salt.nc'
 sss, lat, lon = get_sss(ncfil)
 
-# CCS grid shape ONLY
-GRD = pyroms.grid.get_ROMS_grid('CCS')
-mask = GRD.hgrid.mask_rho
-glat = GRD.hgrid.lat_rho
-glon = GRD.hgrid.lon_rho
+# ROMS Grid information
+grdfile = '/Users/elizabethdrenkard/ANALYSES/CCS/Inputs/Grid/CCS_grd_high_res_bathy_jerlov.nc'
+fid = nc.Dataset(grdfile)
+plat = fid.variables['lat_psi'][:]
+plon = fid.variables['lon_psi'][:]
+
 
 ### OFFSETS
 joffset = 0
 ioffset = 0
 
 m_offset = 0.05
-mask_val = 0
 map_order = 30
-vip_eta = [0,872]
-vip_xi  = [240,378]
 
 clon,clat = np.meshgrid(lon,lat)
 
 # INITIAL FIGURE
 fig, ax = plt.subplots(figsize=(8,8))
-m = Basemap(llcrnrlat=np.min(glat)-m_offset,urcrnrlat = np.max(glat)+m_offset,llcrnrlon=np.min(glon)-m_offset,urcrnrlon=np.max(glon)+m_offset, resolution='i', ax=ax)
+m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset, resolution='i', ax=ax)
 
 P = m.contourf(clon,clat,sss,np.linspace(32,35.5,50),cmap='inferno',zorder=map_order)
 P.cmap.set_under('white')
 P.cmap.set_over([.9,.97,1])
 plt.colorbar(P)
-##DOMAIN OUTLINE
-#for j in range(glat.shape[0]-2):
-#    m.plot((glon[j,0],glon[j+1,0]),(glat[j,0],glat[j+1,0]),linewidth=2,color='k',zorder=map_order+1)
-#    m.plot((glon[j,-1],glon[j+1,-1]),(glat[j,-1],glat[j+1,-1]),linewidth=2,color='k',zorder=map_order+1)
-#for ii in range(glat.shape[1]-2):
-#    m.plot((glon[0,ii],glon[0,ii+1]),(glat[0,ii],glat[0,ii+1]),linewidth=2,color='k',zorder=map_order+1)
-#    m.plot((glon[-1,ii],glon[-1,ii+1]),(glat[-1,ii],glat[-1,ii+1]),linewidth=2,color='k',zorder=map_order+1)
+
+#DOMAIN OUTLINE
+for j in range(plat.shape[0]-1):
+    m.plot((plon[j,0],plon[j+1,0]),(plat[j,0],plat[j+1,0]),linewidth=2,color='k',zorder=map_order+1)
+    m.plot((plon[j,-1],plon[j+1,-1]),(plat[j,-1],plat[j+1,-1]),linewidth=2,color='k',zorder=map_order+1)
+for ii in range(plat.shape[1]-1):
+    m.plot((plon[0,ii],plon[0,ii+1]),(plat[0,ii],plat[0,ii+1]),linewidth=2,color='k',zorder=map_order+1)
+    m.plot((plon[-1,ii],plon[-1,ii+1]),(plat[-1,ii],plat[-1,ii+1]),linewidth=2,color='k',zorder=map_order+1)
 
 polygon_patch(m,ax)
 

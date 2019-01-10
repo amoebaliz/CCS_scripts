@@ -68,7 +68,7 @@ m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,ll
 P = m.pcolormesh(plon,plat,mask_rho[1:-1,1:-1],vmin=.5,vmax=.75,edgecolors='face',cmap='Blues',zorder=map_order)
 P.cmap.set_under('white')
 P.cmap.set_over([1,.8,0])
-P = m.plot(rlon,rlat,'ko',markersize=0.1,zorder=map_order)
+#P = m.plot(rlon,rlat,'ko',markersize=0.1,zorder=map_order)
 
 outline_mask(m,mask_rho[1:-1,1:-1],mask_val,plon[0,0],plat[0,0],plon[-1,-1],plat[-1,-1])
 
@@ -85,4 +85,3 @@ polygon_patch(m,ax)
 m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 plt.show()
-
