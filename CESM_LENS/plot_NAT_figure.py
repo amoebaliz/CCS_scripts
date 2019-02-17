@@ -1,97 +1,80 @@
 import numpy as np
 import netCDF4 as nc
+import matplotlib.pyplot as plt
+import matplotlib.dates as pltd
+import datetime as dt
+# OBJECTIVE: Plot Surf Temp, O2, PH time-series
+dir = '/glade/work/edrenkar/'
+grid_fil = dir + 'LENS_CCS_lat_lon.npy'
 
-# OBJECTIVE: Getting ALL LENS endmemebers for SST surfPH and surfO2
-
-# NCAR directory for Large Ensemble files
-dir = '/glade/collections/cdg/data/cesmLE/CESM-CAM5-BGC-LE/ocn/proc/tseries/monthly/'
-
-# File name strings
-his_fil_bas = 'b.e11.B20TRC5CNBDRD.f09_g16.'
-fut_fil_bas = 'b.e11.BRCP85C5CNBDRD.f09_g16.'
-
-fil_bas2 = '.pop.h.SST.'
-
-# CCS DOMAIN
-a = 245
-b = 317
-c = 225
-d = 260
+latlon = np.load(grid_fil)
+lat = latlon[0,:].squeeze()
+lon = latlon[1,:].squeeze()
 
 # Number of Years in timeseries
-nyr = 2100-1950+1
+nyrs = 2100-1950+1
 
-# Number of NCAR LE endmembers
-end_mem = 35
+# ANNUAL or MONTHLY MEANS
+# ANNUAL = 0, MONTHLY = 1
+an_val = 0
 
+# Assign Month-Center Dates
+ndays = [31,28,31,30,31,30,31,31,30,31,30,31]
+if an_val:
+   cesm_dates = np.zeros(nyrs*12)
+else:
+   cesm_dates = np.zeros(nyrs)   
+n=0
+
+for nyr in range(1950,2100+1):
+
+    if an_val:
+       if nyr%4 == 0:
+          ndays[1] = 29
+       else:
+          ndays[1] = 28
+       for nmon in range(12):
+          date_val = dt.datetime(nyr,nmon+1,1)
+          cesm_dates[n] = pltd.date2num(date_val + dt.timedelta(days=ndays[nmon]/2.-1))
+          n+=1
+    else:
+       cesm_dates[n] = pltd.date2num(dt.datetime(nyr,1,1) + dt.timedelta(days=365/2.-1))
+       n+=1 
+
+# Figure setup:SST, PH, O2
+fig, ax = plt.subplots(3, figsize=(5,8),sharex=True)
+ytic = [range(17,23+1,3), np.arange(7.7,8.1+.1,.2), range(229,255+1,11)]        
+nv=0
 for VAR in ("SST", "PH", "O2"):
-    # Initializing matrix for multi-endmember timeseries
-    var_stor_all=np.empty((0,ny*12,b-a,d-c))
+    npyfil = dir + 'LENS_1950-2100_' + VAR + '.npy'
+    var = np.ma.array(np.load(npyfil))
+    var[var>1000]=np.ma.masked
+    # ISOLATE CCS DOMAIN
 
-    for ne in range(1,end_mem+1):
-        #######################
-        ## HISTORICAL VALUES ##
-        #######################
-        if ne == 1: 
-           his_str_yr = 1850
-        else:
-           his_str_yr = 1920
+    # PLOT TIME SERIES
+    for ne in range(var.shape[0]):
+        ne_ts = np.mean(np.mean(var[ne,:].squeeze(),axis=2),axis=1)
+        if an_val==0:
+           ne_ts = [np.mean(ne_ts[12*a:12*(a+1)]) for a in range(nyrs)]
+ 
+        ax[nv].plot(cesm_dates,ne_ts,color='lightgrey')
 
-        # File name
-        his_ncfil  = dir + his_fil_bas + str(ne).zfill(3) + fil_bas2 + str(his_str_yr) + '01-' + str(200512)+ '.nc'
-        fid_his = nc.Dataset(his_ncfil)
+    em_avg = np.mean(np.mean(np.mean((var),axis=3),axis=2),axis=0).squeeze()
 
-        #############
-        # CESM GRID #
-        #############
-	if (ne == 1 and VAR == 'SST'):
-           # SAVE LENS GRID INFO
-           lat = fid_his.variables['TLAT'][a:b,c:d]
-           lon = fid_his.variables['TLONG'][a:b,c:d]
-           np.save('LENS_CCS_lat_lon.npy', np.ma.append(np.ma.expand_dims(lat,axis=0), np.ma.expand_dims(lon,axis=0),axis=0))
+    if an_val == 0: 
+       em_avg = [np.mean(em_avg[12*a:12*(a+1)]) for a in range(nyrs)]
+  
+    ax[nv].plot(cesm_dates,em_avg,color = 'k') 
+    ax[nv].set_yticks(ytic[nv])
+    plt.setp(ax[nv].get_yticklabels(), fontsize=12)
+    nv+=1
+ax[0].xaxis_date()
+ax[0].set_xlim(dt.datetime(1950,1,1),dt.datetime(2100,12,31))
 
-        # Total number of yrs in historical file
-        nyr_h = 2005-his_str_yr+1
-
-        # From beginning of 1950 to end of length of timeseries
-        Ifyr = 12*(nyr_h-(2005-1950+1))
-
-        # Fetch Variables, PH lacks a depth dimension
-        if VAR == 'PH':
-           var_h = fid_his.variables[VAR][Ifyr:,a:b,c:d].squeeze()
-        else:
-           var_h = fid_his.variables[VAR][Ifyr:,0,a:b,c:d].squeeze()
-        
-        ################### 
-        ## FUTURE VALUES ##
-        ###################
-        fut_str_yr = [2006,2081]
-        fut_end_yr = [2080,2100]
-
-        if ne < 34:
-           # Two files: 2006-2080, 2081-2100
-           tot_yr_f = [np.diff(fut_end_yr),np.diff(fut_end_yr)]
-        else:
-           # One file: 2006-2100
-           tot_yr_f = [(2100-2006) + 1]
-
-        # Opening and appending variable number of files
-        var_f = np.empty((0,b-a,d-c))
-        nfils = len(tot_yr_f)
-        for nf in range(nfils):
-            fut_ncfil = dir + fut_fil_bas + str(ne).zfill(3) + fil_bas2 + str(fut_str_yr[nf]) + '01-' + str(fut_end_yr[nf-nfils])+ '12.nc'
-            fid_fut = nc.Dataset(fut_ncfil)
-            # Number of years contained in future file 
-            nyr_f = fut_end_yr[nf]-fut_str_yr[nf-nfils]+1
-            # Monthly climatology/Annual Mean
-            if VAR == 'PH':
-               var_f = np.ma.append(var_f, fid_fut.variables[VAR][:,a:b,c:d].squeeze())
-            else:
-               var_f = np.ma.append(var_f, fid_fut.variables[VAR][:,0,a:b,c:d].squeeze())
-
-        # STORE VALUES FOR ANALYSIS 
-        var_all_stor = np.ma.append(var_all_stor,np.ma.expand_dims(np.ma.append(var_h,var_f),axis=0),axis=0)
-
-    # SAVE FIELDS TO BINARY FILE
-    npy_save_text = 'LENS_' + VAR + '.npy'
-    np.save(npy_save_text, var_all_stor)
+cesm_ticks = [pltd.date2num(dt.datetime(yr,1,1)) for yr in range(1950,2100+1,25)]
+ax[0].set_xticks(cesm_ticks)
+plt.setp(ax[2].get_xticklabels(), fontsize=12)
+plt.show()
+    #print var.shape
+    #plt.pcolor(lon,lat,var[0,0,:].squeeze())
+    #plt.show()
