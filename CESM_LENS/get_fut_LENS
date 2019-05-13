@@ -41,8 +41,8 @@ for run in $runs; do
         #filnm1=/glade/p/cesmLE/CESM-CAM5-BGC-LE/atm/proc/tseries/monthly/$var/b.e11.BRCP85C5CNBDRD.f09_g16.$runstr.cam.h0.$var.200601-208012.nc
         #filnm2=/glade/p/cesmLE/CESM-CAM5-BGC-LE/atm/proc/tseries/monthly/$var/b.e11.BRCP85C5CNBDRD.f09_g16.$runstr.cam.h0.$var.208101-210012.nc
         #ls $filnm1
-        #strt_val1=840
-        #strt_val2=0
+        strt_val1=840
+        strt_val2=0
 
         for mon in {1..12}; do
             monstr=$(printf %02d $mon)
@@ -71,11 +71,11 @@ for run in $runs; do
             ((strt_val1+=1))
             ((strt_val2+=1))
  
-            #ncra -O ${var}_*_RCP85_$monstr.nc ${runstr}/${var}_RCP85_${runstr}_76-00_clim_$monstr.nc
-            #rm ${var}_*_RCP85_$monstr.nc 
+            ncra -O ${var}_*_RCP85_$monstr.nc ${runstr}/${var}_RCP85_${runstr}_76-00_clim_$monstr.nc
+            rm ${var}_*_RCP85_$monstr.nc 
         done
-        #ncrcat -O ./$runstr/${var}_RCP85_${runstr}_76-00_clim_??.nc ./$runstr/${mod_comp}_run${runstr}_${var}_RCP85_76-00_clim.nc
-#        ls ${mod_comp}_run${runstr}_${var}_RCP85_76-00_clim.nc
+        ncrcat -O ./$runstr/${var}_RCP85_${runstr}_76-00_clim_??.nc ./$runstr/${mod_comp}_run${runstr}_${var}_RCP85_76-00_clim.nc
+        ls ${mod_comp}_run${runstr}_${var}_RCP85_76-00_clim.nc
 #        rm ${var}_RCP85_76-00_clim_??.nc
     done
 

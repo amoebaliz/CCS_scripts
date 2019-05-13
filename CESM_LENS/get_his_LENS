@@ -12,36 +12,40 @@ tim_range=monthly
 #vars="PSL TREFHT FLDS FSDS"
 #vars="U V Q"
 #vars="TAUX TAUY"
-#vars="diatChl spChl diazChl"
+vars="diatChl spChl diazChl"
+runs="17"
 
-#FOR 1850-2005 RUN ONLY
-#strt_val=1572
-strt_val= #1950
+for run in $runs; do
+    runstr=$(printf %03d $run)
 
-#FOR 1920-2005 RUNS
-strt_val=732
+    echo $runstr
+    for var in $vars; do
 
-for var in $vars; do
- fil=b.e11.B20TRC5CNBDRD.f09_g16.017.pop.h.${var}.192001-200512.nc
- filnm=$dir/$mod_comp/$dir2/$tim_range/$var/$fil
-#filnm=/glade/p/cesmLE/CESM-CAM5-BGC-LE/$mod_comp/proc/tseries/monthly/$var/b.e11.B20TRC5CNBDRD.f09_g16.017.cice.h.${var}_nh.192001-200512.nc
-#filnm=/glade/p/cesmLE/CESM-CAM5-BGC-LE/$mod_comp/proc/tseries/monthly/$var/b.e11.B20TRC5CNBDRD.f09_g16.017.pop.h.$var.192001-200512.nc
-#filnm=/glade/p/cesmLE/CESM-CAM5-BGC-LE/$mod_comp/proc/tseries/monthly/$var/b.e11.B20TRC5CNBDRD.f09_g16.017.cam.h0.$var.192001-200512.nc
-#ls $filnm
- for mon in {1..12}; do
-    monstr=$(printf %02d $mon)
-    #ncra -O -d time,$strt_val,,12 -d nj,,45 -d ni,200,254 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
-    ncra -O -d time,$strt_val,,12 -d z_t_150m,0 -d nlat,240,319 -d nlon,190,269 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
-    #ncra -O -d time,$strt_val,,12 -d lat,110,159 -d lon,160,209 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
-    #ncra -O -d lev,-1 -d time,$strt_val,,12 -d lat,110,159 -d lon,160,209 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
-    ((strt_val+=1))
- done
+        #FOR 1850-2005 RUN ONLY
+        #strt_val=1572
+        #strt_val= #1950
 
-ncrcat -O ./his_017/${var}_81-05_clim_??.nc ./his_017/${mod_comp}_${var}_81-05_clim.nc
-#rm ${var}_81-05_clim_??.nc
+        #FOR 1920-2005 RUNS
+        strt_val=732
 
+        fil=b.e11.B20TRC5CNBDRD.f09_g16.017.pop.h.${var}.192001-200512.nc
+        filnm=$dir/$mod_comp/$dir2/$tim_range/$var/$fil
+        #filnm=/glade/p/cesmLE/CESM-CAM5-BGC-LE/$mod_comp/proc/tseries/monthly/$var/b.e11.B20TRC5CNBDRD.f09_g16.017.cice.h.${var}_nh.192001-200512.nc
+        #filnm=/glade/p/cesmLE/CESM-CAM5-BGC-LE/$mod_comp/proc/tseries/monthly/$var/b.e11.B20TRC5CNBDRD.f09_g16.017.pop.h.$var.192001-200512.nc
+        #filnm=/glade/p/cesmLE/CESM-CAM5-BGC-LE/$mod_comp/proc/tseries/monthly/$var/b.e11.B20TRC5CNBDRD.f09_g16.017.cam.h0.$var.192001-200512.nc
+    #ls $filnm
+
+        for mon in {1..12}; do
+            monstr=$(printf %02d $mon)
+            #ncra -O -d time,$strt_val,,12 -d nj,,45 -d ni,200,254 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
+            ncra -O -d time,$strt_val,,12 -d z_t_150m,0 -d nlat,240,319 -d nlon,190,269 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
+            #ncra -O -d time,$strt_val,,12 -d lat,110,159 -d lon,160,209 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
+            #ncra -O -d lev,-1 -d time,$strt_val,,12 -d lat,110,159 -d lon,160,209 $filnm ./his_017/${var}_81-05_clim_$monstr.nc
+            ((strt_val+=1))
+        done
+
+        ncrcat -O ./his_${runstr}/${var}_81-05_clim_??.nc ./his_017/${mod_comp}_run${runstr}_${var}_81-05_clim.nc
+        rm ./his_${runstr}/${var}_81-05_clim_??.nc
+    done
 done
-
-
-
 

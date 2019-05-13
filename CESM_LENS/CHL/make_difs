@@ -12,21 +12,14 @@ vars="diatChl diazChl spChl"
 #vars="Uwind Vwind"
 runstr=$(printf %03d $runs)
 for var in $vars; do
-    his_fil=$dir/his_${var}_MAM.nc
+    echo $runstr $var
+    his_fil=$dir/his${runstr}_${var}_MAM.nc
     echo $his_fil
-    run_fil=$dir/fut017_${var}_MAM.nc
-    echo $run_fil
-    ncdiff -O -v $var $run_fil $his_fil $dir/${var}_MAM_delta.nc
-    
-#    for mon in {1..12}; do
-#        monstr=$(printf %02d $mon)
-#        his_fil=$dir/his/${var}_81-05_clim_$monstr.nc
-#        echo $his_fil 
-#        for run in $runs; do
-#            runstr=$(printf %03d $run)
-#            run_fil=$dir/$runstr/${var}_RCP85_${runstr}_76-00_clim_${monstr}.nc 
-#            ncdiff -O -v $var $run_fil $his_fil $dir/difs/${runstr}_${var}_${monstr}_delta.nc
-#            ncrcat -O $dir/difs/${runstr}_${var}_??_delta.nc $dir/difs/${runstr}_${var}_clim_delta.nc 
-#        done
-#    done
+    ncra -O -d time,2,4 ../his_${runstr}/ocn_run${runstr}_${var}_81-05_clim.nc $his_fil
+
+    fut_fil=$dir/fut${runstr}_${var}_MAM.nc
+    ncra -O -d time,2,4 ../${runstr}/ocn_run${runstr}_${var}_RCP85_76-00_clim.nc $fut_fil
+
+    ncdiff -O -v $var $fut_fil $his_fil $dir/${var}_MAM_delta.nc
+    rm $fut_fil $his_fil 
 done
