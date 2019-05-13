@@ -57,17 +57,17 @@ plon = fid.variables['lon_psi'][:]
 joffset = 0
 ioffset = 0
 
-m_offset = 0.05
+m_offset = 3
 mask_val = 0
 map_order = 30
 
 # INITIAL FIGURE
 fig, ax = plt.subplots(figsize=(8,8))
-m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset, resolution='i', ax=ax)
+m = Basemap(llcrnrlat=20-m_offset,urcrnrlat = 50+m_offset,llcrnrlon=-140-m_offset,urcrnrlon=-110+m_offset, resolution='i', ax=ax)
 
 P = m.pcolormesh(plon,plat,mask_rho[1:-1,1:-1],vmin=.5,vmax=.75,edgecolors='face',cmap='Blues',zorder=map_order)
 P.cmap.set_under('white')
-P.cmap.set_over([1,.8,0])
+P.cmap.set_over([1,.6,0])
 #P = m.plot(rlon,rlat,'ko',markersize=0.1,zorder=map_order)
 
 outline_mask(m,mask_rho[1:-1,1:-1],mask_val,plon[0,0],plat[0,0],plon[-1,-1],plat[-1,-1])
@@ -82,6 +82,6 @@ for ii in range(plat.shape[1]-1):
 
 polygon_patch(m,ax)
 
-m.drawmeridians([-142,-111], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
-m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
+m.drawmeridians([-140,-110], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
+m.drawparallels([20,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_order+5)
 plt.show()

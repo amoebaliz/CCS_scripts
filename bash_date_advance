@@ -1,0 +1,33 @@
+#!/bin/bash
+
+nmdays=(31 28 31 30 31 30 31 31 30 31 30 31) 
+
+# INITIALIZE TIME CLOCK
+YEAR=2010
+mn=1
+dy=1
+FYEAR=2011
+
+while ((YEAR<=FYEAR)); do
+
+      while ((mn<=12)); do
+            
+            MON=$(printf %02d $mn)
+
+            while ((dy<=nmdays[mn-1])); do
+
+                  DAY=$(printf %02d $dy)  
+                  echo ${YEAR}-${MON}-${DAY}
+
+                  ((dy++))
+            done
+            # RESET MONTH
+            dy=1
+            ((mn++))
+
+      done
+      # RESET YEAR
+      mn=1
+      ((YEAR++))
+done
+
