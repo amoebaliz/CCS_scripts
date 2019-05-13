@@ -1,4 +1,4 @@
-DIRROOT=/glade/p/work/edrenkar/MODELS/CCS/RUNS
-RUN=CCS-LD.HCo01Y
-FYEAR=11
-LYEAR=12
+DIRROOT=/glade/scratch/edrenkar/tmpdir_CCS-LD.HCo03Y
+RUN=outputs
+FYEAR=7
+LYEAR=7

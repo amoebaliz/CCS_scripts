@@ -29,7 +29,7 @@ cd $DIRROOT/$RUN/
 
 # loop on year directories
 for yr in $( seq $FYEAR $LYEAR ) ; do
-    year=$(printf %02d $yr)
+    year=$(printf %04d $yr)
     if [ ! -d $DIRROOT/$RUN/$year ] ; then echo $DIRROOT/$RUN/$year does not exist ; exit 1 ; fi
     cd $DIRROOT/$RUN/$year
 

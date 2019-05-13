@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# CHEYENNE - needs recompile
-#SOSIE=/glade/u/home/edrenkar/TOOLS/sosie/bin
-#dirin=/glade/p/work/edrenkar/external_data/ERAinterim/climatologies/
+# CHEYENNE 
+SOSIE=/glade/u/home/edrenkar/TOOLS/sosie/bin
+dirin=/glade/work/edrenkar/external_data/CCMP
+dirmask=/glade/work/edrenkar/external_data/CCMP/land-sea_mask
 
 # MACBOOK
-SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
-dirin=/Users/elizabethdrenkard/TOOLS/CCS_scripts/CCMP
+#SOSIE=/Users/elizabethdrenkard/TOOLS/sosie/bin
+#dirin=/Users/elizabethdrenkard/TOOLS/CCS_scripts/CCMP
 
 #SWFSC
 #SOSIE=/Users/liz.drenkard/TOOLS/sosie/bin
@@ -14,22 +15,21 @@ dirin=/Users/elizabethdrenkard/TOOLS/CCS_scripts/CCMP
 
 dirout=$dirin
 
-filin=CCMP_MAY01-APR02_daily_anom.nc
+ncvar=("Uwind" "Vwind")
+yr=MAY01-APR02
+for varstr in Uwind Vwind; do
 
-ncvar=("u_anom" "v_anom")
-
-for varstr in u_anom v_anom; do
-
+    filin=CCMP_${yr}_${varstr}.nc
     echo $varstr
-    filout=CCMP_$varstr.nc
+    filout=$filin
 
     # DROWN CCMP FILES
     timevar=$( ncdump -h $dirin/$filin | grep time | head -1 | awk '{ print $1 }' )
     ncvar=$( ncdump -h $dirin/$filin | grep float | tail -1 | sed -e "s/(/ /" | awk '{ print $2 }' )
 
     echo Processing variable $ncvar in file $filin
-    $SOSIE/mask_drown_field_ccmp.x -D -i $dirin/$filin -v $varstr -t $timevar \
-                                     -m $dirin/CCMP_LSM.nc\
+    $SOSIE/mask_drown_field_era.x -D -i $dirin/$filin -v $varstr -t $timevar \
+                                     -m $dirmask/CCMP_LSM.nc\
                                      -p -1 -o $dirout/drowned_$filout  
 
     # REMOVES THE VARIABLES: VALID_MIN AND VALID_MAX. 

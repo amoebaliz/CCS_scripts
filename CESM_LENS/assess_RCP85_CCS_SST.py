@@ -132,6 +132,8 @@ def plot_clim_difs():
 
 # NCAR directory for Large Ensemble files
 dir = '/glade/p/cesmLE/CESM-CAM5-BGC-LE/ocn/proc/tseries/monthly/SST/'
+dir = '/glade/collections/cdg/data/cesmLE/CESM-CAM5-BGC-LE/ocn/proc/tseries/monthly/'
+
 
 # File name strings
 his_fil_bas = 'b.e11.B20TRC5CNBDRD.f09_g16.'
