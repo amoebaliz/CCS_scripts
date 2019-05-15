@@ -15,9 +15,9 @@ ny = roms_lat.shape[0]
 nx = roms_lon.shape[1]
 
 # FUT FILES: Reshape to CCS grid
-fid1 = nc.Dataset('diatChl_MAM_delta.nc')
-fid2 = nc.Dataset('diazChl_MAM_delta.nc')
-fid3 = nc.Dataset('spChl_MAM_delta.nc')
+fid1 = nc.Dataset('diatChl_may_delta.nc')
+fid2 = nc.Dataset('diazChl_may_delta.nc')
+fid3 = nc.Dataset('spChl_may_delta.nc')
 
 # get lat lon
 lon = fid1.variables['TLONG'][:]
@@ -60,13 +60,14 @@ out_var = destfield.data
 out_var[roms_mask.astype(np.bool)]=np.ma.masked
 out_var[out_var>100]=np.ma.masked
 
-wifs_nc = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/SeaWIFS/SeaWiFS_CCS_his_Clim_MAM.nc'
 
+# FOR METADATA ONLY
+wifs_nc = '/Users/elizabethdrenkard/TOOLS/CCS_scripts/SeaWIFS/SeaWiFS_CCS_his_Clim_MAM.nc'
 fid4 = nc.Dataset(wifs_nc)
-chl_his = fid4.variables['Chla'][:]
+
 
 # Save new files
-ncfile = 'SeaWiFS_CESMfut017_CCS_Clim_MAM.nc.full_rho'
+ncfile = 'CESMfut017_CCS_Clim_may.nc.full_rho'
 fid2 = nc.Dataset(ncfile,'w')
 
 fid2.createDimension('lat', ny)
@@ -83,9 +84,9 @@ fid2.variables['lon'][:]=roms_lon
 fid2.createVariable('Chla','f8',('lat','lon'),fill_value = np.float(1.0e15))
 fid2.variables['Chla'].long_name = fid4.variables['Chla'].long_name
 fid2.variables['Chla'].units = fid4.variables['Chla'].units
-u_txt = "mass_concentration_chlorophyll_concentration_in_sea_water"
+u_txt = "mass_chlorophyll_concentration_in_sea_water"
 fid2.variables['Chla'].standard_name = u_txt
-fid2.variables['Chla'][:]= out_var + chl_his
+fid2.variables['Chla'][:]= out_var 
 
 fid2.close()
 
