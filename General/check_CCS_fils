@@ -1,10 +1,12 @@
 #!/bin/bash
 
-FYEAR=5
-LYEAR=5
+FYEAR=1
+LYEAR=10
 
-orig_dir=/Volumes/Abalone/CCS/his2
-orig_dir=/Volumes/Abalone/CCS/fut_017
+#orig_dir=/Volumes/Abalone/CCS/his2
+#orig_dir=/Volumes/Abalone/CCS/fut_017
+scratch_dir=/glade/scratch/edrenkar/tmpdir_CCS-LD.HCo03Y/outputs
+work_dir=/glade/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo03Y
 
 nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
 
@@ -18,11 +20,19 @@ for yr in $( seq $FYEAR $LYEAR ) ; do
          
         for day_val in $( seq 1 $dmon ) ; do
             day=$(printf %02d $day_val)
-            fil_base=CCS-LD.HCo02Y_avg_$year-$mon-${day}T12:00:00.nc
-            fil_base=CCS-LD.FCo017_avg_$year-$mon-${day}T12:00:00.nc
-
-            if [ ! -f $orig_dir/$year/$fil_base ] ; then
-               echo $fil_base
+            fil_base=CCS-LD.HCo03Y_avg_$year-$mon-${day}T12:00:00.nc
+            #fil_base=CCS-LD.FCo017_avg_$year-$mon-${day}T12:00:00.nc
+            
+            if [ ! -f $work_dir/$year/$fil_base ] ; then
+               echo "$fil_base does not exist in work directory"
+               ((n+=1))
+            else
+               scr_fil_sz=$(stat -c%s "$scratch_dir/$year/$fil_base") 
+               wrk_fil_sz=$(stat -c%s "$work_dir/$year/$fil_base")
+            fi
+ 
+            if [ "$wrk_fil_sz" -ne "$scr_fil_sz" ]; then
+               echo "$fil_base transfer was incomplete"
                ((n+=1))
             fi
         done
