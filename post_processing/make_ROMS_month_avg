@@ -1,20 +1,20 @@
 #!/bin/bash
 
-FYEAR=3
-LYEAR=12
+FYEAR=7
+LYEAR=9
 
 # Cheyenne
 # in_dir=/glade/scratch/edrenkar/tmpdir_CCS-LD.FCo017/outputs
 # out_dir=/glade/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo017
 
 # Abalone - his
-in_dir=/Volumes/Abalone/CCS/his2
-out_dir=/Users/elizabethdrenkard/Desktop/temp
+in_dir=/Volumes/Abalone/CCS/his3
+out_dir=/Volumes/Abalone/CCS/his3/monthly_means/
 # Abalone - fut
 #in_dir=/Volumes/Abalone/CCS/fut_017
 #out_dir=/
 
-modstr=HCo02Y
+modstr=HCo03Y
 #modstr=FCo017
 nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
 
@@ -35,26 +35,26 @@ for year in $( seq -f %04g $FYEAR $LYEAR ) ; do
 
         if (( $n == ${nmdays[$nmon]} )); then
            echo $year $mon 'GOOD'      
-           #ncra -O -h $fil_dir/CCS-LD.HCo02Y_avg_$year-$mon*.nc $out_dir/$year/CCS-LD.HCo02Y_$year-${mon}.nc
+           ncra -O -h $fil_dir/CCS-LD.HCo03Y_avg_$year-$mon*.nc $out_dir/CCS-LD.HCo03Y_$year-${mon}.nc
            #ncra -O -h $fil_dir/CCS-LD.FCo017_avg_$year-$mon*.nc $out_dir/$year/CCS-LD.FCo017_$year-${mon}.nc
 
            # Getting surface monthly means
-           ncra -O -d s_rho,49  -v temp $fil_dir/CCS-LD.${modstr}_avg_$year-$mon*.nc $out_dir/CCS-LD.${modstr}_surf_temp_$year-${mon}.nc 
-           ncra -O -d s_rho,49  -v salt $fil_dir/CCS-LD.${modstr}_avg_$year-$mon*.nc $out_dir/CCS-LD.${modstr}_surf_salt_$year-${mon}.nc
-           ncra -O -d s_rho,49  -v u,v $fil_dir/CCS-LD.${modstr}_avg_$year-$mon*.nc $out_dir/CCS-LD.${modstr}_surf_uv_$year-${mon}.nc
+           #ncra -O -d s_rho,49  -v temp $fil_dir/CCS-LD.${modstr}_avg_$year-$mon*.nc $out_dir/CCS-LD.${modstr}_surf_temp_$year-${mon}.nc 
+           #ncra -O -d s_rho,49  -v salt $fil_dir/CCS-LD.${modstr}_avg_$year-$mon*.nc $out_dir/CCS-LD.${modstr}_surf_salt_$year-${mon}.nc
+           #ncra -O -d s_rho,49  -v u,v $fil_dir/CCS-LD.${modstr}_avg_$year-$mon*.nc $out_dir/CCS-LD.${modstr}_surf_uv_$year-${mon}.nc
         fi
         ((nmon+=1))
     done
     # Concatenate all monthly means in given year
-    ncrcat -O $out_dir/CCS-LD.${modstr}_surf_temp_$year-??.nc $out_dir/CCS-LD.${modstr}_stemp_$year.nc
-    ncrcat -O $out_dir/CCS-LD.${modstr}_surf_salt_$year-??.nc $out_dir/CCS-LD.${modstr}_ssalt_$year.nc
-    ncrcat -O $out_dir/CCS-LD.${modstr}_surf_uv_$year-??.nc $out_dir/CCS-LD.${modstr}_suv_$year.nc
-    rm $out_dir/CCS-LD.${modstr}_*_$year-??.nc
+    #ncrcat -O $out_dir/CCS-LD.${modstr}_surf_temp_$year-??.nc $out_dir/CCS-LD.${modstr}_stemp_$year.nc
+    #ncrcat -O $out_dir/CCS-LD.${modstr}_surf_salt_$year-??.nc $out_dir/CCS-LD.${modstr}_ssalt_$year.nc
+    #ncrcat -O $out_dir/CCS-LD.${modstr}_surf_uv_$year-??.nc $out_dir/CCS-LD.${modstr}_suv_$year.nc
+    #rm $out_dir/CCS-LD.${modstr}_*_$year-??.nc
 
 done
 
-ncrcat $out_dir/CCS-LD.${modstr}_stemp_????.nc $out_dir/10yr_monthly_mean_his_temp.nc
-ncrcat $out_dir/CCS-LD.${modstr}_ssalt_????.nc $out_dir/10yr_monthly_mean_his_salt.nc
-ncrcat $out_dir/CCS-LD.${modstr}_suv_????.nc $out_dir/10yr_monthly_mean_his_uv.nc
+#ncrcat $out_dir/CCS-LD.${modstr}_stemp_????.nc $out_dir/10yr_monthly_mean_his_temp.nc
+#ncrcat $out_dir/CCS-LD.${modstr}_ssalt_????.nc $out_dir/10yr_monthly_mean_his_salt.nc
+#ncrcat $out_dir/CCS-LD.${modstr}_suv_????.nc $out_dir/10yr_monthly_mean_his_uv.nc
 
-rm $out_dir/CCS-LD.${modstr}*
+#rm $out_dir/CCS-LD.${modstr}*
