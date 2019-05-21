@@ -1,7 +1,7 @@
 #!/bin/bash
 
-FYEAR=1
-LYEAR=10
+FYEAR=3
+LYEAR=9
 
 #orig_dir=/Volumes/Abalone/CCS/his2
 #orig_dir=/Volumes/Abalone/CCS/fut_017
@@ -26,13 +26,19 @@ for yr in $( seq $FYEAR $LYEAR ) ; do
             if [ ! -f $work_dir/$year/$fil_base ] ; then
                echo "$fil_base does not exist in work directory"
                ((n+=1))
+               # COPY FILE FROM SCRATCH DIRECTORY
+               if [ -f $scratch_dir/$year/$fil_base ] ; then
+                  cp $scratch_dir/$year/$fil_base $work_dir/$year/
+               fi 
             else
+               # DETERMINE FILES SIZE IN BOTH SCRATCH AND WORK DIRECTORIES
                scr_fil_sz=$(stat -c%s "$scratch_dir/$year/$fil_base") 
                wrk_fil_sz=$(stat -c%s "$work_dir/$year/$fil_base")
             fi
- 
+
             if [ "$wrk_fil_sz" -ne "$scr_fil_sz" ]; then
                echo "$fil_base transfer was incomplete"
+               
                ((n+=1))
             fi
         done
