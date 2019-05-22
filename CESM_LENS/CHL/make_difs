@@ -15,11 +15,11 @@ for var in $vars; do
     echo $runstr $var
     his_fil=$dir/his${runstr}_${var}_MAM.nc
     echo $his_fil
-    ncra -O -d time,2,4 ../his_${runstr}/ocn_run${runstr}_${var}_81-05_clim.nc $his_fil
+    ncra -O -d time,4 ../his_${runstr}/ocn_run${runstr}_${var}_81-05_clim.nc $his_fil
 
     fut_fil=$dir/fut${runstr}_${var}_MAM.nc
-    ncra -O -d time,2,4 ../${runstr}/ocn_run${runstr}_${var}_RCP85_76-00_clim.nc $fut_fil
+    ncra -O -d time,4 ../${runstr}/ocn_run${runstr}_${var}_RCP85_76-00_clim.nc $fut_fil
 
-    ncdiff -O -v $var $fut_fil $his_fil $dir/${var}_MAM_delta.nc
+    ncdiff -O -v $var $fut_fil $his_fil $dir/${var}_may_delta.nc
     rm $fut_fil $his_fil 
 done

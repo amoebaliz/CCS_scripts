@@ -7,7 +7,7 @@ LYEAR=9
 #orig_dir=/Volumes/Abalone/CCS/fut_017
 scratch_dir=/glade/scratch/edrenkar/tmpdir_CCS-LD.HCo03Y/outputs
 work_dir=/glade/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo03Y
-work_dir=/Volumes/Abalone/CCS/his3
+#work_dir=/Volumes/Abalone/CCS/his3
 
 nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
 
@@ -35,13 +35,13 @@ for yr in $( seq $FYEAR $LYEAR ) ; do
 
             # COMPARING WORK/SCRATCH DIR ON CHEYENNE
             else
-               #scr_fil_sz=$(stat -c%s "$scratch_dir/$year/$fil_base") 
-               #wrk_fil_sz=$(stat -c%s "$work_dir/$year/$fil_base")
-               #if [ "$wrk_fil_sz" -ne "$scr_fil_sz" ]; then
-                   #echo "$fil_base transfer was incomplete"
-               wrk_fil_sz="$(wc -c <"$work_dir/$year/$fil_base")"
-               if [ "$wrk_fil_sz" -lt  "$min_fil" ]; then
-                  echo "$fil_base is small check file"
+               scr_fil_sz=$(stat -c%s "$scratch_dir/$year/$fil_base") 
+               wrk_fil_sz=$(stat -c%s "$work_dir/$year/$fil_base")
+               if [ "$wrk_fil_sz" -ne "$scr_fil_sz" ]; then
+                   echo "$fil_base transfer was incomplete"
+               #wrk_fil_sz="$(wc -c <"$work_dir/$year/$fil_base")"
+               #if [ "$wrk_fil_sz" -lt  "$min_fil" ]; then
+               #   echo "$fil_base is small check file"
 
                   ((n+=1))
                fi

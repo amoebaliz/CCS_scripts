@@ -1,23 +1,24 @@
 #!/bin/bash
 
-FYEAR=7
-LYEAR=9
+FYEAR=3
+LYEAR=12
 
 # Cheyenne
-# in_dir=/glade/scratch/edrenkar/tmpdir_CCS-LD.FCo017/outputs
-# out_dir=/glade/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo017
+in_dir=/glade/scratch/edrenkar/tmpdir_CCS-LD.HCo03Y/outputs
+#out_dir=/glade/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.FCo017
+out_dir=/glade/work/edrenkar/MODELS/CCS/RUNS/CCS-LD.HCo03Y/monthly_means
 
 # Abalone - his
-in_dir=/Volumes/Abalone/CCS/his3
-out_dir=/Volumes/Abalone/CCS/his3/monthly_means/
+#in_dir=/Volumes/Abalone/CCS/his3
+#out_dir=/Volumes/Abalone/CCS/his3/monthly_means/
 # Abalone - fut
 #in_dir=/Volumes/Abalone/CCS/fut_017
 #out_dir=/
 
 modstr=HCo03Y
 #modstr=FCo017
-nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
 
+nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
 
 for year in $( seq -f %04g $FYEAR $LYEAR ) ; do
 
