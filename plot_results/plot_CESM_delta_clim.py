@@ -58,7 +58,7 @@ def get_sst(i):
     #ncfile = '/Users/elizabethdrenkard/Desktop/ECCWO_FILES/SST_DELTA_017.nc' 
     ncfile = '/Volumes/Abalone/CCS/CESM/climatologies/017_TEMP_clim_delta.nc'
     fid = nc.Dataset(ncfile)
-    sst = np.ma.masked_array(fid.variables['temp'][i,49,:].squeeze())    
+    sst = np.ma.masked_array(fid.variables['TEMP'][i,0,:].squeeze())    
     sst[sst >100] = -1
     print sst.shape 
     sst = fill_CA_Gulf(sst)
@@ -103,14 +103,24 @@ for j in range(plat.shape[0]-1):
 for ii in range(plat.shape[1]-1):
     m.plot((plon[0,ii],plon[0,ii+1]),(plat[0,ii],plat[0,ii+1]),linewidth=2,color='k',zorder=map_order+1)
     m.plot((plon[-1,ii],plon[-1,ii+1]),(plat[-1,ii],plat[-1,ii+1]),linewidth=2,color='k',zorder=map_order+1)
-m = Basemap(llcrnrlat=np.min(glat)-m_offset,urcrnrlat = np.max(glat)+m_offset,llcrnrlon=np.min(glon)-m_offset,urcrnrlon=np.max(glon)+m_offset, resolution='i', ax=ax)
+m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset, resolution='i', ax=ax)
 
-grd_fil = '/Users/elizabethdrenkard/Documents/Conferences/2018/ECCWO_FILES/LENS_grid.nc'
+grd_fil = '/Users/elizabethdrenkard/Documents/Conferences/2018/ECCWO/ECCWO_FILES/LENS_grid.nc'
 lsm = nc.Dataset(grd_fil).variables['lsm'][:]
 lats = nc.Dataset(grd_fil).variables['lat'][:]
-print lats.shape
+lats = (lats[1:,1:] + \
+        lats[1:,:-1] + \
+        lats[:-1,1:] + \
+        lats[:-1,:-1])/4
+
+
 lons = nc.Dataset(grd_fil).variables['lon'][:]
 lons[lons>180]=lons[lons>180]-360
+
+lons = (lons[1:,1:] + \
+        lons[1:,:-1] + \
+        lons[:-1,1:] + \
+        lons[:-1,:-1])/4
 
 #plt.title('SST (oC)')
 tx =plt.text(-118,46.5,'', fontsize=20,zorder=map_order+5)
@@ -121,7 +131,7 @@ m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_orde
 
 sst,mon = get_sst(0)
 # NOTE: pcolormesh = incorrect. needs to be the lat/lon corners not the center of the pixel
-im1 = m.pcolormesh(lons,lats,sst[:],vmin=1.5,vmax=4.5,cmap='nipy_spectral',zorder=map_order)
+im1 = m.pcolormesh(lons,lats,sst[1:-1,:-1],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
 im1.cmap.set_under('w')
 polygon_patch(m,ax)
 # ANIMATION
@@ -134,7 +144,7 @@ def updatefig(i):
     sst, mon = get_sst(i)
 
     # NOTE: pcolormesh = incorrect. needs to be the lat/lon corners not the center of the pixel
-    im1 = m.pcolormesh(lons,lats,sst[:],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
+    im1 = m.pcolormesh(lons,lats,sst[1:-1,1:-1],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
     im1.cmap.set_under('w')
     polygon_patch(m,ax)
     tx_str = mon 

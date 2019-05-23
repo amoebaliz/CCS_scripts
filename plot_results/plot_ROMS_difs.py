@@ -154,7 +154,7 @@ m.drawparallels([18,50], labels=[0,0,0,0], fmt='%d', fontsize=18,zorder=map_orde
 #u,v,mag,mon = get_vel(0)
 sst,mon = get_sst(0)
 #im1 = m.pcolor(plon,plat,sst[1:-1,1:-1],vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
-im1 = m.pcolor(plon,plat,sst[1:-1,1:-1],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
+im1 = m.pcolor(plon,plat,sst[1:-1,1:-1],vmin=1.5,vmax=4.5,cmap='nipy_spectral',zorder=map_order)
 #u,v,mag,mon = get_vel(0)
 #im1 = m.pcolor(plon,plat,mag,vmin=0,vmax=.2,cmap='OrRd',zorder=map_order)
 #im2 = m.quiver(rlon[::afreq],rlat[::afreq],u[::afreq,::afreq],v[::afreq,::afreq], scale=5,zorder=map_order+2)
@@ -174,7 +174,7 @@ def updatefig(i):
     print np.mean(sst), np.std(sst)
     #u,v,mag,mon = get_vel(i)
     #im1   = m.pcolormesh(plon,plat,sst[1:-1,1:-1],vmin=-5,vmax=5,cmap='bwr',zorder=map_order)
-    im1   = m.pcolormesh(plon,plat,sst[1:-1,1:-1],vmin=2,vmax=5,cmap='nipy_spectral',zorder=map_order)
+    im1   = m.pcolormesh(plon,plat,sst[1:-1,1:-1],vmin=1.5,vmax=4.5,cmap='nipy_spectral',zorder=map_order)
     polygon_patch(m,ax)
     tx_str = mon 
     tx.set_text(tx_str)
