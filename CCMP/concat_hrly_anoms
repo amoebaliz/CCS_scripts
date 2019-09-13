@@ -1,0 +1,10 @@
+#!/bin/bash
+
+dir=/glade/work/edrenkar/external_data/CCMP/
+
+fyear=2001
+lyear=2002
+
+ncrcat -O -h $dir$lyear/CCMP_Wind_Analysis_${lyear}0[1234]*6hrly_anom* $dir$fyear/CCMP_Wind_Analysis_${fyear}0[56789]*6hrly_anom* $dir$fyear/CCMP_Wind_Analysis_${fyear}1*6hrly_anom* CCMP_MAY01-APR02.nc
+
+

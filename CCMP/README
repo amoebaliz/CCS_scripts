@@ -18,6 +18,8 @@ iii) python make_anomalies.py
      subtract climatology month from daily mean
      create new anomaly file
      change longitude from 0to360 to -90to90 
+     # SEPT 13, 2019
+     change time to 'Days' (Subtract hours since X)
 
 #      Daily anomaly files are created and stored @ 
 #      /glade/p/work/edrenkar/external_data/CCMP
@@ -34,6 +36,10 @@ SEPT 8, 2017
 v)  ./concat_daily_anoms
     generates daily anomaly files for each year - need to do manually 
     if not a complete JAN-DEC year
+
+SEPT 13, 2019
+v) ./concat_hrly_anoms
+   generates hrly anomaly file
  
 # MAY 15, 2018: DROWNING CCMP:
 vi) ./get_ERAi_.25deg_grid.py
