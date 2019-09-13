@@ -39,9 +39,6 @@ CCMP_v = '/glade/work/edrenkar/external_data/CCMP/drowned_CCMP_MAY01-APR02_Vwind
 fidCCMPu = nc.Dataset(CCMP_u)
 fidCCMPv = nc.Dataset(CCMP_v)
 
-anomU = fidCCMPu.variables['Uwind'][:]
-anomV = fidCCMPv.variables['Vwind'][:]
-
 clon = fidCCMPu.variables['lon'][:]
 clon[clon>180]=clon[clon>180]-360
 clat = fidCCMPu.variables['lat'][:]
@@ -73,27 +70,6 @@ sourcefieldV = ESMF.Field(sourcegrid, name = 'CCMP_Anom')
 destfieldU = ESMF.Field(destgrid, name = 'ERAi_CCMPanom_Uwind')
 destfieldV = ESMF.Field(destgrid, name = 'ERAi_CCMPanom_Vwind')
 
-# Allocate output variables
-Uout = np.zeros((4*365,ny,nx))
-Vout = np.zeros((4*365,ny,nx))
-
-for nt in range(4*365):
-    print nt
-    sourcefieldU.data[...] = Uclim[nt,:].squeeze()
-    sourcefieldV.data[...] = Vclim[nt,:].squeeze()
-
-    # REGULAR GRID BILINIEAR INTERPOLATION
-    regridU = ESMF.Regrid(sourcefieldU, destfieldU, regrid_method = ESMF.RegridMethod.BILINEAR,
-              unmapped_action = ESMF.UnmappedAction.IGNORE)
-    regridV = ESMF.Regrid(sourcefieldV, destfieldV, regrid_method = ESMF.RegridMethod.BILINEAR,
-              unmapped_action = ESMF.UnmappedAction.IGNORE)
-
-    destfieldU = regridU(sourcefieldU, destfieldU)
-    destfieldV = regridV(sourcefieldV, destfieldV)
-
-    Uout[nt,:] = anomU[nt,:].squeeze() + destfieldU.data
-    Vout[nt,:] = anomV[nt,:].squeeze() + destfieldV.data
-
 # Save new wind files
 ncfilU = 'ERAi_CCMPanom_' + yr + '_Uwind.nc'
 fid2 = nc.Dataset(ncfilU,'w')
@@ -105,17 +81,17 @@ fid2.createDimension('lon', nx)
 time = fid2.createVariable('time', 'f8', ('time'))
 fid2.variables['time'].units = fidUclim.variables['time'].units
 fid2.variables['time'].cycle_length = fidUclim.variables['time'].cycle_length
-fid2.variables['time'][:] = np.arange(.5,364.5+1)
+fid2.variables['time'][:] = fidUclim.variables['time'][:]
 
 fid2.createVariable('lat','f8',('lat'))
 fid2.variables['lat'].long_name = fidUclim.variables['lat'].long_name
 fid2.variables['lat'].units = fidUclim.variables['lat'].units
-fid2.variables['lat'][:]=elat
+fid2.variables['lat'][:]=clat
 
 fid2.createVariable('lon','f8',('lon'))
 fid2.variables['lon'].long_name = fidUclim.variables['lon'].long_name
 fid2.variables['lon'].units = fidUclim.variables['lon'].units
-fid2.variables['lon'][:]=elon
+fid2.variables['lon'][:]=clon
     
 fid2.createVariable('Uwind','f8',('time','lat','lon'),fill_value = np.float(1.0e15))
 fid2.variables['Uwind'].long_name = fidUclim.variables['Uwind'].long_name
@@ -124,8 +100,6 @@ fid2.variables['Uwind'].coordinates = fidUclim.variables['Uwind'].coordinates
 fid2.variables['Uwind'].time = fidUclim.variables['Uwind'].time
 u_txt = "ERAinterim climatology (1981-2010) + CCMP " + yr + " Anomaly (relative to 1990-2010)"
 fid2.variables['Uwind'].details = u_txt
-fid2.variables['Uwind'][:]=Uout
-print time
 fid2.close()
 
 ncfilV = 'ERAi_CCMPanom_' +yr+'_Vwind.nc'
@@ -138,17 +112,17 @@ fid2.createDimension('lon',nx)
 fid2.createVariable('time', 'f8', ('time'))
 fid2.variables['time'].units = fidVclim.variables['time'].units
 fid2.variables['time'].cycle_length = fidVclim.variables['time'].cycle_length
-fid2.variables['time'][:] = np.arange(.5,364.5+1)    
+fid2.variables['time'][:] = fidVclim.variables['time'][:]    
 
 fid2.createVariable('lat','f8',('lat'))
 fid2.variables['lat'].long_name = fidVclim.variables['lat'].long_name
 fid2.variables['lat'].units = fidVclim.variables['lat'].units
-fid2.variables['lat'][:]=elat
+fid2.variables['lat'][:]=clat
     
 fid2.createVariable('lon','f8',('lon'))
 fid2.variables['lon'].long_name = fidVclim.variables['lon'].long_name
 fid2.variables['lon'].units = fidVclim.variables['lon'].units
-fid2.variables['lon'][:]=elon
+fid2.variables['lon'][:]=clon
     
 fid2.createVariable('Vwind','f8',('time','lat','lon'),fill_value = np.float(1.0e15))
 fid2.variables['Vwind'].long_name = fidVclim.variables['Vwind'].long_name
@@ -158,9 +132,36 @@ fid2.variables['Vwind'].time = fidVclim.variables['Vwind'].time
 v_txt = "ERAinterim climatology (1981-2010) + CCMP " + yr + " Anomaly (relative to 1990-2010)"
 
 fid2.variables['Vwind'].details = v_txt 
-fid2.variables['Vwind'][:]=Vout
-
 fid2.close()
+
+for nt in range(4*365):
+    print nt
+    sourcefieldU.data[...] = fidUclim.variables['Uwind'][nt,:].squeeze()
+    sourcefieldV.data[...] = fidVclim.variables['Vwind'][nt,:].squeeze()
+
+    # REGULAR GRID BILINIEAR INTERPOLATION
+    regridU = ESMF.Regrid(sourcefieldU, destfieldU, regrid_method = ESMF.RegridMethod.BILINEAR,
+              unmapped_action = ESMF.UnmappedAction.IGNORE)
+    regridV = ESMF.Regrid(sourcefieldV, destfieldV, regrid_method = ESMF.RegridMethod.BILINEAR,
+              unmapped_action = ESMF.UnmappedAction.IGNORE)
+
+    destfieldU = regridU(sourcefieldU, destfieldU)
+    destfieldV = regridV(sourcefieldV, destfieldV)
+
+    Uout = fidCCMPu.variables['Uwind'][nt,:].squeeze() + destfieldU.data
+    Vout = fidCCMPv.variables['Vwind'][nt,:].squeeze() + destfieldV.data
+
+    ncfilU = 'ERAi_CCMPanom_' + yr + '_Uwind.nc'
+    ncfilV = 'ERAi_CCMPanom_' + yr + '_Vwind.nc'
+
+    fidu = nc.Dataset(ncfilU,'a')
+    fidv = nc.Dataset(ncfilV,'a')
+
+    fidu.variables['Uwind'][nt,:] = Uout
+    fidv.variables['Vwind'][nt,:] = Vout
+
+    fidu.close()
+    fidv.close()
 
 fidVclim.close()
 fidUclim.close()
