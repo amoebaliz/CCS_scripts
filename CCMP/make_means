@@ -15,7 +15,7 @@ lyear=2010
 
 #MAKE MONTHLY CLIMATOLOGIES
 
-dir=/glade/p/work/edrenkar/external_data/CCMP
+dir=/glade/work/edrenkar/external_data/CCMP
 # Loop over every month 
 for mon in $( seq -f %02g 1 12 ) ; do
     echo $mon
@@ -23,7 +23,7 @@ for mon in $( seq -f %02g 1 12 ) ; do
     for year in $( seq $fyear $lyear ) ; do
         echo $year
         # create individual monthly means; keep original CCMP files
-        ncra -O $year/CCMP_Wind_Analysis_$year${mon}*_V02.0_L3.0_RSS.nc.sub CCMP_$year$mon.nc
+        ncra -O $dir/$year/CCMP_Wind_Analysis_$year${mon}*_V02.0_L3.0_RSS.nc.sub CCMP_$year$mon.nc
     done
     # create 23-yr climatology; remove monthly means from individual years 
     # ncra -O CCMP_*$mon.nc CCMP_1988-2010_clim_$mon.nc
