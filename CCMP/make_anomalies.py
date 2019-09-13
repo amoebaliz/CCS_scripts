@@ -90,7 +90,7 @@ for year in range(2001,2002+1):
             lon.setncattr('long_name','longitude')
             lon[:] = lon_shift
 
-            u_anom = newnc.createVariable( 'u_anom', 'f', ('time', 'lat', 'lon',))
+            u_anom = newnc.createVariable( 'Uwind', 'f', ('time', 'lat', 'lon',))
             for atname in uclim.ncattrs():
                 setattr(u_anom,atname,getattr(uclim,atname))
             # update certain attributes
@@ -101,7 +101,7 @@ for year in range(2001,2002+1):
             u_anom[:4] = uanom
             #u_anom[:1] = uanom
 
-            v_anom = newnc.createVariable( 'v_anom', 'f', ('time', 'lat', 'lon',))
+            v_anom = newnc.createVariable( 'Vwind', 'f', ('time', 'lat', 'lon',))
             for atname in vclim.ncattrs():
                 setattr(v_anom,atname,getattr(vclim,atname)) 
             # update certain attributes

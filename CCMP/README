@@ -65,12 +65,16 @@ viii) ./drown_CCMP_CLIM
       RETURNS: drowned_CCMP_u_anom.nc
                drowned_CCMP_v_anom.nc
 
-iv) python CCMP_2_ERAi.py
-    Regrids CCMP to the ERAinterim grid and adds it to the ERAi wind field
-    climatology    
+#iv) python CCMP_2_ERAi.py
+#    Regrids CCMP to the ERAinterim grid and adds it to the ERAi wind field
+#    climatology    
  
+iv) python ERAi_2_CCMP.py
+    Regrids ERAinterim to the CCMP grid and adds it to the 
+    ERAi wind field climatology 
     RETURNS: ERAi_CCMPanom_MAY01-APR02_Vwind.nc
              ERAi_CCMPanom_MAY01-APR02_Uwind.nc
+
 
 # NOTE: LD 5-17-18: ISSUE WITH OLD FILES - have May 1 as first time step 
 #       In composite wind files... so previously was using 4 month shift
