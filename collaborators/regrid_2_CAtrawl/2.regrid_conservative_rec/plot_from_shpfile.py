@@ -110,8 +110,7 @@ lon_bnds = np.array(((-122.05,-117.065),  \
 fig, ax = plt.subplots(figsize=(2*abs(np.diff(lon_bnds[plot_num,:])),\
                                 2*abs(np.diff(lat_bnds[plot_num,:]))))
 
-m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset, resolution='i', ax=ax)
-
+m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset, ax=ax)#, ax=ax)
 P = m.pcolormesh(plon,plat,mask_rho[1:-1,1:-1],vmin=.5,vmax=.75,edgecolors='face',cmap='Blues',zorder=map_order)
 P.cmap.set_under('white')
 P.cmap.set_over([.9,.97,1])

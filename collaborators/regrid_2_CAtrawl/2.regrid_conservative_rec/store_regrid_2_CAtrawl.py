@@ -54,7 +54,7 @@ sf = shp.Reader(shp_fil)
 nshapes = len(sf.shapes())
 roms=0
 # NEW SHAPEFILE
-w = shp.Writer(sf.shapeType)
+#w = shp.Writer(sf.shapeType)
 
 # WRITE FIELDS TO NEW SHAPEFILE
 mon_list =['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -80,7 +80,9 @@ else:
    grd_fil = '/Users/elizabethdrenkard/Documents/Conferences/2018/ECCWO/ECCWO_FILES/LENS_grid.nc'
    fid = nc.Dataset(grd_fil)
    mask_rho = fid.variables['lsm'][:][1:-1,1:-1]
+   print mask_rho.shape, mask_rho
    lats = fid.variables['lat'][:]
+   print lats.shape
    plat = (lats[:-1,:-1] + lats[1:,:-1] + lats [1:,1:] + lats[:-1,1:])/4. 
    lons = fid.variables['lon'][:]
    lons[lons>180]=lons[lons>180]-360

@@ -51,7 +51,7 @@ def get_var(i):
     MONS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     mon = MONS[i]
     
-    var_dif = fid_CESM.variables[ocean_var][i,dep_lev,:].squeeze()
+    var_dif = fid_CESM.variables[ocean_var][i,dep_lev,1:-1,1:-1].squeeze()
 
     print np.min(var_dif),np.max(var_dif)
     return var_dif, mon
@@ -75,29 +75,31 @@ def interp_to_caltrawl(var):
            ((lat_bnds[plot_num,0]<shp_lats[0]<lat_bnds[plot_num,1])  or  \
             (lat_bnds[plot_num,0]<shp_lats[1]<lat_bnds[plot_num,1])):
 
-           # DEFINE CENTRAL POINT
-           c_lon = np.mean(shp_lons)
-           c_lat = np.mean(shp_lats)
-           # DEFINE SURROUNDING (FAKE) GRID POINTS
-           x = [2*bbox[0]-c_lon, c_lon, 2*bbox[2]-c_lon]
-           y = [2*bbox[1]-c_lat, c_lat, 2*bbox[3]-c_lat]
-
-           Xn, Yn = np.meshgrid(x, y)
+           Xn, Yn = np.meshgrid(shp_lons, shp_lats)
+           
            dest_lon[...] = Xn
            dest_lat[...] = Yn
-        
            # DEFINE INTERPOLATION FUNCTION
            destfield = ESMF.Field(destgrid, name = 'CAtrawl_delta')
 
-           regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,
-                    unmapped_action = ESMF.UnmappedAction.IGNORE)
- 
+           # DEFINE INTERPOLATION FUNCTION
+           regrid = ESMF.Regrid(sourcefield, destfield, 
+                         regrid_method = ESMF.RegridMethod.CONSERVE,
+                         src_mask_values=np.array([0], dtype=np.int32),
+                         src_frac_field=srcfracfield,
+                         norm_type=ESMF.NormType.FRACAREA, 
+                         unmapped_action = ESMF.UnmappedAction.IGNORE)
+
+           #regrid = ESMF.Regrid(sourcefield, destfield, regrid_method = ESMF.RegridMethod.BILINEAR,
+           #         unmapped_action = ESMF.UnmappedAction.IGNORE)
            # INTERPOLATE TO SINGLE BOX 
            destfield = regrid(sourcefield, destfield)
-
            # EXTRACT CENTER VALUE
-           c_val = destfield.data[1,1] 
-           #print ns, c_val
+           c_val = destfield.data[0,0] 
+           #print np.sum(srcfracfield.data)
+           if np.sum(srcfracfield.data) == 0.:
+              #print 'MEEP'
+              c_val=np.nan
            if c_val>100:
               c_val=np.nan
            # plot each pcolor grid cell
@@ -119,26 +121,40 @@ mask_rho = fid.variables['mask_rho'][:]
 plat = fid.variables['lat_psi'][:]
 plon = fid.variables['lon_psi'][:]
 
-
 # CESM Grid information
 grd_fil = '/Users/elizabethdrenkard/Documents/Conferences/2018/ECCWO/ECCWO_FILES/LENS_grid.nc'
-lsm = nc.Dataset(grd_fil).variables['lsm'][:]
+lsm = nc.Dataset(grd_fil).variables['lsm'][:][1:-1,1:-1]
 lats = nc.Dataset(grd_fil).variables['lat'][:]
+plats = (lats[:-1,:-1] + lats[1:,:-1] + lats [1:,1:] + lats[:-1,1:])/4.
 lons = nc.Dataset(grd_fil).variables['lon'][:]
-lons[lons>180]=lons[lons>180]-360
-
+#lons[lons>180]=lons[lons>180]-360
+plons = (lons[:-1,:-1] + lons[1:,:-1] + lons [1:,1:] + lons[:-1,1:])/4.
+plons[plons>180]=plons[plons>180]-360
 # PREPARE SOURCE GRID OBJECT
-sourcegrid = ESMF.Grid(np.array(lsm.shape), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
-source_lon = sourcegrid.get_coords(0)
-source_lat = sourcegrid.get_coords(1)
-source_lon[...] = lons
-source_lat[...] = lats
+sourcegrid = ESMF.Grid(np.array(lsm.shape), staggerloc = ESMF.StaggerLoc.CORNER, \
+                       coord_sys = ESMF.CoordSys.SPH_DEG)
+
+source_lon = sourcegrid.get_coords(0, staggerloc=ESMF.StaggerLoc.CORNER)
+source_lat = sourcegrid.get_coords(1, staggerloc=ESMF.StaggerLoc.CORNER)
+
+source_lon[...] = plons
+source_lat[...] = plats
+
+sourcegrid.add_item(ESMF.GridItem.MASK,[ESMF.StaggerLoc.CENTER])
+grid_mask = sourcegrid.get_item(ESMF.GridItem.MASK)
+grid_mask[...] = lsm.astype(np.int32)
 sourcefield = ESMF.Field(sourcegrid, name = 'CESM_Delta')
+srcfracfield = ESMF.Field(sourcegrid, 'srcfracfield')
 
 # PREPARE DESTINATION GRID OBJECT
-destgrid = ESMF.Grid(np.array((3,3)), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
-dest_lon = destgrid.get_coords(0)
-dest_lat = destgrid.get_coords(1)
+#destgrid = ESMF.Grid(np.array((3,3)), staggerloc = ESMF.StaggerLoc.CENTER, coord_sys = ESMF.CoordSys.SPH_DEG)
+#dest_lon = destgrid.get_coords(0,staggerloc=ESMF.StaggerLoc.CORNER)
+#dest_lat = destgrid.get_coords(1,staggerloc=ESMF.StaggerLoc.CORNER)
+destgrid = ESMF.Grid(np.array((1,1)), staggerloc = ESMF.StaggerLoc.CORNER, \
+                     coord_sys = ESMF.CoordSys.SPH_DEG)
+dest_lon = destgrid.get_coords(0,staggerloc=ESMF.StaggerLoc.CORNER)
+dest_lat = destgrid.get_coords(1,staggerloc=ESMF.StaggerLoc.CORNER)
+
 #destfield = ESMF.Field(destgrid, name = 'CAtrawl_delta')
 
 # DEFINE ROMS OUTPUT INFORMATION
@@ -168,8 +184,8 @@ lon_bnds = np.array(((-122.05,-117.065),  \
 fig, ax = plt.subplots(figsize=(2*abs(np.diff(lon_bnds[plot_num,:])),\
                                 2*abs(np.diff(lat_bnds[plot_num,:]))))
 
-m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset, resolution='i', ax=ax)
-
+#m = Basemap()
+m = Basemap(llcrnrlat=np.min(plat)-m_offset,urcrnrlat = np.max(plat)+m_offset,llcrnrlon=np.min(plon)-m_offset,urcrnrlon=np.max(plon)+m_offset,ax=ax)
 P = m.pcolormesh(plon,plat,mask_rho[1:-1,1:-1],vmin=.5,vmax=.75,edgecolors='face',cmap='Blues',zorder=map_order)
 P.cmap.set_under('white')
 P.cmap.set_over([.9,.97,1])
@@ -209,6 +225,9 @@ def updatefig(i):
            im.remove()
 
     var, mon = get_var(i)
+    var[lsm==0]==np.nan
+    plt.figure()
+    #plt.pcolor(plons,plats,var,vmin=1.5,vmax=4.5,cmap='nipy_spectral')
     im_all=interp_to_caltrawl(var)
     polygon_patch(m,ax)
  
