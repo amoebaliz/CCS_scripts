@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# MAKE MONTHLY CLIMATOLOGY (SEPT. 1981 - DEC. 2010)
+# OISST of AVHRR-ONLY, 1/4 DEG RESOLUTION
+
+# This version has month on the outer loop :. 
+# only needs to loop once for climatology
+
+bdir=https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/access/avhrr-only
+
+# number of days in a month; edited for leaps
+nmdays=(31 28 31 30 31 30 31 31 30 31 30 31)
+
+# iterate over every month
+for mon in {1..12}; do
+    monstr=$(printf %02d $mon)
+    
+    # 1981 Starts in Sept 
+    iyr=$((1982-$mon/9)) 
+    for yr in $(seq $iyr 2010) ; do
+        # Check if monthly mean for given year exists from previous downloads
+        if [ ! -f "sst_clim_$yr$monstr.nc" ]; then
+            # Leap year check
+            ineq=$((yr%4))
+            if (($ineq == 0)); then
+               nmdays[1]=29
+            else
+               nmdays[1]=28
+            fi  
+        
+            # number of days in a given month
+            nday=${nmdays[$((mon-1))]}
+            for daystr in $(seq -f "%02g" 1 $nday) ; do
+
+                ncfil=avhrr-only-v2.$yr$monstr$daystr.nc
+                # request the file
+                wget $bdir/$yr$monstr/$ncfil
+
+                # spatially subset and set record dimension 
+                ncks -d lat,400,599 -d lon,800,1049 --mk_rec_dmn time -O $ncfil $ncfil.sub
+                rm $ncfil
+            done 
+        
+            # Generate monthly mean for given year
+            ncra *$yr$monstr??.nc.sub sst_clim_$yr$monstr.nc
+            rm *$yr$monstr??.nc.sub
+        fi
+    done
+    
+    # Generate climatological (198[12]-2010) mean for given month 
+    ncra sst_clim_????$monstr.nc oisst_$monstr.nc
+    rm sst_clim_????$monstr.nc
+
+done
+
