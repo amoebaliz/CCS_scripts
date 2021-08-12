@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 import glob
 
-# z_r function from Pyroms 
+# z_r function from Pyroms vgrid
 # NOTE: assuming Vtrans==2 even though stated 4 in gridid.txt
 def z_r_calc(h, hc, N, s_rho, Cs_r, zeta, Vtrans):
         z_r = np.empty(s_rho.shape + h.shape, 'd')
@@ -17,6 +17,17 @@ def z_r_calc(h, hc, N, s_rho, Cs_r, zeta, Vtrans):
         return z_r
 
 
+
+def z_w_calc(h, hc, Np, s_w, Cs_w, zeta, Vtrans):
+
+        z_w = np.empty((Np) + h.shape, 'd')
+
+        for  k in range(Np):
+            z0 = (hc * s_w[k] + h * Cs_w[k]) / \
+                          (hc + h)
+                    z_w[n,k,:] = zeta[n,:] + (zeta[n,:] + h * z0)
+
+        return z_w
 
 # zslice function from Pyroms
 def zslice(var, depth, Cpos='rho', mode='linear'):
@@ -42,8 +53,9 @@ def zslice(var, depth, Cpos='rho', mode='linear'):
         imode=0
         raise Warning, '%s not supported, defaulting to linear' % mode
 
-    # Vtrans = 2
-    # N = 50     
+    Vtrans = 2
+    # N = 50 
+    Np = 51
     z_r = z_r_calc(h, hc, 50, s_rho, Cs_r, zeta, 2)
     print z_r.shape
     # compute the depth on Arakawa-C grid position
